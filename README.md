@@ -12,6 +12,7 @@ lab/index.html        LAB 實驗紀錄：依技術篩選，點開放大
 about/index.html      About：自介、專長、經歷、客戶、履歷
 css/style.css         所有樣式；換強調色改 --accent
 js/main.js            滑過播放、點了才載入影片
+js/intro.js           首頁開場（Reel 全螢幕 → 往下滑縮回首頁）
 images/               放圖片（LAB 的圖放 images/lab/）
 videos/               放滑過卡片時播放的短循環 mp4（LAB 的放 videos/lab/）
 files/                放履歷 PDF
@@ -25,7 +26,7 @@ files/                放履歷 PDF
    - 個人照用 4:5
 2. **Reel 和成片**：先上傳到 Vimeo，網址最後那串數字就是影片編號，例如 `vimeo.com/123456789`。把編號填進 `data-vimeo=""`。
 3. **滑過預覽**：從每支片剪 3 到 5 秒的無聲循環，存成 mp4（寬 960px 左右，1 到 2 MB 以內），用卡片上寫的檔名放進 `videos/`。不想要這個效果，就刪掉卡片上的 `data-loop`。
-4. **開場片段**：首頁一打開會先全螢幕播 `videos/reel-teaser.mp4`（6 到 10 秒、無聲、5 MB 以內），播完再縮進首頁。還沒放檔案時會顯示斜線底，約 4.5 秒後自動進入。
+4. **首頁 Reel 和開場**：首頁一打開，Reel 就會全螢幕靜音自動播放，下方是 AE 時間軸。訪客往下滑、按方向鍵或按「進入網站」，Reel 才縮回首頁的格子，並繼續播放。換 Reel 時，要改 `index.html` 裡 Reel 的 iframe 網址和按鈕 `data-vimeo` 的編號。Vimeo 免費帳號可能會在畫面上顯示播放控制列；付費帳號（Plus 以上）才能完全隱藏。
 5. **方括號 `[ ]`** 的地方都是還需要補的資料。
 
 ## 新增一個作品

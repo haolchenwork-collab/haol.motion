@@ -38,6 +38,8 @@ document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
   btn.addEventListener('click', function () {
     var id = btn.getAttribute('data-vimeo');
     if (!id || btn.querySelector('iframe')) return;
+    // 首頁 Reel：先拿掉靜音循環的那支，換成有聲音、有控制列的完整播放器
+    btn.parentNode.querySelectorAll('[data-reel-bg]').forEach(function (f) { f.remove(); });
     var frame = document.createElement('iframe');
     frame.src = 'https://player.vimeo.com/video/' + encodeURIComponent(id) + '?autoplay=1&title=0&byline=0&portrait=0';
     frame.allow = 'autoplay; fullscreen; picture-in-picture';

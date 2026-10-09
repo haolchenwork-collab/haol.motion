@@ -22,8 +22,20 @@
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
 .t-where { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; }
 
-.t-reel { grid-column: span 7; padding: 0; background: none; }
-.t-reel .media { aspect-ratio: 16 / 9; border-radius: 4px; }
+.t-reel { grid-column: span 7; padding: 0; background: none; position: relative; }
+.t-reel::before { content: ""; display: block; aspect-ratio: 16 / 9; } /* 撐住格子大小，開場時 Reel 被拿去全螢幕也不會塌 */
+.reel-media { position: absolute; left: 0; top: 0; width: 100%; aspect-ratio: 16 / 9; border-radius: 4px; container-type: size; background-color: #000; }
+/* 影片永遠填滿畫面（像 object-fit: cover），全螢幕時也不會有黑邊 */
+.reel-media iframe.reel-bg {
+  inset: auto; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw);
+  z-index: 0; pointer-events: none;
+}
+.reel-media > img { z-index: 0; }
+/* 「開聲音看」按鈕：小小的放左下，不擋畫面 */
+.t-reel .player.reel-sound { inset: auto; left: 12px; bottom: 12px; width: auto; height: auto; z-index: 3; }
+.t-reel .player.reel-sound .play { position: static; transform: none; font-size: 14px; padding: 10px 16px; gap: 10px; }
+.t-reel .player.reel-sound:hover .play { transform: scale(1.04); }
 
 /* ---------- 客戶跑馬燈 ---------- */
 .ticker { margin-top: 8px; border-block: 1px solid var(--line); overflow: hidden; white-space: nowrap; }
@@ -99,12 +111,11 @@
   .ticker-track, .t-status .pulse { animation: none; }
 }
 
-/* ---------- 開場：先播 Reel，再縮進首頁 ---------- */
+/* ---------- 開場：Reel 全螢幕播放，往下滑才縮進首頁 ---------- */
 html.intro-playing { overflow: hidden; }
 [data-layer] { transition: clip-path .75s cubic-bezier(.75,0,.2,1), opacity .3s ease; }
 html.intro-playing [data-layer] { clip-path: inset(0 100% 0 0); opacity: 0; }
 html.intro-playing [data-layer].in { clip-path: inset(0 0 0 0); opacity: 1; }
-html.intro-playing [data-layer="3"] { transition: none; }
 
 .reel-intro {
   position: fixed; inset: 0; z-index: 60;
@@ -116,22 +127,20 @@ html.intro-playing [data-layer="3"] { transition: none; }
 }
 html:not(.intro-playing) .reel-intro { display: none; }
 .ri-screen { position: relative; flex: 1; min-height: 0; }
-.ri-frame {
-  position: absolute; inset: 0; overflow: hidden; border-radius: 4px;
-  background-color: var(--surface);
-  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.035) 0 12px, transparent 12px 24px);
-}
-.ri-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.ri-ph { position: absolute; left: 16px; top: 14px; }
+.ri-frame { position: absolute; inset: 0; }
 .ri-panel { background: #141416; border: 1px solid var(--line); border-radius: 6px; transition: transform .6s cubic-bezier(.7,0,.2,1), opacity .4s ease; }
 .tl-enter { min-height: 36px; padding: 0 14px; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 999px; font: inherit; font-weight: 500; cursor: pointer; }
 .tl-enter:hover { filter: brightness(1.1); }
 
-/* 離場：黑底淡掉、時間軸往下滑走、畫面縮進首頁的 Reel 格子 */
+/* 開場時，首頁的 Reel 本身被固定到全螢幕的位置（位置由 js/intro.js 設定），所以不用重新載入影片 */
+.reel-media.is-intro { position: fixed; z-index: 61; aspect-ratio: auto; }
+.reel-media.is-intro .reel-sound { opacity: 0; pointer-events: none; }
+.reel-media.flying { transition: left .95s cubic-bezier(.76,0,.24,1), top .95s cubic-bezier(.76,0,.24,1), width .95s cubic-bezier(.76,0,.24,1), height .95s cubic-bezier(.76,0,.24,1); }
+.reel-sound { transition: opacity .4s ease; }
+
+/* 離場：黑底淡掉、時間軸往下滑走、Reel 縮進首頁的格子 */
 .reel-intro.leaving { background-color: transparent; pointer-events: none; }
 .reel-intro.leaving .ri-panel { transform: translateY(130%); opacity: 0; }
-.ri-frame.flying { position: fixed; transition: left .95s cubic-bezier(.76,0,.24,1), top .95s cubic-bezier(.76,0,.24,1), width .95s cubic-bezier(.76,0,.24,1), height .95s cubic-bezier(.76,0,.24,1); }
-.ri-frame.flying .ri-ph { opacity: 0; transition: opacity .3s; }
 
 /* 時間軸（開場面板用） */
 .tl-head { display: flex; align-items: center; gap: 16px; padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--line); }
@@ -145,8 +154,8 @@ html:not(.intro-playing) .reel-intro { display: none; }
 .tl-labels li.on .n { color: var(--accent); }
 .tl-tracks { position: relative; }
 .tl-row { position: relative; }
-.tl-row .bar { position: absolute; top: 6px; bottom: 6px; background: #2A2A2D; border-radius: 2px; }
-.tl-row.on .bar { background: #3B4A1A; box-shadow: inset 0 0 0 1px var(--accent); }
+.tl-row .tl-bar { position: absolute; top: 6px; bottom: 6px; background: #2A2A2D; border-radius: 2px; }
+.tl-row.on .tl-bar { background: #3B4A1A; box-shadow: inset 0 0 0 1px var(--accent); }
 .playhead { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; margin-left: -1px; background: var(--accent); }
 .playhead::before { content: ""; position: absolute; top: -6px; left: -5px; border: 6px solid transparent; border-top-color: var(--accent); }
 @media (max-width: 640px) {
@@ -155,4 +164,5 @@ html:not(.intro-playing) .reel-intro { display: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .reel-intro { display: none; }
+  .reel-media.flying { transition: none; }
 }
