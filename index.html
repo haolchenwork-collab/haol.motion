@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>浩辰 HaoChen | Motion Designer</title>
+<meta name="description" content="浩辰 HaoChen，台灣動態設計師。擅長 2D 動態設計與角色動畫，融合 2D、3D 與實拍，做品牌宣傳、廣告與片頭。">
+<meta property="og:title" content="浩辰 HaoChen | Motion Designer">
+<meta property="og:description" content="2D Motion Designer / 3D Artist，台灣。">
+<meta property="og:image" content="images/og-image.jpg">
+<link rel="icon" href="images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/home.css">
+<script>
+  // 開場：先全螢幕播 Reel，再縮進首頁。每個分頁只播一次；系統設定「減少動態」時不播。
+  (function () {
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var seen = false;
+    try { seen = sessionStorage.getItem('introSeen') === '1'; } catch (e) {}
+    if (!reduce && !seen) document.documentElement.classList.add('intro-playing');
+  })();
+</script>
+</head>
+<body class="home">
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="index.html">HAOCHEN<span class="dot">.</span><span class="zh">浩辰</span></a>
+    <nav class="nav" aria-label="主選單">
+      <a href="work/index.html">WORK</a>
+      <a href="lab/index.html">LAB</a>
+      <a href="about/index.html">ABOUT</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+  <!-- Hero：標題、簡介、狀態、Reel -->
+  <section class="home-hero wrap">
+    <div class="bento hero-grid">
+      <div class="hero-left">
+        <div class="tile line t-title" data-layer="1">
+          <span class="tile-label"><span>Portfolio 2019 — 2026</span><span>廖浩辰</span></span>
+          <h1>2D Motion<br>Designer<span class="slash">/</span><br>3D Artist</h1>
+        </div>
+        <div class="tile t-intro" data-layer="2">
+          <p>台灣動態設計師。擅長 2D 動態設計與角色動畫，把 2D、3D 和實拍混在一起，做品牌宣傳、典禮與片頭。</p>
+        </div>
+        <div class="hero-meta" data-layer="2">
+          <div class="tile t-status"><span class="pulse" aria-hidden="true"></span>Open for work</div>
+          <div class="tile line t-where"><span>Taiwan</span><span data-clock>--:--</span></div>
+        </div>
+      </div>
+
+      <!-- Reel：data-vimeo 填 Vimeo 影片編號，封面放 images/reel-cover.jpg -->
+      <div class="tile t-reel" id="reel" data-layer="3">
+        <div class="media">
+          <img src="images/reel-cover.jpg" alt="Reel 2024 封面畫面">
+          <button class="player" type="button" data-vimeo="1057715669" aria-label="播放 Reel 2024">
+            <span class="play">
+              <svg width="18" height="20" viewBox="0 0 18 20" aria-hidden="true"><path d="M2 2 L16 10 L2 18 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
+              PLAY REEL 2024
+            </span>
+            <span class="meta">2D MG · 2D Character · 3D MG</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 合作單位：跑馬燈（文字重複兩次才能無縫循環） -->
+  <section class="ticker" data-layer="4" aria-label="合作單位：Disney Channel、Gogoro、金曲獎、台中國際動畫影展、Mixcode、Nulls Design、27 Design">
+    <div class="ticker-track" aria-hidden="true">
+      <span>Disney Channel</span><span class="sep">✳</span><span>Gogoro</span><span class="sep">✳</span><span>金曲獎 GMA</span><span class="sep">✳</span><span>台中國際動畫影展</span><span class="sep">✳</span><span>Mixcode</span><span class="sep">✳</span><span>Nulls Design</span><span class="sep">✳</span><span>27 Design</span><span class="sep">✳</span>
+      <span>Disney Channel</span><span class="sep">✳</span><span>Gogoro</span><span class="sep">✳</span><span>金曲獎 GMA</span><span class="sep">✳</span><span>台中國際動畫影展</span><span class="sep">✳</span><span>Mixcode</span><span class="sep">✳</span><span>Nulls Design</span><span class="sep">✳</span><span>27 Design</span><span class="sep">✳</span>
+    </div>
+  </section>
+
+  <!-- 精選作品：第一件放大，其他五件小格 -->
+  <section class="wrap" id="work" data-layer="5">
+    <div class="bar">
+      <h2>Selected Work<sup>(06)</sup></h2>
+      <a class="more" href="work/index.html">全部作品 →</a>
+    </div>
+    <div class="bento works">
+      <a class="w w-xl" href="work/tiaf-2023.html" data-loop="videos/tiaf-2023-loop.mp4">
+        <div class="media"><img src="images/tiaf-2023.jpg" alt="TIAF 2023 形象片畫面"></div>
+        <span class="no">01</span>
+        <div class="cap"><h3>TIAF 2023</h3><span>台中國際動畫影展 · Mixcode · 2023</span></div>
+      </a>
+      <a class="w" href="work/index.html" data-loop="videos/gma-32-loop.mp4">
+        <div class="media"><img src="images/gma-32.jpg" alt="第 32 屆金曲獎動態畫面"></div>
+        <span class="no">02</span>
+        <div class="cap"><h3>GMA 32nd</h3><span>金曲獎 · Mixcode</span></div>
+      </a>
+      <a class="w" href="work/index.html" data-loop="videos/disney-channel-loop.mp4">
+        <div class="media"><img src="images/disney-channel.jpg" alt="Disney Channel 識別動畫畫面"></div>
+        <span class="no">03</span>
+        <div class="cap"><h3>Disney Channel Ident</h3><span>頻道識別 · 27 Design</span></div>
+      </a>
+      <a class="w" href="work/index.html" data-loop="videos/thrifty-family-loop.mp4">
+        <div class="media"><img src="images/thrifty-family.jpg" alt="The Thrifty Family 片頭畫面"></div>
+        <span class="no">04</span>
+        <div class="cap"><h3>The Thrifty Family</h3><span>台劇片頭</span></div>
+      </a>
+      <a class="w" href="work/index.html" data-loop="videos/national-day-2019-loop.mp4">
+        <div class="media"><img src="images/national-day-2019.jpg" alt="2019 國慶動態畫面"></div>
+        <span class="no">05</span>
+        <div class="cap"><h3>Taiwan National Day</h3><span>國慶 · 27 Design · 2019</span></div>
+      </a>
+      <a class="w" href="work/index.html" data-loop="videos/gogoro-loop.mp4">
+        <div class="media"><img src="images/gogoro.jpg" alt="Gogoro 品牌宣傳畫面"></div>
+        <span class="no">06</span>
+        <div class="cap"><h3>Gogoro</h3><span>品牌宣傳 · Nulls Design</span></div>
+      </a>
+    </div>
+  </section>
+
+  <!-- LAB 最新 4 則 ＋ About 簡介 -->
+  <section class="wrap duo" data-layer="5">
+    <div class="bento">
+      <div class="lab-block" id="lab">
+        <div class="bar">
+          <h2>Lab<sup>(latest)</sup></h2>
+          <a class="more" href="lab/index.html">看全部實驗 →</a>
+        </div>
+        <div class="lab-row">
+          <a class="lab-tile" href="lab/index.html#lab-006" aria-label="LAB-006"><div class="media"><img src="images/lab/lab-006.jpg" alt=""></div><span class="tag">006 · 3D</span></a>
+          <a class="lab-tile" href="lab/index.html#lab-005" aria-label="LAB-005"><div class="media"><img src="images/lab/lab-005.jpg" alt=""></div><span class="tag">005 · 角色</span></a>
+          <a class="lab-tile" href="lab/index.html#lab-004" aria-label="LAB-004"><div class="media"><img src="images/lab/lab-004.jpg" alt=""></div><span class="tag">004 · 材質</span></a>
+          <a class="lab-tile" href="lab/index.html#lab-003" aria-label="LAB-003"><div class="media"><img src="images/lab/lab-003.jpg" alt=""></div><span class="tag">003 · 轉場</span></a>
+        </div>
+      </div>
+
+      <div class="tile t-about" id="about">
+        <span class="tile-label">About</span>
+        <p class="statement">我做會動的圖像，把 <em>2D 角色、3D 和實拍</em> 混在一起，替品牌、典禮和節目說故事。</p>
+        <div class="facts-row">
+          <div><b>2019</b><span>開始做動態設計</span></div>
+          <div><b>3</b><span>待過的工作室</span></div>
+          <div><b>10</b><span>商業專案</span></div>
+        </div>
+        <div class="who">
+          <div class="media"><img src="images/portrait.jpg" alt="廖浩辰個人照"></div>
+          <p>廖浩辰 HaoChen Liao<br><a class="more" href="about/index.html">更多關於我 →</a></p>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="site-footer" id="contact">
+  <div class="wrap">
+    <p class="mono muted kicker">LET'S MAKE THINGS MOVE · 合作洽詢</p>
+    <a class="big-mail" href="mailto:haolchen.work@gmail.com">haolchen.work<span class="at">@</span><wbr>gmail.com</a>
+    <div class="footer-row">
+      <div class="links">
+        <a href="https://www.instagram.com/haol2.5d/" target="_blank" rel="noopener">Instagram ↗</a>
+        <a href="https://www.behance.net/1044b10990be" target="_blank" rel="noopener">Behance ↗</a>
+        <a href="https://www.linkedin.com/in/haochen-liao-a58705299" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+      <span class="muted">© 2026 HaoChen Liao</span>
+    </div>
+  </div>
+</footer>
+
+<!-- 開場：全螢幕先播 Reel 片段，下方的 AE 時間軸跟著影片跑；播完（或往下捲、按「進入網站」）就縮進首頁的 Reel 位置 -->
+<div class="reel-intro" id="intro" role="region" aria-label="開場：Reel 2024">
+  <div class="ri-screen">
+    <div class="ri-frame" data-frame>
+      <!-- 開場片段放 videos/reel-teaser.mp4：建議 6–10 秒、無聲、寬 1920 以內、5 MB 以內 -->
+      <video data-teaser src="videos/reel-teaser.mp4" poster="images/reel-cover.jpg" muted playsinline autoplay preload="auto" aria-hidden="true"></video>
+      <span class="ri-ph">[REEL 2024 開場片段]</span>
+    </div>
+  </div>
+  <div class="ri-panel">
+    <div class="tl-head">
+      <span class="tl-file">REEL_2024.mp4 · Comp 1</span>
+      <span class="tl-tc" data-tc>0:00:00:00</span>
+      <button type="button" class="tl-enter" data-enter>進入網站 ↓</button>
+    </div>
+    <div class="tl-body">
+      <ol class="tl-labels">
+        <li><span class="n">1</span>2D MG</li>
+        <li><span class="n">2</span>2D CHARACTER</li>
+        <li><span class="n">3</span>3D MG</li>
+      </ol>
+      <div class="tl-tracks">
+        <div class="tl-row" data-from="0" data-to="0.38"><span class="bar" style="left:0;right:62%"></span></div>
+        <div class="tl-row" data-from="0.38" data-to="0.70"><span class="bar" style="left:38%;right:30%"></span></div>
+        <div class="tl-row" data-from="0.70" data-to="1"><span class="bar" style="left:70%;right:0"></span></div>
+        <span class="playhead" data-playhead></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/intro.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

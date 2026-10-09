@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab | 浩辰 HaoChen</title>
+<meta name="description" content="浩辰 HaoChen 的實驗紀錄：工作之外的 3D、角色、材質與轉場練習。">
+<link rel="icon" href="../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="logo" href="../index.html">HAOCHEN<span class="dot">.</span><span class="zh">浩辰</span></a>
+    <nav class="nav" aria-label="主選單">
+      <a href="../work/index.html">WORK</a>
+      <a href="index.html" aria-current="page">LAB</a>
+      <a href="../about/index.html">ABOUT</a>
+      <a href="#contact">CONTACT</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="page-hero wrap">
+    <h1>Lab<span class="dot">.</span></h1>
+    <p>工作之外的實驗紀錄。每一則都是一次嘗試：新的軟體、新的風格，或只是想知道「這樣做會怎樣」。最新的在最上面。</p>
+  </section>
+
+  <section class="wrap" style="padding-bottom:96px">
+    <div class="filters" data-target="#lab-list" role="group" aria-label="依技術篩選">
+      <button type="button" data-filter="all" aria-pressed="true">全部</button>
+      <button type="button" data-filter="3d" aria-pressed="false">3D</button>
+      <button type="button" data-filter="character" aria-pressed="false">角色</button>
+      <button type="button" data-filter="material" aria-pressed="false">材質</button>
+      <button type="button" data-filter="transition" aria-pressed="false">轉場</button>
+      <button type="button" data-filter="graphic" aria-pressed="false">平面</button>
+    </div>
+
+    <!-- 新增實驗：複製最上面一則，編號 +1，放在最前面。
+         圖片放 images/lab/，循環動畫放 videos/lab/（data-loop 可省略） -->
+    <div class="lab-grid" id="lab-list">
+      <button type="button" class="lab-card" id="lab-006" data-entry data-tags="3d" data-loop="../videos/lab/lab-006.mp4" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="../images/lab/lab-006.jpg" alt=""></div>
+        <div class="lab-meta"><span class="lab-no">LAB-006</span><span>[日期]</span></div>
+        <h3>[實驗標題]</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>3D</span><span>C4D</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-005" data-entry data-tags="character" data-loop="../videos/lab/lab-005.mp4" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="../images/lab/lab-005.jpg" alt=""></div>
+        <div class="lab-meta"><span class="lab-no">LAB-005</span><span>[日期]</span></div>
+        <h3>[實驗標題]</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>角色</span><span>AE</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-004" data-entry data-tags="material 3d" data-loop="../videos/lab/lab-004.mp4" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="../images/lab/lab-004.jpg" alt=""></div>
+        <div class="lab-meta"><span class="lab-no">LAB-004</span><span>[日期]</span></div>
+        <h3>[實驗標題]</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>材質</span><span>C4D</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-003" data-entry data-tags="transition" data-loop="../videos/lab/lab-003.mp4" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="../images/lab/lab-003.jpg" alt=""></div>
+        <div class="lab-meta"><span class="lab-no">LAB-003</span><span>[日期]</span></div>
+        <h3>[實驗標題]</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>轉場</span><span>AE</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-002" data-entry data-tags="character" data-loop="../videos/lab/lab-002.mp4" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="../images/lab/lab-002.jpg" alt=""></div>
+        <div class="lab-meta"><span class="lab-no">LAB-002</span><span>[日期]</span></div>
+        <h3>[實驗標題]</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>角色</span><span>2D</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-001" data-entry data-tags="graphic" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="../images/lab/lab-001.jpg" alt="2024 新年紅包袋設計"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-001</span><span>2024.01</span></div>
+        <h3>2024 Lunar Year 紅包袋</h3>
+        <p class="lab-note">[設計概念，一兩句]</p>
+        <div class="tags"><span>平面</span><span>插畫</span></div>
+      </button>
+    </div>
+  </section>
+</main>
+
+<dialog class="lightbox" aria-label="實驗放大檢視">
+  <div class="lightbox-inner">
+    <div class="lightbox-media" style="flex:2 1 420px;min-width:0"></div>
+    <div class="lightbox-text">
+      <button type="button" class="lightbox-close">關閉 ✕</button>
+      <div class="lightbox-body" style="display:flex;flex-direction:column;gap:12px"></div>
+    </div>
+  </div>
+</dialog>
+
+<footer class="site-footer" id="contact">
+  <div class="wrap">
+    <p class="mono muted kicker">LET'S MAKE THINGS MOVE · 合作洽詢</p>
+    <a class="big-mail" href="mailto:haolchen.work@gmail.com">haolchen.work<span class="at">@</span><wbr>gmail.com</a>
+    <div class="footer-row">
+      <div class="links">
+        <a href="https://www.instagram.com/haol2.5d/" target="_blank" rel="noopener">Instagram ↗</a>
+        <a href="https://www.behance.net/1044b10990be" target="_blank" rel="noopener">Behance ↗</a>
+        <a href="https://www.linkedin.com/in/haochen-liao-a58705299" target="_blank" rel="noopener">LinkedIn ↗</a>
+      </div>
+      <span class="muted">© 2026 HaoChen Liao</span>
+    </div>
+  </div>
+</footer>
+
+<script src="../js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+/* 首頁專用：緊湊的格線拼貼排版（只影響 <body class="home">） */
+.home .wrap { max-width: 1440px; padding-inline: 16px; }
+.home .site-header .wrap { padding-block: 10px; }
+
+.bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; }
+.tile { min-width: 0; border-radius: 4px; background: var(--surface); padding: 20px; }
+.tile.line { background: transparent; border: 1px solid var(--line); }
+.tile-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; color: var(--muted); text-transform: uppercase; }
+
+/* ---------- Hero：左邊標題與資訊，右邊 Reel ---------- */
+.home-hero { padding-block: 8px 8px; }
+.hero-left { grid-column: span 5; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.t-title { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 20px 22px; }
+.t-title h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(40px, 4.4vw, 72px); line-height: 0.88; letter-spacing: -0.035em; }
+.t-title h1 .slash { color: var(--accent); }
+.t-title .tile-label { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.t-intro { padding: 16px 20px; }
+.t-intro p { margin: 0; font-size: 15px; line-height: 1.6; }
+.hero-meta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 8px; }
+.t-status { background: var(--accent); color: var(--on-accent); display: flex; align-items: center; gap: 10px; padding: 14px 16px; font-family: var(--mono); font-size: 13px; letter-spacing: 0.04em; }
+.t-status .pulse { width: 9px; height: 9px; border-radius: 999px; background: var(--on-accent); flex: none; animation: pulse 1.6s ease-in-out infinite; }
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.25; } }
+.t-where { display: flex; justify-content: space-between; gap: 12px; padding: 14px 16px; font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; }
+
+.t-reel { grid-column: span 7; padding: 0; background: none; }
+.t-reel .media { aspect-ratio: 16 / 9; border-radius: 4px; }
+
+/* ---------- 客戶跑馬燈 ---------- */
+.ticker { margin-top: 8px; border-block: 1px solid var(--line); overflow: hidden; white-space: nowrap; }
+.ticker-track { display: inline-flex; gap: 0; padding-block: 14px; animation: ticker 32s linear infinite; }
+.ticker-track span { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2.2vw, 30px); color: var(--muted); padding-inline: 28px; }
+.ticker-track span.sep { color: var(--accent); padding-inline: 0; }
+@keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+/* ---------- 區塊標題列 ---------- */
+.bar { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 16px; padding-block: 40px 12px; }
+.bar h2 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(28px, 3.2vw, 44px); line-height: 1; }
+.bar h2 sup { font-family: var(--mono); font-weight: 400; font-size: 13px; color: var(--accent); vertical-align: top; margin-left: 6px; }
+
+/* ---------- 精選作品：大小不一的格子 ---------- */
+.works { grid-auto-flow: dense; }
+.w { position: relative; display: block; grid-column: span 4; border-radius: 4px; overflow: hidden; min-width: 0; }
+.w .media { aspect-ratio: 16 / 10; border-radius: 0; }
+.w-xl { grid-column: span 8; grid-row: span 2; }
+.w-xl .media { aspect-ratio: auto; height: 100%; min-height: 320px; }
+.w .no { position: absolute; top: 12px; right: 14px; z-index: 2; font-family: var(--mono); font-size: 12px; color: var(--fg); background: var(--bg); padding: 2px 8px; border-radius: 999px; }
+.w .cap { position: absolute; left: 0; bottom: 0; z-index: 2; max-width: calc(100% - 16px); background: var(--bg); padding: 10px 14px 10px 0; display: flex; flex-direction: column; gap: 2px; border-top-right-radius: 4px; }
+.w .cap h3 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 20px; line-height: 1.15; }
+.w-xl .cap h3 { font-size: clamp(24px, 2.6vw, 36px); }
+.w .cap span { font-family: var(--mono); font-size: 12px; color: var(--muted); }
+.w .media { outline: 2px solid transparent; outline-offset: -2px; transition: outline-color .2s; }
+.w:hover .media, .w:focus-visible .media { outline-color: var(--accent); }
+.w:hover .cap h3 { color: var(--accent); }
+.w video { opacity: 0; transition: opacity .3s; }
+.w.is-playing video { opacity: 1; }
+
+/* ---------- LAB ＋ About ---------- */
+.duo { padding-top: 8px; }
+.lab-block { grid-column: span 7; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
+.lab-block .bar { padding-block: 32px 4px; }
+.lab-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.lab-tile { position: relative; display: block; border-radius: 4px; overflow: hidden; }
+.lab-tile .media { aspect-ratio: 1 / 1; border-radius: 0; }
+.lab-tile .tag { position: absolute; left: 8px; bottom: 8px; z-index: 2; font-family: var(--mono); font-size: 11px; background: var(--bg); color: var(--accent); padding: 2px 8px; border-radius: 999px; }
+.lab-tile:hover .media { outline: 2px solid var(--accent); outline-offset: -2px; }
+
+.t-about { grid-column: span 5; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 24px; margin-top: 32px; }
+.t-about .statement { margin: 0; font-family: var(--body); font-weight: 700; font-size: clamp(20px, 1.9vw, 26px); line-height: 1.45; }
+.t-about .statement em { font-style: normal; color: var(--accent); }
+.t-about .facts-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border-top: 1px solid var(--line); padding-top: 16px; }
+.t-about .facts-row b { display: block; font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
+.t-about .facts-row span { font-size: 12px; color: var(--muted); }
+.t-about .who { display: flex; align-items: center; gap: 14px; }
+.t-about .who .media { width: 56px; height: 56px; border-radius: 999px; flex: none; }
+.t-about .who p { margin: 0; font-size: 14px; line-height: 1.4; }
+
+/* ---------- Footer 收緊 ---------- */
+.home .site-footer { margin-top: 48px; }
+.home .site-footer .wrap { padding-block: 56px 24px; gap: 24px; }
+
+/* ---------- 平板 ---------- */
+@media (max-width: 1000px) {
+  .hero-left, .t-reel { grid-column: span 12; }
+  .w { grid-column: span 6; }
+  .w-xl { grid-column: span 12; grid-row: auto; }
+  .w-xl .media { aspect-ratio: 16 / 9; height: auto; min-height: 0; }
+  .lab-block, .t-about { grid-column: span 12; }
+  .t-about { margin-top: 0; }
+}
+/* ---------- 手機 ---------- */
+@media (max-width: 640px) {
+  .t-title { padding: 20px; }
+  .t-title h1 { font-size: 10.5vw; }
+  .player .play { font-size: 15px; padding: 12px 18px; gap: 10px; }
+  .w { grid-column: span 12; }
+  .lab-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker-track, .t-status .pulse { animation: none; }
+}
+
+/* ---------- 開場：先播 Reel，再縮進首頁 ---------- */
+html.intro-playing { overflow: hidden; }
+[data-layer] { transition: clip-path .75s cubic-bezier(.75,0,.2,1), opacity .3s ease; }
+html.intro-playing [data-layer] { clip-path: inset(0 100% 0 0); opacity: 0; }
+html.intro-playing [data-layer].in { clip-path: inset(0 0 0 0); opacity: 1; }
+html.intro-playing [data-layer="3"] { transition: none; }
+
+.reel-intro {
+  position: fixed; inset: 0; z-index: 60;
+  display: flex; flex-direction: column; gap: 8px;
+  padding: 8px 8px calc(8px + env(safe-area-inset-bottom, 0px));
+  background: #000;
+  font-family: var(--mono); font-size: 12px; color: var(--muted);
+  transition: background-color .6s ease;
+}
+html:not(.intro-playing) .reel-intro { display: none; }
+.ri-screen { position: relative; flex: 1; min-height: 0; }
+.ri-frame {
+  position: absolute; inset: 0; overflow: hidden; border-radius: 4px;
+  background-color: var(--surface);
+  background-image: repeating-linear-gradient(135deg, rgba(255,255,255,0.035) 0 12px, transparent 12px 24px);
+}
+.ri-frame video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ri-ph { position: absolute; left: 16px; top: 14px; }
+.ri-panel { background: #141416; border: 1px solid var(--line); border-radius: 6px; transition: transform .6s cubic-bezier(.7,0,.2,1), opacity .4s ease; }
+.tl-enter { min-height: 36px; padding: 0 14px; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 999px; font: inherit; font-weight: 500; cursor: pointer; }
+.tl-enter:hover { filter: brightness(1.1); }
+
+/* 離場：黑底淡掉、時間軸往下滑走、畫面縮進首頁的 Reel 格子 */
+.reel-intro.leaving { background-color: transparent; pointer-events: none; }
+.reel-intro.leaving .ri-panel { transform: translateY(130%); opacity: 0; }
+.ri-frame.flying { position: fixed; transition: left .95s cubic-bezier(.76,0,.24,1), top .95s cubic-bezier(.76,0,.24,1), width .95s cubic-bezier(.76,0,.24,1), height .95s cubic-bezier(.76,0,.24,1); }
+.ri-frame.flying .ri-ph { opacity: 0; transition: opacity .3s; }
+
+/* 時間軸（開場面板用） */
+.tl-head { display: flex; align-items: center; gap: 16px; padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--line); }
+.tl-file { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tl-tc { color: var(--accent); font-size: 15px; font-variant-numeric: tabular-nums; }
+.tl-body { display: grid; grid-template-columns: 150px minmax(0, 1fr); }
+.tl-labels { margin: 0; padding: 0; list-style: none; border-right: 1px solid var(--line); }
+.tl-labels li, .tl-row { height: 26px; display: flex; align-items: center; border-bottom: 1px solid #1f1f22; }
+.tl-labels li { gap: 10px; padding-left: 14px; color: var(--fg); letter-spacing: 0.06em; white-space: nowrap; overflow: hidden; }
+.tl-labels .n { width: 16px; color: var(--muted); flex: none; }
+.tl-labels li.on .n { color: var(--accent); }
+.tl-tracks { position: relative; }
+.tl-row { position: relative; }
+.tl-row .bar { position: absolute; top: 6px; bottom: 6px; background: #2A2A2D; border-radius: 2px; }
+.tl-row.on .bar { background: #3B4A1A; box-shadow: inset 0 0 0 1px var(--accent); }
+.playhead { position: absolute; top: 0; bottom: 0; left: 0; width: 2px; margin-left: -1px; background: var(--accent); }
+.playhead::before { content: ""; position: absolute; top: -6px; left: -5px; border: 6px solid transparent; border-top-color: var(--accent); }
+@media (max-width: 640px) {
+  .tl-body { grid-template-columns: 112px minmax(0, 1fr); }
+  .tl-labels li { font-size: 11px; padding-left: 10px; gap: 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .reel-intro { display: none; }
+}
