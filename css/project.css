@@ -63,3 +63,6 @@
 .pj-hero .facts { padding: 18px 20px; }
 .pj-credits.has-bg .section { margin-block: 40px; padding: 32px 28px; }
 .pj-credits.has-bg .pj-credit-bg { opacity: .6; }
+
+/* 作品頁內容拉寬，跟首頁一樣用滿畫面 */
+.project-page main .wrap { max-width: 1440px; padding-inline: clamp(16px, 3vw, 40px); }
