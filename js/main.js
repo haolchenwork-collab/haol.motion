@@ -307,7 +307,7 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
 (function () {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var imgs = Array.prototype.slice.call(document.querySelectorAll('.media > img, .media > .media-blur, .ab-photo > img, .pj-band img'));
-  var heads = Array.prototype.slice.call(document.querySelectorAll('.page-hero h1, .pj-hero h1, .ab-intro h1'));
+  var heads = Array.prototype.slice.call(document.querySelectorAll('.page-hero h1, .pj-hero h1'));
   imgs.forEach(function (el) { el.classList.add('px'); });
   var ticking = false;
   function update() {
@@ -327,5 +327,32 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   }
   addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
   addEventListener('resize', update);
+  update();
+})();
+
+// 12. 卡片位移：同一排的卡片依所在欄位用不同速度移動，捲動時錯開
+(function () {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var cards = Array.prototype.slice.call(document.querySelectorAll('#work-list .card, .home .tile, .ab-tile, .lab-card'));
+  var SPEED = [0.02, 0.11, 0.06]; // 左、中、右（作品、LAB 等整齊的格子）
+  var BENTO = [0.02, 0.04, 0.03]; // 首頁、About 的拼貼格子，上下相鄰的格子差太多會疊在一起
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var vh = innerHeight, on = innerWidth > 760;
+    cards.forEach(function (el) {
+      if (!on || el.hidden) { if (el._ty) { el.style.translate = ''; el._ty = 0; } return; }
+      var r = el.getBoundingClientRect(), p = el.parentNode.getBoundingClientRect();
+      var top = r.top - (el._ty || 0);
+      if (top > vh + 200 || top + r.height < -200) return;
+      var band = Math.min(2, Math.floor(((r.left + r.width / 2 - p.left) / p.width) * 3));
+      var ty = (top + r.height / 2 - vh / 2) * (el.matches('.tile, .ab-tile') ? BENTO : SPEED)[band];
+      el._ty = ty;
+      el.style.translate = '0 ' + ty.toFixed(1) + 'px';
+    });
+  }
+  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update);
+  document.querySelectorAll('.filters button').forEach(function (b) { b.addEventListener('click', function () { setTimeout(update, 50); }); });
   update();
 })();
