@@ -31,10 +31,10 @@
 .pj-cell img, .pj-cell video, .pj-band img, .pj-band video { width: 100%; height: 100%; object-fit: cover; display: block; }
 .pj-band { aspect-ratio: var(--ar); margin-bottom: 8px; }
 
-/* 小的裝飾 GIF：方格整齊排 */
-.pj-deco { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 120px)); gap: 8px; }
-.pj-deco .media { aspect-ratio: 1; background: #000; }
-.pj-deco img { width: 100%; height: 100%; display: block; }
+/* 元素：等大方格，填滿整個寬度，素材完整顯示（不裁切） */
+.pj-elements { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.pj-el { aspect-ratio: 1; border-radius: 6px; overflow: hidden; background: #111113; display: grid; place-items: center; }
+.pj-el img, .pj-el video { width: 100%; height: 100%; object-fit: contain; display: block; }
 
 /* Credits：有 Wix 的背景影片時鋪在後面 */
 .pj-credits { position: relative; overflow: hidden; border-top: 1px solid var(--line); }
@@ -47,7 +47,7 @@
 @media (max-width: 700px) {
   .pj-row { flex-wrap: wrap; }
   .pj-row.n3 > .pj-cell, .pj-row.n4 > .pj-cell { flex-basis: calc(50% - 4px); }
-  .pj-deco { grid-template-columns: repeat(3, 1fr); }
+  .pj-elements { grid-template-columns: repeat(3, 1fr); }
   .pj-hero .facts { grid-template-columns: 1fr 1fr; gap: 14px 20px; }
   .pj-hero .facts div:last-child { grid-column: 1 / -1; }
 }

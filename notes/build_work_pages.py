@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = '12'
+ASSET_V = '13'
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -412,16 +412,19 @@ def render(slug, data, films, title):
         if s.get('band'):
             body.append('<div class="pj-band media" style="--ar:{:.3f}">{}</div>'.format(
                 s['band']['r'][2] / max(s['band']['r'][3], 1), media_tag(s['band'])))
-        if s['media']:
-            # 元素類的區塊放小一點、排密一點
-            small = s['name'].lower().startswith('element')
-            body.append(rows_html(s['media'], 200 if small else 480))
-        if s.get('deco'):
-            body.append('<div class="pj-deco">{}</div>'.format(''.join(
-                '<div class="media">{}</div>'.format(media_tag(d, 'contain')) for d in s['deco'])))
+        is_el = s['name'].lower().startswith('element')
+        if s['media'] and not is_el:
+            body.append(rows_html(s['media'], 480))
+        # 元素：這一區的素材和小裝飾 GIF 一起排成等大方格，填滿整個寬度
+        els = (s['media'] if is_el else []) + s.get('deco', [])
+        els = [e for e in els if min(e.get('o', e['r'][2:])) >= 40 and min(e['r'][2:]) >= 20]
+        if els:
+            body.append('<div class="pj-elements">{}</div>'.format(''.join(
+                '<div class="pj-el">{}</div>'.format(media_tag(e, 'contain')) for e in els)))
+            s['n_el'] = len(els)
         if not body:
             continue
-        n = len(s['media']) + len(s.get('deco', [])) + (1 if s.get('band') else 0)
+        n = (0 if is_el else len(s['media'])) + s.get('n_el', 0) + (1 if s.get('band') else 0)
         zh = ZH.get(s['name'].lower().strip(), '')
         out.append('<section class="section wrap pj-sec"><div class="section-head"><h2>{}</h2><span class="mono muted">{}{:02d}</span></div>{}</section>'.format(
             html.escape(s['name']), html.escape(zh) + ' · ' if zh else '', n, '\n'.join(body)))
