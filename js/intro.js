@@ -15,6 +15,7 @@
   var tc = box.querySelector('[data-tc]');
   var rows = box.querySelectorAll('.tl-row');
   var labels = box.querySelectorAll('.tl-labels li');
+  var fxLayer = box.querySelectorAll('[data-fx-layer]');
   var FPS = 24;
   var SIM = 60;        // 讀不到影片時間時，時間軸假裝的長度（秒）
   var left = false, start = performance.now();
@@ -66,7 +67,7 @@
     if (bg && bg.tagName === 'VIDEO' && bg.duration) { dur = bg.duration; secs = bg.currentTime; }
     else if (vt) { dur = vt.dur; secs = Math.min(vt.secs + (now - vt.at) / 1000, dur); }
     else { dur = SIM; secs = ((now - start) / 1000) % SIM; }
-    var p = secs / dur;
+    var p = secs / dur, main = null;
     head.style.left = (p * 100) + '%';
     var m = Math.floor(secs / 60), s = Math.floor(secs % 60);
     tc.textContent = '0:' + pad(m) + ':' + pad(s) + ':' + pad(Math.floor((secs % 1) * FPS));
@@ -74,7 +75,13 @@
       var on = p >= parseFloat(r.getAttribute('data-from')) && p < parseFloat(r.getAttribute('data-to')) + (i === rows.length - 1 ? 0.01 : 0);
       r.classList.toggle('on', on);
       if (labels[i]) labels[i].classList.toggle('on', on);
+      if (on && !main && i < 4) main = labels[i];
     });
+    // 右邊 Effect Controls 顯示目前正在播的主要圖層
+    if (main) {
+      var name = main.textContent.replace(/^\s*\d+/, '').trim();
+      fxLayer.forEach(function (el) { if (el.textContent !== name) el.textContent = name; });
+    }
     requestAnimationFrame(tick);
   }
   requestAnimationFrame(tick);

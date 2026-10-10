@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="css/style.css?v=45">
-<link rel="stylesheet" href="css/home.css?v=45">
+<link rel="stylesheet" href="css/style.css?v=46">
+<link rel="stylesheet" href="css/home.css?v=46">
 <script>
   // 開場：先全螢幕播 Reel，再縮進首頁。每個分頁只播一次；系統設定「減少動態」時不播。
   (function () {
@@ -175,8 +175,70 @@
 <!-- 開場：Reel 全螢幕播放，下方的 AE 時間軸跟著影片跑；往下滑、按方向鍵或按「進入網站」才縮進首頁的 Reel 位置 -->
 <div class="reel-intro" id="intro" role="region" aria-label="開場：Reel 2024">
   <div class="ri-screen">
-    <!-- 首頁的 Reel 會在開場時蓋在這個位置上播放 -->
-    <div class="ri-frame" data-frame></div>
+    <!-- 左右兩邊仿 After Effects 介面：Project 面板、Effect Controls（裝飾用） -->
+    <aside class="ri-side ri-project" aria-hidden="true">
+      <div class="ri-tab"><span class="on">Project</span><span>Effects &amp; Presets</span></div>
+      <div class="ri-meta">
+        <div class="thumb"></div>
+        <div><b>REEL_2024</b>▾<br>1920 × 1080 (1.00)<br>Δ 0:01:00:00, 24.00 fps</div>
+      </div>
+      <div class="ri-search">⌕</div>
+      <div class="ri-cols"><span>Name</span><span>Type</span></div>
+      <ul class="ri-list">
+          <li class="dir">▾ 01_Comps</li>
+          <li class="sel"><i class="ic ic-comp">▣</i>REEL_2024</li>
+          <li><i class="ic ic-comp">▣</i>TIAF_2023</li>
+          <li><i class="ic ic-comp">▣</i>Golden_Horse_61</li>
+          <li><i class="ic ic-comp">▣</i>Lantern_Festival_2025</li>
+          <li><i class="ic ic-comp">▣</i>GMA_33_Best_MV</li>
+          <li class="dir">▾ 02_Footage</li>
+          <li><i class="ic ic-img">▤</i>styleframes_v03.psd</li>
+          <li><i class="ic ic-img">▤</i>character_sheet.ai</li>
+          <li><i class="ic ic-vid">▶</i>plate_bg_4k.mov</li>
+          <li class="dir">▾ 03_Audio</li>
+          <li><i class="ic ic-aud">♪</i>MUSIC_final.wav</li>
+          <li><i class="ic ic-aud">♪</i>SFX_whoosh_01.wav</li>
+          <li class="dir">▸ 04_Solids</li>
+      </ul>
+      <div class="ri-foot">8 bpc</div>
+    </aside>
+    <div class="ri-stage">
+      <!-- 首頁的 Reel 會在開場時蓋在這個位置上播放 -->
+      <div class="ri-frame" data-frame></div>
+    </div>
+    <aside class="ri-side ri-fx" aria-hidden="true">
+      <div class="ri-tab"><span class="on">Effect Controls: <em data-fx-layer>2D MG</em></span></div>
+      <div class="ri-meta small">REEL_2024 · <em data-fx-layer>2D MG</em></div>
+      <ul class="ri-fxlist">
+          <li class="fx open"><div class="fx-name"><span class="tw">▾</span><span class="fx-on">fx</span>Deep Glow<span class="reset">Reset</span></div>
+            <div class="fx-p"><span>Radius</span><b>180.0</b></div>
+            <div class="fx-p"><span>Exposure</span><b>1.25</b></div>
+            <div class="fx-p"><span>Chromatic</span><b>On</b></div>
+          </li>
+          <li class="fx open"><div class="fx-name"><span class="tw">▾</span><span class="fx-on">fx</span>Saber<span class="reset">Reset</span></div>
+            <div class="fx-p"><span>Glow Intensity</span><b>68.0%</b></div>
+            <div class="fx-p"><span>Core Size</span><b>2.40</b></div>
+          </li>
+          <li class="fx open"><div class="fx-name"><span class="tw">▾</span><span class="fx-on">fx</span>Trapcode Particular<span class="reset">Reset</span></div>
+            <div class="fx-p"><span>Particles/sec</span><b>1200</b></div>
+            <div class="fx-p"><span>Velocity</span><b>340.0</b></div>
+          </li>
+          <li class="fx"><div class="fx-name"><span class="tw">▾</span><span class="fx-on">fx</span>Element 3D<span class="reset">Reset</span></div>
+          </li>
+          <li class="fx"><div class="fx-name"><span class="tw">▾</span><span class="fx-on">fx</span>Turbulent Displace<span class="reset">Reset</span></div>
+          </li>
+          <li class="fx"><div class="fx-name"><span class="tw">▾</span><span class="fx-on">fx</span>Optical Flares<span class="reset">Reset</span></div>
+          </li>
+      </ul>
+      <div class="ri-tab sub"><span class="on">Effects &amp; Presets</span></div>
+      <ul class="ri-list presets">
+        <li class="dir">▾ * Animation Presets</li>
+        <li class="dir">▸ Video Copilot</li>
+        <li class="dir">▸ Red Giant</li>
+        <li class="dir">▸ Sapphire</li>
+        <li class="dir">▸ Plugin Everything</li>
+      </ul>
+    </aside>
   </div>
   <div class="ri-panel">
     <div class="tl-head">
@@ -210,7 +272,7 @@
   </div>
 </div>
 
-<script src="js/intro.js?v=45"></script>
-<script src="js/main.js?v=45"></script>
+<script src="js/intro.js?v=46"></script>
+<script src="js/main.js?v=46"></script>
 </body>
 </html>

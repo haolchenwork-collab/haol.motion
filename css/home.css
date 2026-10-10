@@ -127,9 +127,39 @@ html.intro-playing [data-layer].in { clip-path: inset(0 0 0 0); opacity: 1; }
   transition: background-color .6s ease;
 }
 html:not(.intro-playing) .reel-intro { display: none; }
-.ri-screen { position: relative; flex: 1; min-height: 0; container-type: size; }
-/* 影片不再塞滿：在上方區域裡置中，最寬 86%，保持 16:9 */
-.ri-frame { position: absolute; inset: 0; margin: auto; width: min(86cqw, (100cqh - 48px) * 16 / 9); height: min(100cqh - 48px, 86cqw * 9 / 16); }
+.ri-screen { position: relative; flex: 1; min-height: 0; display: grid; grid-template-columns: 230px minmax(0, 1fr) 260px; gap: 8px; }
+.ri-stage { position: relative; min-width: 0; min-height: 0; container-type: size; background: #0a0a0b; border: 1px solid var(--line); border-radius: 6px; }
+
+/* 仿 AE 的側邊面板（裝飾用） */
+.ri-side { min-height: 0; overflow: hidden; display: flex; flex-direction: column; background: #141416; border: 1px solid var(--line); border-radius: 6px; font-size: 11px; color: #9a9aa0; }
+.ri-tab { display: flex; gap: 14px; padding: 7px 10px; border-bottom: 1px solid var(--line); white-space: nowrap; overflow: hidden; }
+.ri-tab span.on { color: var(--fg); }
+.ri-tab em, .ri-meta em { font-style: normal; color: var(--accent); }
+.ri-tab.sub { border-top: 1px solid var(--line); margin-top: auto; }
+.ri-foot { margin-top: auto; padding: 6px 10px; border-top: 1px solid var(--line); color: #6c6c72; }
+.ri-meta { display: flex; gap: 10px; padding: 10px; line-height: 1.55; border-bottom: 1px solid #1f1f22; }
+.ri-meta.small { padding: 6px 10px; }
+.ri-meta b { color: var(--fg); font-weight: 500; }
+.ri-meta .thumb { width: 64px; aspect-ratio: 16 / 9; flex: none; border-radius: 2px; background: linear-gradient(135deg, #2b6cff, #c6ff3d 55%, #ff5b8a); opacity: .85; }
+.ri-search { margin: 8px 10px; padding: 3px 8px; border-radius: 4px; background: #0d0d0f; border: 1px solid #222226; color: #5a5a60; }
+.ri-cols { display: flex; justify-content: space-between; padding: 4px 10px; border-block: 1px solid #1f1f22; color: #6c6c72; }
+.ri-list { margin: 0; padding: 4px 0; list-style: none; overflow: hidden; }
+.ri-list li { display: flex; align-items: center; gap: 7px; padding: 2px 10px 2px 24px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ri-list li.dir { padding-left: 10px; color: #c8c8cc; }
+.ri-list li.sel { background: #24331a; color: var(--fg); box-shadow: inset 2px 0 0 var(--accent); }
+.ri-list .ic { font-style: normal; width: 12px; text-align: center; flex: none; }
+.ic-comp { color: #C9A6FF; } .ic-img { color: #FFD84D; } .ic-vid { color: #5CC8FF; } .ic-aud { color: #FF8A3D; }
+.ri-fxlist { margin: 0; padding: 4px 0; list-style: none; overflow: hidden; }
+.ri-fxlist .fx-name { display: flex; align-items: center; gap: 6px; padding: 3px 10px; color: #d6d6da; }
+.ri-fxlist .fx:not(.open) .tw { transform: rotate(-90deg); }
+.ri-fxlist .tw { display: inline-block; width: 10px; color: #6c6c72; }
+.ri-fxlist .fx-on { font-size: 9px; padding: 0 3px; border: 1px solid #3a3a40; border-radius: 2px; color: #8a8a90; }
+.ri-fxlist .reset { margin-left: auto; color: #5a5a60; text-decoration: underline; }
+.ri-fxlist .fx-p { display: flex; justify-content: space-between; padding: 2px 10px 2px 38px; }
+.ri-fxlist .fx-p b { font-weight: 400; color: #5CA8FF; text-decoration: underline dotted; text-underline-offset: 2px; }
+@media (max-width: 1100px) { .ri-screen { grid-template-columns: minmax(0, 1fr); } .ri-side { display: none; } }
+/* 影片在中間的預覽區裡置中，四邊留 24px，保持 16:9 */
+.ri-frame { position: absolute; inset: 0; margin: auto; width: min(100cqw - 48px, (100cqh - 48px) * 16 / 9); height: min(100cqh - 48px, (100cqw - 48px) * 9 / 16); }
 .ri-panel { background: #141416; border: 1px solid var(--line); border-radius: 6px; transition: transform .6s cubic-bezier(.7,0,.2,1), opacity .4s ease; }
 .tl-enter { min-height: 36px; padding: 0 14px; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 999px; font: inherit; font-weight: 500; cursor: pointer; }
 .tl-enter:hover { filter: brightness(1.1); }
@@ -143,6 +173,10 @@ html:not(.intro-playing) .reel-intro { display: none; }
 /* 離場：黑底淡掉、時間軸往下滑走、Reel 縮進首頁的格子 */
 .reel-intro.leaving { background-color: transparent; pointer-events: none; }
 .reel-intro.leaving .ri-panel { transform: translateY(130%); opacity: 0; }
+.ri-side, .ri-stage { transition: opacity .4s ease, transform .6s cubic-bezier(.7,0,.2,1); }
+.reel-intro.leaving .ri-stage { opacity: 0; }
+.reel-intro.leaving .ri-project { transform: translateX(-110%); opacity: 0; }
+.reel-intro.leaving .ri-fx { transform: translateX(110%); opacity: 0; }
 
 /* 時間軸（開場面板用） */
 .tl-head { display: flex; align-items: center; gap: 16px; padding: 6px 8px 6px 14px; border-bottom: 1px solid var(--line); }
