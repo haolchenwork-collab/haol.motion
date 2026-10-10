@@ -10,8 +10,8 @@
 /* ---------- Hero：左邊標題與資訊，右邊 Reel ---------- */
 .home-hero { padding-block: 8px 8px; }
 .hero-left { grid-column: span 5; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
-.t-title { flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 20px 22px; }
-.t-title h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(40px, 4.4vw, 72px); line-height: 0.88; letter-spacing: -0.035em; }
+.t-title { flex: 1; container-type: inline-size; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 20px 22px; }
+.t-title h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: min(72px, 11cqi); /* 跟著格子寬度縮放，「Designer/」不會超出格子 */ line-height: 0.88; letter-spacing: -0.035em; }
 .t-title h1 .slash { color: var(--accent); }
 .t-title .tile-label { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
 .t-intro { padding: 16px 20px; }
@@ -24,7 +24,7 @@
 
 .t-reel { grid-column: span 7; padding: 0; background: none; position: relative; }
 .t-reel::before { content: ""; display: block; aspect-ratio: 16 / 9; } /* 撐住格子大小，開場時 Reel 被拿去全螢幕也不會塌 */
-.reel-media { position: absolute; left: 0; top: 0; width: 100%; aspect-ratio: 16 / 9; border-radius: 4px; container-type: size; background-color: #000; }
+.reel-media { position: absolute; left: 0; top: 0; width: 100%; height: 100%; /* 跟左欄一樣高，不留空 */ border-radius: 4px; container-type: size; background-color: #000; }
 /* 影片永遠填滿畫面（像 object-fit: cover），全螢幕時也不會有黑邊 */
 .reel-media video.reel-bg { object-fit: cover; z-index: 0; }
 .reel-media iframe.reel-bg {

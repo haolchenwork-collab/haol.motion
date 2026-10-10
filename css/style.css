@@ -455,7 +455,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 .motion .rv { opacity: 0; transform: translateY(28px) scale(.985); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
 .motion .rv.in { opacity: 1; transform: none; }
 .spot { position: relative; isolation: isolate; }
-.spot::before { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s; background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(198, 255, 61, .13), transparent 60%); }
-.spot:hover::before { opacity: 1; }
-.ab-stat.accent.spot::before, .ab-contact.spot::before { background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .35), transparent 60%); }
+.spot::after { content: ""; position: absolute; inset: 0; z-index: -1; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .3s; background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(198, 255, 61, .13), transparent 60%); }
+.spot:hover::after { opacity: 1; }
+.ab-stat.accent.spot::after, .ab-contact.spot::after { background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .35), transparent 60%); }
 .magnet { display: inline-block; transition: transform .25s cubic-bezier(.2,.7,.2,1); }

@@ -234,7 +234,7 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   progress();
 
   // 內容依序滑入（同一層的兄弟元素錯開時間）
-  var sel = '.tile, .ab-tile, #work-list .card, .lab-card, .lab-tile, .pj-hero > *, .pj-sec, .pj-row, .site-footer .wrap > *, .page-head > *, .work-bar';
+  var sel = '.tile:not(.t-reel), .ab-tile, #work-list .card, .lab-card, .lab-tile, .pj-hero > *, .pj-sec, .pj-row, .site-footer .wrap > *, .page-head > *, .work-bar';
   var items = document.querySelectorAll(sel);
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {
@@ -252,7 +252,7 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
 
   // 滑鼠光暈：格子跟著游標亮一圈
   if (matchMedia('(hover: hover)').matches) {
-    document.querySelectorAll('.tile, .ab-tile, .lab-tile').forEach(function (el) {
+    document.querySelectorAll('.tile:not(.t-reel), .ab-tile, .lab-tile').forEach(function (el) {
       el.classList.add('spot');
       el.addEventListener('pointermove', function (e) {
         var r = el.getBoundingClientRect();
