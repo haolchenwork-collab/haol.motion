@@ -22,7 +22,7 @@ PAGES = [
     ('taiwan-lantern-festival-2025', 'tlf2025', 'Taiwan Lantern Festival', '2025 台灣燈會', '2025', ['1067632531']),
     ('golden-horse-61', 'thethriftyfamily-1', 'Golden Horse 61st', '第 61 屆金馬獎', '2024', ['1046285324', '1046277623']),
     ('thrifty-family', 'thethriftyfamily', 'The Thrifty Family', '省省吧！我家富貴發 影集片頭', '2024', ['1017416780']),
-    ('ballbreaker', 'breakball', 'Ballbreaker', '爆蛋者', '2023', ['843768853']),
+    ('ballbreaker', 'breakball', 'Ballbreaker', '破蛋者', '2023', ['843768853']),
     ('gma33-best-mv', 'gma33bestmv', 'GMA 33rd · Best MV', '第 33 屆金曲獎 最佳MV獎', '2022', ['726967776']),
     ('gma33-best-hakka', 'gma33besthakka', 'GMA 33rd · Best Hakka Singer', '第 33 屆金曲獎 最佳客語歌手', '2022', ['727259221']),
     ('good-financial-ep7', 'goodfinancialseriesep7', 'Good Financial EP7', '金融知識+ 第七集', '2022', ['776099322']),
@@ -167,7 +167,7 @@ ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫�
 
 
 # 作品中文名以浩辰提供的為準（覆蓋 Wix 頁上的寫法）
-SUB_FIX = {'ballbreaker': '爆蛋者'}
+SUB_FIX = {}
 
 
 def fix(t):
