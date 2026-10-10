@@ -215,3 +215,90 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   set();
   window.addEventListener('resize', set);
 })();
+
+// 10. 全站動態：捲動進度條、內容依序滑入、滑鼠光暈、數字跳動、換頁淡出
+(function () {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var root = document.documentElement;
+  root.classList.add('motion');
+
+  // 捲動進度條
+  var bar = document.createElement('div');
+  bar.className = 'scroll-bar';
+  document.body.appendChild(bar);
+  function progress() {
+    var max = root.scrollHeight - innerHeight;
+    bar.style.transform = 'scaleX(' + (max > 0 ? scrollY / max : 0) + ')';
+  }
+  addEventListener('scroll', progress, { passive: true });
+  progress();
+
+  // 內容依序滑入（同一層的兄弟元素錯開時間）
+  var sel = '.tile, .ab-tile, #work-list .card, .lab-card, .lab-tile, .pj-hero > *, .pj-sec, .pj-row, .site-footer .wrap > *, .page-head > *, .work-bar';
+  var items = document.querySelectorAll(sel);
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        io.unobserve(e.target);
+        var sib = Array.prototype.indexOf.call(e.target.parentNode.children, e.target);
+        e.target.style.transitionDelay = Math.min(sib, 6) * 70 + 'ms';
+        e.target.classList.add('in');
+        setTimeout(function () { e.target.style.transitionDelay = ''; }, 1400);
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    items.forEach(function (el) { el.classList.add('rv'); io.observe(el); });
+  }
+
+  // 滑鼠光暈：格子跟著游標亮一圈
+  if (matchMedia('(hover: hover)').matches) {
+    document.querySelectorAll('.tile, .ab-tile, .lab-tile').forEach(function (el) {
+      el.classList.add('spot');
+      el.addEventListener('pointermove', function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+        el.style.setProperty('--my', (e.clientY - r.top) + 'px');
+      });
+    });
+    // 導覽和篩選按鈕：微微被游標吸過去
+    document.querySelectorAll('.nav a, .filters button').forEach(function (el) {
+      el.classList.add('magnet');
+      el.addEventListener('pointermove', function (e) {
+        var r = el.getBoundingClientRect();
+        el.style.transform = 'translate(' + ((e.clientX - r.left - r.width / 2) * 0.25).toFixed(1) + 'px,' + ((e.clientY - r.top - r.height / 2) * 0.35).toFixed(1) + 'px)';
+      });
+      el.addEventListener('pointerleave', function () { el.style.transform = ''; });
+    });
+  }
+
+  // 數字跳動：<b data-count>
+  var nums = document.querySelectorAll('[data-count]');
+  if (nums.length && 'IntersectionObserver' in window) {
+    var nio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) {
+        if (!e.isIntersecting) return;
+        nio.unobserve(e.target);
+        var el = e.target, to = +el.getAttribute('data-count'), from = to > 1000 ? to - 25 : 0, t0 = performance.now();
+        (function step(t) {
+          var k = Math.min(1, (t - t0) / 1300);
+          el.textContent = Math.round(from + (to - from) * (1 - Math.pow(1 - k, 3)));
+          if (k < 1) requestAnimationFrame(step);
+        })(t0);
+      });
+    }, { threshold: 0.5 });
+    nums.forEach(function (n) { nio.observe(n); });
+  }
+
+  // 換頁：站內連結先淡出再跳轉
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank' || a.hasAttribute('data-film') || a.hasAttribute('download')) return;
+    var url = new URL(a.href, location.href);
+    if (url.origin !== location.origin || url.protocol.indexOf('http') !== 0) return;
+    if (url.pathname === location.pathname && url.hash) return;
+    e.preventDefault();
+    root.classList.add('leaving');
+    setTimeout(function () { location.href = url.href; }, 280);
+  });
+  addEventListener('pageshow', function (e) { if (e.persisted) root.classList.remove('leaving'); });
+})();
