@@ -317,13 +317,14 @@ def render(slug, data, films, title):
         if full and cy < first_h + 40:
             hero_bg = hero_bg or it
             continue
-        if w < W * 0.15 or (w < W * 0.3 and (x < W * 0.15 or x + w > W * 0.85)):
-            deco.append(it)
-            continue
         sec = None
         for s in sections:
             if s['y'] <= cy + 40:
                 sec = s
+        in_el = sec is not None and sec['name'].lower().startswith('element') and min(it.get('o', [w, h])) >= 200
+        if not in_el and (w < W * 0.15 or (w < W * 0.3 and (x < W * 0.15 or x + w > W * 0.85))):
+            deco.append(it)
+            continue
         if sec is None:
             deco.append(it) if not full else None
             if full and not hero_bg:
