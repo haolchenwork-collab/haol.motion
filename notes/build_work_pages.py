@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = '9'
+ASSET_V = '10'
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -293,7 +293,7 @@ def render(slug, data, films, title):
             continue
         sections.append({'name': name, 'y': hd['r'][1], 'media': [], 'band': None})
 
-    # 素材分到它所在的區塊；小的裝飾 GIF 收進「元素」
+    # 素材分到它所在的區塊；小的裝飾 GIF 照 Wix 上的位置散放（同一張可以出現好幾次）
     seen = set()
     hero_bg = None
     credit_bg = None
@@ -306,38 +306,33 @@ def render(slug, data, films, title):
         full = w >= W * 0.9
         if full and h < 60:
             continue                              # Wix 上的細分隔線
+        cy = y + h / 2
+        if not full and (w < W * 0.15 or (w < W * 0.3 and (x < W * 0.15 or x + w > W * 0.85))):
+            deco.append(it)
+            continue
         if key in seen:
             continue
         seen.add(key)
-        cy = y + h / 2
         if credit_h and full and y <= credit_h['r'][1] + 60 <= y + h:
             credit_bg = credit_bg or it
             continue
         if full and cy < first_h + 40:
             hero_bg = hero_bg or it
             continue
-        if w < W * 0.15 or (w < W * 0.3 and (x < W * 0.15 or x + w > W * 0.85)):
-            deco.append(it)
-            continue
         sec = None
         for s in sections:
             if s['y'] <= cy + 40:
                 sec = s
         if sec is None:
-            deco.append(it) if not full else None
-            if full and not hero_bg:
-                hero_bg = it
+            if full:
+                hero_bg = hero_bg or it
+            else:
+                deco.append(it)
             continue
         if full:
             sec['band'] = sec['band'] or it
         else:
             sec['media'].append(it)
-    if deco:
-        el = next((s for s in sections if s['name'].lower().startswith('element')), None)
-        if el is None:
-            el = {'name': 'Elements', 'y': H, 'media': [], 'band': None}
-            sections.append(el)
-        el['deco'] = deco
 
     # 組 HTML
     out = []
@@ -369,6 +364,8 @@ def render(slug, data, films, title):
     if roles:
         facts.append(('MY ROLE', ' · '.join(roles)))
 
+    anchors = []   # 每個區塊在 Wix 上對應的 y，用來放裝飾
+    hero_y = big[0]['r'][1] if big else 0
     hero_cls = 'project-hero wrap' + (' has-bg' if hero_bg else '')
     out.append('<section class="pj-hero{}">'.format(' has-bg' if hero_bg else ''))
     if hero_bg:
@@ -380,6 +377,7 @@ def render(slug, data, films, title):
     if facts:
         out.append('<dl class="facts">{}</dl>'.format(''.join(
             '<div><dt>{}</dt><dd>{}</dd></div>'.format(a, html.escape(b)) for a, b in facts)))
+    anchors.append((hero_y, len(out)))
     out.append('</div></section>')
 
     # 影片
@@ -390,6 +388,7 @@ def render(slug, data, films, title):
         c = '<figcaption class="mono">{}</figcaption>'.format(html.escape(fix(ttext(cap)))) if cap and fix(ttext(cap)).upper() != 'VIDEO' else ''
         film_parts.append('<figure class="pj-film">{}{}</figure>'.format(film_html(f, head_title), c))
     if film_parts:
+        anchors.append((min(p['r'][1] for p in players), len(out)))
         out.append('<section class="wrap pj-films" aria-label="完整影片">{}</section>'.format(''.join(film_parts)))
 
     # 概念＋我負責的部分
@@ -403,6 +402,7 @@ def render(slug, data, films, title):
         if roles:
             col2 = '<div><h2 class="eyebrow">WHAT I DID · 我負責的部分</h2><ul class="did">{}</ul></div>'.format(
                 ''.join('<li>{}</li>'.format(html.escape(r)) for r in roles))
+        anchors.append((min([t['r'][1] for t in brief] or [first_h]), len(out)))
         out.append('<section class="section wrap pj-brief"><div class="two-col">{}{}</div></section>'.format(col1, col2))
 
     # 素材區塊
@@ -413,22 +413,37 @@ def render(slug, data, films, title):
                 s['band']['r'][2] / max(s['band']['r'][3], 1), media_tag(s['band'])))
         if s['media']:
             body.append(rows_html(s['media']))
-        if s.get('deco'):
-            body.append('<div class="pj-deco">{}</div>'.format(''.join(
-                '<div class="media">{}</div>'.format(media_tag(d, 'contain')) for d in s['deco'])))
         if not body:
             continue
-        n = len(s['media']) + len(s.get('deco', [])) + (1 if s.get('band') else 0)
+        n = len(s['media']) + (1 if s.get('band') else 0)
+        anchors.append((s['y'], len(out)))
         zh = ZH.get(s['name'].lower().strip(), '')
         out.append('<section class="section wrap pj-sec"><div class="section-head"><h2>{}</h2><span class="mono muted">{}{:02d}</span></div>{}</section>'.format(
             html.escape(s['name']), html.escape(zh) + ' · ' if zh else '', n, '\n'.join(body)))
 
     # Credits
     if credits:
+        anchors.append((credit_h['r'][1] if credit_h else H, len(out)))
         bg = '<div class="pj-credit-bg media">{}</div>'.format(media_tag(credit_bg)) if credit_bg else ''
         out.append('<section class="pj-credits{}">{}<div class="section wrap"><h2 class="eyebrow pj-credit-head">CREDITS</h2><dl class="credits">{}</dl></div></section>'.format(
             ' has-bg' if credit_bg else '', bg, ''.join(
                 '<div>{}<dd>{}</dd></div>'.format('<dt>{}</dt>'.format(html.escape(a)) if a else '', html.escape(b)) for a, b in credits)))
+
+    # 裝飾：放進 Wix 上位置最接近的區塊，左右位置和大小照 Wix（以整個視窗寬度換算）
+    floats = {}
+    for d in deco:
+        x, y, w, h = d['r']
+        cy = y + h / 2
+        best = anchors[0]
+        for a in anchors:
+            if a[0] <= cy:
+                best = a
+        floats.setdefault(best[1], []).append(
+            '<div class="pj-float" style="left:{:.2f}vw;top:{:.2f}vw;width:{:.2f}vw;aspect-ratio:{}/{}">{}</div>'.format(
+                x / W * 100, (y - best[0]) / W * 100, w / W * 100, w, h, media_tag(d, 'contain')))
+    for idx, fl in floats.items():
+        k = out[idx].rfind('</section>')
+        out[idx] = out[idx][:k] + '<div class="pj-floats" aria-hidden="true">{}</div>'.format(''.join(fl)) + out[idx][k:]
     return '\n'.join(out)
 
 
