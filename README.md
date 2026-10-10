@@ -69,3 +69,11 @@ files/                放履歷 PDF
 - 手機打開看一次
 - 點 Email，確認寄到正確的信箱
 - 每張圖有沒有出現、每支影片能不能播放
+
+## 作品頁（work/*.html）
+
+15 個作品頁是照舊 Wix 作品頁的版面產生的，素材（GIF、圖片、背景影片）目前直接連 Wix 的檔案。
+
+- 版面資料在 `notes/wix-pages/*.json`，產生程式是 `notes/build_work_pages.py`，執行 `python3 notes/build_work_pages.py` 會重寫 `work/` 裡的 15 頁（`work/index.html` 不會動）。
+- 要改某一頁的字或圖，改對應的 json 再重新產生，不要直接改 html，否則下次產生會被蓋掉。
+- 版面樣式在 `css/project.css`。手機版改成由上往下排，並隱藏小的裝飾圖。

@@ -186,3 +186,74 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   tick();
   setInterval(tick, 30000);
 });
+
+// 7. 作品頁的循環影片和 GIF 動畫：捲到附近才載入，離開畫面就暫停
+(function () {
+  var vids = document.querySelectorAll('video[data-lazy-src]');
+  if (!vids.length) return;
+  function on(v) {
+    if (!v.src) v.src = v.getAttribute('data-lazy-src');
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+  if (!('IntersectionObserver' in window)) { vids.forEach(on); return; }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) on(e.target);
+      else if (e.target.src) e.target.pause();
+    });
+  }, { rootMargin: '300px 0px' });
+  vids.forEach(function (v) { io.observe(v); });
+})();
+
+// 8. 作品頁版面：位置照 Wix，但這裡的字型行高不同，文字可能變高。
+//    由上往下量每段文字實際的高度，蓋到下面的內容時，就把下面全部往下推。
+(function () {
+  var secs = document.querySelectorAll('.wx[data-w]');
+  if (!secs.length) return;
+  function layout(sec) {
+    var W = +sec.getAttribute('data-w'), H0 = +sec.getAttribute('data-h');
+    var els = [].slice.call(sec.querySelectorAll(':scope > .wx-i[data-r]'));
+    if (window.innerWidth <= 700) {            // 手機版用 CSS 由上往下排
+      sec.style.aspectRatio = '';
+      els.forEach(function (el) { el.style.top = ''; el.style.height = ''; });
+      return;
+    }
+    var s = sec.clientWidth / W;
+    var list = els.map(function (el) {
+      var r = el.getAttribute('data-r').split(',').map(Number);
+      return { el: el, x: r[0], y: r[1], w: r[2], h: r[3], text: el.classList.contains('wx-text'),
+               free: el.classList.contains('wx-box') || el.classList.contains('wx-deco') || r[2] >= W * 0.9 };
+    }).sort(function (a, b) { return a.y - b.y; });
+    var push = 0, placed = [], bottom = H0;
+    list.forEach(function (it) {
+      var y = it.y + push;
+      if (!it.free) {
+        placed.forEach(function (p) {
+          if (p.x < it.x + it.w && it.x < p.x + p.w && p.top <= y && y < p.bottom + 6) {
+            push += p.bottom + 6 - y; y = p.bottom + 6;
+          }
+        });
+      }
+      var h = it.h;
+      if (it.text) {
+        it.el.style.height = 'auto';
+        h = Math.max(it.h, it.el.scrollHeight / s);
+        placed.push({ x: it.x, w: it.w, top: y, bottom: y + h });
+      }
+      it.ny = y; it.nh = h;
+      bottom = Math.max(bottom, y + h);
+    });
+    var H = Math.max(H0 + push, bottom);
+    sec.style.aspectRatio = W + ' / ' + H;
+    list.forEach(function (it) {
+      it.el.style.top = (it.ny / H * 100) + '%';
+      it.el.style.height = (it.nh / H * 100) + '%';
+    });
+  }
+  function all() { secs.forEach(layout); }
+  var t;
+  window.addEventListener('resize', function () { clearTimeout(t); t = setTimeout(all, 150); });
+  all();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(all);
+})();

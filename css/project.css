@@ -1,0 +1,45 @@
+/* 作品頁：版面照舊 Wix 作品頁的位置產生（notes/build_work_pages.py）。
+   桌機上所有元素用百分比定位，跟著寬度等比例縮放；手機上改成由上往下排。 */
+.wx-back { display: flex; justify-content: space-between; padding-block: 20px 8px; font-size: 13px; }
+
+.wx {
+  position: relative;
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  container-type: inline-size;
+  overflow-x: clip;
+}
+.wx-i { position: absolute; }
+.wx-box { pointer-events: none; }
+.wx-media, .wx-gallery, .wx-g-i { overflow: hidden; }
+.wx-media img, .wx-media video, .wx-g-i img, .wx-g-i video {
+  display: block; width: 100%; height: 100%; object-fit: cover;
+}
+.wx-g-i { position: absolute; }
+.wx-svg svg { display: block; width: 100%; height: 100%; }
+.wx-film .media { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; }
+.wx-film .media img, .wx-film .media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.wx-film .media video[controls] { object-fit: contain; }
+.wx-dead { display: grid; place-items: center; border: 1px dashed var(--line); }
+
+/* 文字大小也跟著版面寬度縮放：Wix 上量到的字級 / 版面寬度 */
+.wx-text p {
+  margin: 0;
+  font-size: calc(var(--fs) / var(--W) * 100cqw);
+  line-height: 1.45;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 700px) {
+  .wx { aspect-ratio: auto !important; display: flex; flex-direction: column; gap: 16px; padding: 16px; }
+  .wx-i { position: static; width: auto !important; height: auto !important; }
+  .wx-box, .wx-deco { display: none; }
+  .wx-media { aspect-ratio: var(--ar); }
+  .wx-film .media { aspect-ratio: 16 / 9; height: auto; }
+  .wx-gallery { position: relative; aspect-ratio: var(--gar); }
+  .wx-g-i { position: absolute; }
+  .wx-svg { max-width: 160px; aspect-ratio: var(--ar); }
+  .wx-text p { font-size: max(14px, calc(var(--fs) * 0.9px)); }
+}
