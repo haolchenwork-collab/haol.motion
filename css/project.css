@@ -32,7 +32,7 @@
 .pj-band { aspect-ratio: var(--ar); margin-bottom: 8px; }
 
 /* 小的裝飾 GIF：方格整齊排 */
-.pj-deco { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.pj-deco { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 120px)); gap: 8px; }
 .pj-deco .media { aspect-ratio: 1; background: #000; }
 .pj-deco img { width: 100%; height: 100%; display: block; }
 

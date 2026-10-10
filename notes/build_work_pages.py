@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = '11'
+ASSET_V = '12'
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -212,7 +212,7 @@ def media_tag(it, fit='cover'):
     return '<img src="{}" alt="" loading="lazy" style="object-fit:{}">'.format(html.escape(url), fit)
 
 
-def rows_html(media):
+def rows_html(media, row_h=480):
     """照 Wix 上的列（y 相近的放同一列）排，同一列等高、照比例分寬度"""
     media = sorted(media, key=lambda m: (m['r'][1], m['r'][0]))
     rows = []
@@ -229,8 +229,9 @@ def rows_html(media):
             ar = '{:.3f}'.format(m['r'][2] / max(m['r'][3], 1))
             cells.append('<div class="media pj-cell" style="--ar:{}">{}</div>'.format(ar, media_tag(m)))
         # 一列在 Wix 上只佔內容欄（約 600px）的一部分時，這裡也不要撐滿整個寬度
-        span = max(m['r'][0] + m['r'][2] for m in row) - min(m['r'][0] for m in row)
-        mw = '' if span >= 560 else ' style="max-width:{:.0f}%"'.format(max(span / 600 * 100, 34))
+        # 列的高度最多 row_h px：用「全部素材比例加總 × 高度」當這一列的最大寬度
+        ars = sum(m['r'][2] / max(m['r'][3], 1) for m in row)
+        mw = ' style="max-width:{:.0f}px"'.format(ars * row_h + 8 * (len(row) - 1))
         out.append('<div class="pj-row n{}"{}>{}</div>'.format(min(len(row), 4), mw, ''.join(cells)))
     return '\n'.join(out)
 
@@ -412,7 +413,9 @@ def render(slug, data, films, title):
             body.append('<div class="pj-band media" style="--ar:{:.3f}">{}</div>'.format(
                 s['band']['r'][2] / max(s['band']['r'][3], 1), media_tag(s['band'])))
         if s['media']:
-            body.append(rows_html(s['media']))
+            # 元素類的區塊放小一點、排密一點
+            small = s['name'].lower().startswith('element')
+            body.append(rows_html(s['media'], 200 if small else 480))
         if s.get('deco'):
             body.append('<div class="pj-deco">{}</div>'.format(''.join(
                 '<div class="media">{}</div>'.format(media_tag(d, 'contain')) for d in s['deco'])))
