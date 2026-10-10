@@ -302,3 +302,30 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   });
   addEventListener('pageshow', function (e) { if (e.persisted) root.classList.remove('leaving'); });
 })();
+
+// 11. 視差：圖片在框裡比捲動慢、大標題往上飄得慢一點
+(function () {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  var imgs = Array.prototype.slice.call(document.querySelectorAll('.media > img, .media > .media-blur, .ab-photo > img, .pj-band img'));
+  var heads = Array.prototype.slice.call(document.querySelectorAll('.page-hero h1, .pj-hero h1, .ab-intro h1'));
+  imgs.forEach(function (el) { el.classList.add('px'); });
+  var ticking = false;
+  function update() {
+    ticking = false;
+    var vh = innerHeight;
+    imgs.forEach(function (el) {
+      var box = el.parentNode.getBoundingClientRect();
+      if (box.bottom < -100 || box.top > vh + 100) return;
+      var d = (box.top + box.height / 2 - vh / 2) / vh; // -1 ~ 1
+      el.style.translate = '0 ' + (d * box.height * -0.12).toFixed(1) + 'px';
+    });
+    heads.forEach(function (el) {
+      var y = Math.min(scrollY, vh);
+      el.style.translate = '0 ' + (y * 0.25).toFixed(1) + 'px';
+      el.style.opacity = Math.max(0.15, 1 - y / (vh * 0.9)).toFixed(2);
+    });
+  }
+  addEventListener('scroll', function () { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();

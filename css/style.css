@@ -459,3 +459,5 @@ figcaption { font-size: 14px; color: var(--muted); }
 .spot:hover::before { opacity: 1; }
 .ab-stat.accent.spot::before, .ab-contact.spot::before { background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .35), transparent 60%); }
 .magnet { display: inline-block; transition: transform .25s cubic-bezier(.2,.7,.2,1); }
+/* 視差：圖片放大一點，捲動時才不會露出邊 */
+.px { scale: 1.16; will-change: translate; }

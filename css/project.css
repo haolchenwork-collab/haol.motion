@@ -35,7 +35,7 @@
 .pj-row { display: flex; gap: 8px; margin: 0 auto 8px; }
 .pj-row > .pj-cell { flex: var(--ar) 1 0; min-width: 0; aspect-ratio: var(--ar); }
 .pj-cell img, .pj-cell video, .pj-band img, .pj-band video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.pj-band { aspect-ratio: var(--ar); margin-bottom: 8px; }
+.pj-band { aspect-ratio: var(--ar); margin-bottom: 8px; overflow: hidden; }
 
 /* 元素：等大方格，填滿整個寬度，素材完整顯示（不裁切） */
 .pj-elements { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
