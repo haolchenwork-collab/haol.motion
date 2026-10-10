@@ -72,8 +72,8 @@ files/                放履歷 PDF
 
 ## 作品頁（work/*.html）
 
-15 個作品頁是照舊 Wix 作品頁的版面產生的，素材（GIF、圖片、背景影片）目前直接連 Wix 的檔案。
+15 個作品頁用的是這個網站自己的作品頁版型（標題與資訊、完整影片、概念、各素材區塊、Credits），素材和文字取自舊 Wix 作品頁。素材（GIF、圖片、背景影片）目前直接連 Wix 的檔案。
 
 - 版面資料在 `notes/wix-pages/*.json`，產生程式是 `notes/build_work_pages.py`，執行 `python3 notes/build_work_pages.py` 會重寫 `work/` 裡的 15 頁（`work/index.html` 不會動）。
 - 要改某一頁的字或圖，改對應的 json 再重新產生，不要直接改 html，否則下次產生會被蓋掉。
-- 版面樣式在 `css/project.css`。手機版改成由上往下排，並隱藏小的裝飾圖。
+- 版面樣式在 `css/project.css`。小的裝飾 GIF 會收進每頁的 Element 區塊。
