@@ -51,6 +51,7 @@
 .pj-credits .credits { font-size: 13px; gap: 12px 28px; }
 
 @media (max-width: 700px) {
+  .pj-hero h1 { font-size: 22px; line-height: 1.15; }
   .pj-row { flex-wrap: wrap; }
   .pj-row.n3 > .pj-cell, .pj-row.n4 > .pj-cell { flex-basis: calc(50% - 4px); }
   .pj-elements { grid-template-columns: repeat(3, 1fr); }

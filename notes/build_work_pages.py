@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 46
+ASSET_V = 47
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -159,7 +159,8 @@ def fit_players(items, H):
 
 CJK = re.compile(r'[一-鿿]')
 FIX = {'Lowerthirt': 'Lower third', 'Award HightLight': 'Award Highlight', 'Priduction House': 'Production House',
-       '3D Animarion': '3D Animation', 'Nomimees': 'Nominees'}
+       '3D Animarion': '3D Animation', 'Nomimees': 'Nominees', 'Taiwan Nation Day': 'Taiwan National Day',
+       'Award 33st': 'Award 33rd', 'Award 31st': 'Award 31st', 'BallBreaker': 'Ballbreaker'}
 ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫面', 'logo': '標準字', 'lower third': '字卡',
       'making of': '幕後', 'title': '片名', 'original': '原始畫面', 'animation': '動畫', 'compositing': '合成',
       'stage': '舞台', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素'}
@@ -394,6 +395,8 @@ def render(slug, data, films, title):
     film_parts = []
     for p, cap in zip(players, film_caps):
         f = next(fi, None)
+        if not f or f == 'dead':               # 影片已下架：不放空框，整段跳過
+            continue
         c = '<figcaption class="mono">{}</figcaption>'.format(html.escape(fix(ttext(cap)))) if cap and fix(ttext(cap)).upper() != 'VIDEO' else ''
         film_parts.append('<figure class="pj-film">{}{}</figure>'.format(film_html(f, head_title), c))
     if film_parts:
