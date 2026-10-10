@@ -1,5 +1,5 @@
 /* 首頁專用：緊湊的格線拼貼排版（只影響 <body class="home">） */
-.home .wrap { max-width: 1440px; padding-inline: 16px; }
+/* 首頁左右留白跟其他頁一樣，用 style.css 的 .wrap */
 .home .site-header .wrap { padding-block: 10px; }
 
 .bento { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; }
