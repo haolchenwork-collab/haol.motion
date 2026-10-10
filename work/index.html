@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="../css/style.css?v=23">
+<link rel="stylesheet" href="../css/style.css?v=24">
 </head>
 <body>
 
@@ -41,15 +41,11 @@
         <button type="button" data-filter="title" aria-pressed="false">片頭與識別</button>
         <button type="button" data-filter="exhibition" aria-pressed="false">展覽</button>
       </div>
-      <div class="view-toggle" role="group" aria-label="排列方式">
-        <button type="button" data-view="strips" aria-pressed="true" aria-label="長條"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="2" width="14" height="5" rx="1"/><rect x="1" y="9" width="14" height="5" rx="1"/></svg></button>
-        <button type="button" data-view="tiles" aria-pressed="false" aria-label="格狀"><svg viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></button>
-      </div>
     </div>
 
     <!-- 新增作品：複製一張卡片，改 href、圖片、文字和 data-tags。
          沒有案例頁的作品：href="#"，data-film="vimeo:編號" 會在本頁跳出影片；data-loop 是滑過時播的片段。影片來源見 notes/video-map.md -->
-    <div class="work-grid dense strips" id="work-list">
+    <div class="work-grid dense tiles" id="work-list">
       <a class="card" href="tiaf-2023.html" data-tags="brand" data-loop="https://video.wixstatic.com/video/f77ff6_44d2cbd12e064f059b0bd9a6b92530d2/720p/mp4/file.mp4">
         <div class="media ratio-16x9"><img src="https://i.vimeocdn.com/video/1707358898-6cf7469ad96512fa2e7b1263941865910c4da98f896ddbfa3b40169299178a05-d_960" alt="TIAF 2023 畫面" loading="lazy"></div>
         <div class="card-cap"><div class="card-title"><div><h3>TIAF 2023</h3><span class="zh">台中國際動畫影展 形象片</span></div><span class="mono muted">2023</span></div>
@@ -144,6 +140,6 @@
   </div>
 </footer>
 
-<script src="../js/main.js?v=23"></script>
+<script src="../js/main.js?v=24"></script>
 </body>
 </html>

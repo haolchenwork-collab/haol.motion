@@ -215,20 +215,3 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   set();
   window.addEventListener('resize', set);
 })();
-
-// 9. 作品列表排法切換（長條／格狀），記住上次的選擇。
-(function () {
-  var list = document.getElementById('work-list');
-  var btns = document.querySelectorAll('.view-toggle button[data-view]');
-  if (!list || !btns.length) return;
-  function set(v) {
-    list.classList.toggle('strips', v === 'strips');
-    list.classList.toggle('tiles', v === 'tiles');
-    btns.forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-view') === v)); });
-    try { localStorage.setItem('work-view', v); } catch (e) {}
-  }
-  var saved = null;
-  try { saved = localStorage.getItem('work-view'); } catch (e) {}
-  if (saved === 'tiles' || saved === 'strips') set(saved);
-  btns.forEach(function (b) { b.addEventListener('click', function () { set(b.getAttribute('data-view')); }); });
-})();
