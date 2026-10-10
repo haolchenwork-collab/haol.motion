@@ -291,22 +291,20 @@ figcaption { font-size: 14px; color: var(--muted); }
   display: flex; flex-direction: column; gap: 8px;
   padding: 32px 16px 14px;
 }
-/* 玻璃沒有邊框：模糊層往右、往上漸漸淡出到圖片裡（只遮罩模糊層，文字不受影響） */
+/* 玻璃沒有邊框：模糊層往上漸漸淡出到圖片裡（只遮罩模糊層，文字不受影響） */
 #work-list .card-cap::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(to right, rgba(0, 0, 0, .55), rgba(0, 0, 0, .3) 55%, transparent);
+  background: linear-gradient(to top, rgba(0, 0, 0, .5), rgba(0, 0, 0, .2) 70%, transparent);
   -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
-  -webkit-mask-image: linear-gradient(to right, #000 45%, transparent), linear-gradient(to top, #000 50%, transparent);
-  -webkit-mask-composite: source-in;
-  mask-image: linear-gradient(to right, #000 45%, transparent), linear-gradient(to top, #000 50%, transparent);
-  mask-composite: intersect;
+  -webkit-mask-image: linear-gradient(to top, #000 50%, transparent);
+  mask-image: linear-gradient(to top, #000 50%, transparent);
 }
 #work-list .card:hover h3 { color: var(--accent); }
 #work-list .card-title { align-items: baseline; gap: 12px; }
 #work-list .card-title > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
 #work-list .card h3 { font-size: 18px; line-height: 1.15; }
 #work-list .card .zh { font-size: 13px; }
-#work-list .card-title .mono { font-size: 12px; flex-shrink: 0; }
+#work-list .card-title .mono { font-size: 12px; flex-shrink: 0; color: rgba(255, 255, 255, .75); }
 #work-list .tags { font-size: 11px; gap: 6px; }
 #work-list .tags span { padding: 2px 10px; border-color: var(--glass-edge); background: rgba(255, 255, 255, .04); }
 
