@@ -50,7 +50,7 @@ document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
   });
 });
 
-// 3b. 首頁 Reel：優先播 videos/reel.mp4；檔案不存在就換成 Vimeo 的靜音循環播放器
+// 3b. 首頁 Reel：先從 jsDelivr 讀，失敗就讀本站的 videos/reel.mp4，再不行換成 Vimeo 的靜音循環播放器
 document.querySelectorAll('video[data-vimeo-fallback]').forEach(function (v) {
   function fallback() {
     if (!v.parentNode) return;
@@ -65,8 +65,13 @@ document.querySelectorAll('video[data-vimeo-fallback]').forEach(function (v) {
     v.parentNode.replaceChild(f, v);
     document.dispatchEvent(new CustomEvent('reel-fallback', { detail: f }));
   }
-  v.addEventListener('error', fallback);
-  if (v.error) fallback();
+  function onError() {
+    var local = v.getAttribute('data-local-src');
+    if (local) { v.removeAttribute('data-local-src'); v.src = local; v.play && v.play().catch(function () {}); return; }
+    fallback();
+  }
+  v.addEventListener('error', onError);
+  if (v.error) onError();
   var p = v.play && v.play();
   if (p && p.catch) p.catch(function () {});
 });

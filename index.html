@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="css/style.css?v=4">
-<link rel="stylesheet" href="css/home.css?v=4">
+<link rel="stylesheet" href="css/style.css?v=5">
+<link rel="stylesheet" href="css/home.css?v=5">
 <script>
   // 開場：先全螢幕播 Reel，再縮進首頁。每個分頁只播一次；系統設定「減少動態」時不播。
   (function () {
@@ -62,8 +62,9 @@
       <div class="tile t-reel" id="reel">
         <div class="media reel-media" data-reel>
           <img src="images/reel-cover.jpg" alt="Reel 2024 封面畫面">
-          <!-- Reel 影片檔放 videos/reel.mp4（建議 1080p、H.264、無聲或有聲都可，50 MB 以內）。沒有這個檔時會改用 Vimeo -->
-          <video class="reel-bg" data-reel-bg data-vimeo-fallback="1057715669" src="videos/reel.mp4" poster="images/reel-cover.jpg" muted autoplay loop playsinline preload="auto" aria-hidden="true"></video>
+          <!-- Reel 影片：透過 jsDelivr（比 GitHub Pages 快很多）讀 repository 裡的 videos/reel.mp4，網址裡那串是 commit 編號。
+               換影片：替換 videos/reel.mp4（20 MB 以內）並推上去，再把網址裡的 commit 編號換成新的。讀不到時依序改用本站檔案、Vimeo -->
+          <video class="reel-bg" data-reel-bg data-vimeo-fallback="1057715669" src="https://cdn.jsdelivr.net/gh/haolchenwork-collab/haol.motion@819c51241b86c79a0ca4b1824e60fb2e7a85625a/videos/reel.mp4" data-local-src="videos/reel.mp4" poster="images/reel-cover.jpg" muted autoplay loop playsinline preload="auto" aria-hidden="true"></video>
           <button class="player reel-sound" type="button" data-vimeo="1057715669" aria-label="開聲音完整觀看 Reel 2024">
             <span class="play">
               <svg width="14" height="16" viewBox="0 0 18 20" aria-hidden="true"><path d="M2 2 L16 10 L2 18 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
@@ -199,7 +200,7 @@
   </div>
 </div>
 
-<script src="js/intro.js?v=4"></script>
-<script src="js/main.js?v=4"></script>
+<script src="js/intro.js?v=5"></script>
+<script src="js/main.js?v=5"></script>
 </body>
 </html>
