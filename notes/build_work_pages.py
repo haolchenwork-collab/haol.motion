@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = '13'
+ASSET_V = '14'
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -294,7 +294,7 @@ def render(slug, data, films, title):
             continue
         sections.append({'name': name, 'y': hd['r'][1], 'media': [], 'band': None})
 
-    # 素材分到它所在的區塊；小的裝飾 GIF 收進「元素」
+    # 素材分到它所在的區塊；小的裝飾 GIF 另外收著，不放進頁面
     seen = set()
     hero_bg = None
     credit_bg = None
@@ -333,12 +333,7 @@ def render(slug, data, films, title):
             sec['band'] = sec['band'] or it
         else:
             sec['media'].append(it)
-    if deco:
-        el = next((s for s in sections if s['name'].lower().startswith('element')), None)
-        if el is None:
-            el = {'name': 'Elements', 'y': H, 'media': [], 'band': None}
-            sections.append(el)
-        el['deco'] = deco
+    # 小的裝飾 GIF（Wix 頁面上的點綴）不放進作品頁
 
     # 組 HTML
     out = []
@@ -416,7 +411,7 @@ def render(slug, data, films, title):
         if s['media'] and not is_el:
             body.append(rows_html(s['media'], 480))
         # 元素：這一區的素材和小裝飾 GIF 一起排成等大方格，填滿整個寬度
-        els = (s['media'] if is_el else []) + s.get('deco', [])
+        els = s['media'] if is_el else []
         els = [e for e in els if min(e.get('o', e['r'][2:])) >= 40 and min(e['r'][2:]) >= 20]
         if els:
             body.append('<div class="pj-elements">{}</div>'.format(''.join(

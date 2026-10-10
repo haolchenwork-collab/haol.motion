@@ -76,4 +76,4 @@ files/                放履歷 PDF
 
 - 版面資料在 `notes/wix-pages/*.json`，產生程式是 `notes/build_work_pages.py`，執行 `python3 notes/build_work_pages.py` 會重寫 `work/` 裡的 15 頁（`work/index.html` 不會動）。
 - 要改某一頁的字或圖，改對應的 json 再重新產生，不要直接改 html，否則下次產生會被蓋掉。
-- 版面樣式在 `css/project.css`。小的裝飾 GIF 會收進每頁的 Element 區塊。
+- 版面樣式在 `css/project.css`。Wix 頁面上小的裝飾 GIF 不放進作品頁；Element 區只放 Wix 上 Element 標題下的素材。
