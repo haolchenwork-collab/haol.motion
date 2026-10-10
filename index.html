@@ -12,8 +12,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="css/style.css?v=2">
-<link rel="stylesheet" href="css/home.css?v=2">
+<link rel="stylesheet" href="css/style.css?v=3">
+<link rel="stylesheet" href="css/home.css?v=3">
 <script>
   // 開場：先全螢幕播 Reel，再縮進首頁。每個分頁只播一次；系統設定「減少動態」時不播。
   (function () {
@@ -57,12 +57,13 @@
         </div>
       </div>
 
-      <!-- Reel：一打開就靜音自動循環播放（Vimeo background 模式）。開場時這格會先全螢幕，往下滑才縮回來。
-           換影片：改 iframe 網址和按鈕 data-vimeo 裡的編號 1057715669；封面放 images/reel-cover.jpg（影片載入前顯示） -->
+      <!-- Reel：一打開就靜音自動循環播放。開場時這格會先全螢幕，往下滑才縮回來。
+           換影片：替換 videos/reel.mp4；「開聲音看」用的是 data-vimeo 裡的 Vimeo 編號 1057715669；封面放 images/reel-cover.jpg（影片載入前顯示） -->
       <div class="tile t-reel" id="reel">
         <div class="media reel-media" data-reel>
           <img src="images/reel-cover.jpg" alt="Reel 2024 封面畫面">
-          <iframe class="reel-bg" data-reel-bg src="https://player.vimeo.com/video/1057715669?background=1&amp;autoplay=1&amp;loop=1&amp;muted=1&amp;autopause=0&amp;playsinline=1&amp;dnt=1" allow="autoplay; fullscreen; picture-in-picture" title="Reel 2024（靜音播放中）" tabindex="-1"></iframe>
+          <!-- Reel 影片檔放 videos/reel.mp4（建議 1080p、H.264、無聲或有聲都可，50 MB 以內）。沒有這個檔時會改用 Vimeo -->
+          <video class="reel-bg" data-reel-bg data-vimeo-fallback="1057715669" src="videos/reel.mp4" muted autoplay loop playsinline preload="auto" aria-hidden="true"></video>
           <button class="player reel-sound" type="button" data-vimeo="1057715669" aria-label="開聲音完整觀看 Reel 2024">
             <span class="play">
               <svg width="14" height="16" viewBox="0 0 18 20" aria-hidden="true"><path d="M2 2 L16 10 L2 18 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
@@ -198,7 +199,7 @@
   </div>
 </div>
 
-<script src="js/intro.js?v=2"></script>
-<script src="js/main.js?v=2"></script>
+<script src="js/intro.js?v=3"></script>
+<script src="js/main.js?v=3"></script>
 </body>
 </html>

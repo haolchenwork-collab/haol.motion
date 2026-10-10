@@ -9,7 +9,7 @@
 
   var slot = box.querySelector('[data-frame]');           // 全螢幕時 Reel 要放的位置
   var reel = document.querySelector('[data-reel]');        // 首頁的 Reel
-  var bg = reel && reel.querySelector('[data-reel-bg]');   // Vimeo 播放器
+  var bg = reel && reel.querySelector('[data-reel-bg]');   // Reel 影片（mp4；沒有檔案時會被換成 Vimeo 播放器）
   var tile = document.getElementById('reel');
   var head = box.querySelector('[data-playhead]');
   var tc = box.querySelector('[data-tc]');
@@ -40,7 +40,7 @@
 
   // 跟 Vimeo 播放器要播放時間，讓時間軸和影片同步
   function vimeo(method, value) {
-    if (!bg || !bg.contentWindow) return;
+    if (!bg || bg.tagName !== 'IFRAME' || !bg.contentWindow) return;
     var msg = { method: method };
     if (value !== undefined) msg.value = value;
     bg.contentWindow.postMessage(JSON.stringify(msg), 'https://player.vimeo.com');
@@ -55,12 +55,16 @@
       vt = { secs: d.data.seconds, dur: d.data.duration, at: performance.now() };
     }
   });
-  if (bg) bg.addEventListener('load', function () { vimeo('addEventListener', 'timeupdate'); });
+  document.addEventListener('reel-fallback', function (e) {
+    bg = e.detail;
+    bg.addEventListener('load', function () { vimeo('addEventListener', 'timeupdate'); });
+  });
 
   function tick(now) {
     if (left) return;
     var secs, dur;
-    if (vt) { dur = vt.dur; secs = Math.min(vt.secs + (now - vt.at) / 1000, dur); }
+    if (bg && bg.tagName === 'VIDEO' && bg.duration) { dur = bg.duration; secs = bg.currentTime; }
+    else if (vt) { dur = vt.dur; secs = Math.min(vt.secs + (now - vt.at) / 1000, dur); }
     else { dur = SIM; secs = ((now - start) / 1000) % SIM; }
     var p = secs / dur;
     head.style.left = (p * 100) + '%';

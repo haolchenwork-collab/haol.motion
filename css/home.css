@@ -26,6 +26,7 @@
 .t-reel::before { content: ""; display: block; aspect-ratio: 16 / 9; } /* 撐住格子大小，開場時 Reel 被拿去全螢幕也不會塌 */
 .reel-media { position: absolute; left: 0; top: 0; width: 100%; aspect-ratio: 16 / 9; border-radius: 4px; container-type: size; background-color: #000; }
 /* 影片永遠填滿畫面（像 object-fit: cover），全螢幕時也不會有黑邊 */
+.reel-media video.reel-bg { object-fit: cover; z-index: 0; }
 .reel-media iframe.reel-bg {
   inset: auto; left: 50%; top: 50%; transform: translate(-50%, -50%);
   width: max(100cqw, 177.78cqh); height: max(100cqh, 56.25cqw);

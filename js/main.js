@@ -50,6 +50,27 @@ document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
   });
 });
 
+// 3b. 首頁 Reel：優先播 videos/reel.mp4；檔案不存在就換成 Vimeo 的靜音循環播放器
+document.querySelectorAll('video[data-vimeo-fallback]').forEach(function (v) {
+  function fallback() {
+    if (!v.parentNode) return;
+    var f = document.createElement('iframe');
+    f.className = 'reel-bg';
+    f.setAttribute('data-reel-bg', '');
+    f.src = 'https://player.vimeo.com/video/' + encodeURIComponent(v.getAttribute('data-vimeo-fallback')) +
+      '?background=1&autoplay=1&loop=1&muted=1&autopause=0&playsinline=1&dnt=1';
+    f.allow = 'autoplay; fullscreen; picture-in-picture';
+    f.title = 'Reel 2024（靜音播放中）';
+    f.tabIndex = -1;
+    v.parentNode.replaceChild(f, v);
+    document.dispatchEvent(new CustomEvent('reel-fallback', { detail: f }));
+  }
+  v.addEventListener('error', fallback);
+  if (v.error) fallback();
+  var p = v.play && v.play();
+  if (p && p.catch) p.catch(function () {});
+});
+
 // 4. 篩選按鈕（作品列表、LAB）：按鈕 data-filter，項目 data-tags（空白分隔）。
 document.querySelectorAll('.filters').forEach(function (bar) {
   var target = document.querySelector(bar.getAttribute('data-target'));
