@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = '15'
+ASSET_V = '16'
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -231,7 +231,10 @@ def rows_html(media, row_h=480):
         # 一列在 Wix 上只佔內容欄（約 600px）的一部分時，這裡也不要撐滿整個寬度
         # 列的高度最多 row_h px：用「全部素材比例加總 × 高度」當這一列的最大寬度
         ars = sum(m['r'][2] / max(m['r'][3], 1) for m in row)
-        mw = ' style="max-width:{:.0f}px"'.format(ars * row_h + 8 * (len(row) - 1))
+        cap = ars * row_h + 8 * (len(row) - 1)
+        if len(row) == 1:
+            cap = min(cap, 860)                   # 單張圖最寬 860px，不撐滿整個畫面
+        mw = ' style="max-width:{:.0f}px"'.format(cap)
         out.append('<div class="pj-row n{}"{}>{}</div>'.format(min(len(row), 4), mw, ''.join(cells)))
     return '\n'.join(out)
 
