@@ -1,15 +1,16 @@
-"""從舊 Wix 作品頁的版面資料（notes/wix-pages/*.json）產生 work/*.html 作品頁。
+"""用舊 Wix 作品頁的素材和文字（notes/wix-pages/*.json）產生 work/*.html 作品頁，版面是新網站的作品頁設計。
 
 用法：python3 notes/build_work_pages.py
-每個 json 是在 Wix 頁面上量出來的元素位置（寬度 W 的畫面上，x, y, w, h 像素）。
-這裡把位置換成百分比，所以版面會跟著視窗寬度等比例縮放；手機上改成由上往下排。
+每個 json 是在 Wix 頁面上量出來的元素（寬度 W 的畫面上，x, y, w, h 像素）。
+這裡用位置判斷每個素材屬於哪個小標題（Process、Element…），再照新網站的作品頁版型排：
+標題與資訊 → 完整影片 → 概念與負責部分 → 各素材區塊 → Credits。
 """
 import html, json, os, re
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = '7'
+ASSET_V = '8'
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -156,94 +157,279 @@ def fit_players(items, H):
     return items, H
 
 
+CJK = re.compile(r'[一-鿿]')
+FIX = {'Lowerthirt': 'Lower third', 'Award HightLight': 'Award Highlight', 'Priduction House': 'Production House',
+       '3D Animarion': '3D Animation', 'Nomimees': 'Nominees'}
+ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫面', 'logo': '標準字', 'lower third': '字卡',
+      'making of': '幕後', 'title': '片名', 'original': '原始畫面', 'animation': '動畫', 'compositing': '合成',
+      'stage': '舞台', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素'}
+
+
+def fix(t):
+    for a, b in FIX.items():
+        t = t.replace(a, b)
+    return t
+
+
+def tstyle(it):
+    s = next((l['s'] for l in it.get('l', []) if 's' in l), '255,255,255|16|400|text|l')
+    c, size, wgt, fam, al = s.split('|')
+    return float(size), fam
+
+
+def ttext(it):
+    return '\n'.join(l['x'] for l in it.get('l', [])).replace('​', '').strip()
+
+
+def split_roles(s):
+    out, depth, cur = [], 0, ''
+    for ch in s:
+        if ch in '(（':
+            depth += 1
+        elif ch in ')）':
+            depth -= 1
+        if ch in '、,，' and depth == 0:
+            out.append(cur.strip()); cur = ''
+        else:
+            cur += ch
+    if cur.strip():
+        out.append(cur.strip())
+    return [r for r in out if r]
+
+
+def media_tag(it, fit='cover'):
+    """一個素材（圖片、GIF 或 Wix 影片）"""
+    x, y, w, h = it['r']
+    if it['t'] in ('v', 'bv'):
+        return '<video data-lazy-src="{}" poster="{}" muted loop playsinline aria-hidden="true"></video>'.format(
+            html.escape(WIXVID.format(it['id'], vid_quality(it.get('q')))), html.escape(WIXPOSTER.format(it['id'])))
+    ow, oh = it.get('o', [w, h])
+    if fit == 'contain':
+        tw = min(ow, 720); th = round(tw * oh / ow) if ow else tw
+        url = media_url(it['u'], tw / 2, th / 2)
+    else:
+        url = media_url(it['u'], min(w * 1.6, 1400), min(h * 1.6, 1400 * h / max(w, 1)))
+    return '<img src="{}" alt="" loading="lazy" style="object-fit:{}">'.format(html.escape(url), fit)
+
+
+def rows_html(media):
+    """照 Wix 上的列（y 相近的放同一列）排，同一列等高、照比例分寬度"""
+    media = sorted(media, key=lambda m: (m['r'][1], m['r'][0]))
+    rows = []
+    for m in media:
+        if rows and abs(rows[-1][0]['r'][1] - m['r'][1]) < 40:
+            rows[-1].append(m)
+        else:
+            rows.append([m])
+    out = []
+    for row in rows:
+        row.sort(key=lambda m: m['r'][0])
+        cells = []
+        for m in row:
+            ar = '{:.3f}'.format(m['r'][2] / max(m['r'][3], 1))
+            cells.append('<div class="media pj-cell" style="--ar:{}">{}</div>'.format(ar, media_tag(m)))
+        # 一列在 Wix 上只佔內容欄（約 600px）的一部分時，這裡也不要撐滿整個寬度
+        span = max(m['r'][0] + m['r'][2] for m in row) - min(m['r'][0] for m in row)
+        mw = '' if span >= 560 else ' style="max-width:{:.0f}%"'.format(max(span / 600 * 100, 34))
+        out.append('<div class="pj-row n{}"{}>{}</div>'.format(min(len(row), 4), mw, ''.join(cells)))
+    return '\n'.join(out)
+
+
 def render(slug, data, films, title):
     W = data['W']
     items, H = fit_players(data['items'], data['H'])
     items, H = expand_galleries(posters_to_videos(items), H)
-    # 拿掉 Wix 的頂部綠色選單列。Wix 的選單是蓋在內容上面的，所以從第一個內容元素的上方 40px 開始裁
-    def is_header(it):
-        return it['t'] == 'b' and it['c'].startswith(HEADER_GREEN) and it['r'][1] < 200
-    tops = [it['r'][1] for it in items if not is_header(it) and it['r'][3] > 0]
-    cut = max(0, min(tops) - 40) if tops else 0
-    keep = []
-    for z, it in enumerate(items):
+    items = [i for i in items if not (i['t'] == 'b')]
+    items.sort(key=lambda i: (i['r'][1], i['r'][0]))
+    texts = [i for i in items if i['t'] == 't']
+    players = [i for i in items if i['t'] == 'p']
+
+    # 標題區的文字
+    big = [t for t in texts if tstyle(t)[1] == 'display-extrabold']
+    head_title = fix(ttext(big[0])) if big else title
+    zh_sub = ttext(big[1]) if len(big) > 1 else ''
+    role_t = next((t for t in texts if re.search(r'/\s*(19|20)\d\d\s*/', ttext(t))), None)
+    kind = year = studio = ''
+    roles = []
+    if role_t:
+        parts = [p.strip() for p in fix(ttext(role_t)).split('/')]
+        kind = parts[0] if parts else ''
+        year = parts[1] if len(parts) > 1 else ''
+        rest = '/'.join(parts[2:])
+        m = re.search(r'\bRole\b', rest)
+        if m:
+            studio, roles = rest[:m.start()].strip(' /'), split_roles(rest[m.end():])
+        else:
+            studio = rest
+    headings = [t for t in texts if len(t['l']) == 1 and '\n' not in ttext(t) and tstyle(t)[0] >= 24 and tstyle(t)[1] == 'display-bold']
+    credit_ts = [t for t in texts if t not in headings and len(re.findall(r'[：:]', ttext(t))) >= 3]
+    used = set(id(t) for t in big[:2] + headings + credit_ts + ([role_t] if role_t else []))
+    first_h = headings[0]['r'][1] if headings else H
+    brief = [t for t in texts if id(t) not in used and t['r'][1] < first_h + 10 and tstyle(t)[0] >= 14 and len(ttext(t)) > 20]
+    brief_zh = [ttext(t) for t in brief if CJK.search(ttext(t))]
+    brief_en = [ttext(t) for t in brief if not CJK.search(ttext(t))]
+
+    # 影片：每個播放器上方緊貼的標題當成影片說明，不另外開區塊
+    film_caps = []
+    for p in players:
+        cap = None
+        for hd in headings:
+            if 0 <= p['r'][1] - (hd['r'][1] + hd['r'][3]) < 70:
+                cap = hd
+        film_caps.append(cap)
+    cap_ids = set(id(c) for c in film_caps if c)
+
+    # 其他標題 = 素材區塊；Credit 另外處理
+    sections = []
+    credit_h = None
+    for hd in headings:
+        name = fix(ttext(hd)).strip()
+        if id(hd) in cap_ids or name.upper() == 'VIDEO':
+            continue
+        if name.lower() == 'credit':
+            credit_h = hd
+            continue
+        if sections and sections[-1]['name'].lower() == name.lower():
+            continue
+        sections.append({'name': name, 'y': hd['r'][1], 'media': [], 'band': None})
+
+    # 素材分到它所在的區塊；小的裝飾 GIF 收進「元素」
+    seen = set()
+    hero_bg = None
+    credit_bg = None
+    deco = []
+    for it in items:
+        if it['t'] not in ('i', 'bi', 'v', 'bv'):
+            continue
         x, y, w, h = it['r']
-        if y + h <= cut:
+        key = it.get('u') or it.get('id')
+        full = w >= W * 0.9
+        if full and h < 60:
+            continue                              # Wix 上的細分隔線
+        if key in seen:
             continue
-        if is_header(it):
+        seen.add(key)
+        cy = y + h / 2
+        if credit_h and full and y <= credit_h['r'][1] + 60 <= y + h:
+            credit_bg = credit_bg or it
             continue
-        it = dict(it)
-        it['r'] = [x, y - cut, w, h]
-        it['z'] = z
-        keep.append(it)
-    H = H - cut
-    if keep:
-        H = max(H, max(i['r'][1] + i['r'][3] for i in keep))
-    keep.sort(key=lambda i: (i['r'][1], i['r'][0]))
-
-    film_iter = iter(films)
-    parts = []
-    tagged = 0
-
-    def tag_new():
-        # 每個元素記下 Wix 上的原始位置，讓 main.js 量完實際字高後重排，避免文字互相重疊
-        nonlocal tagged
-        for n in range(tagged, len(parts)):
-            parts[n] = parts[n].replace('<div class="wx-i', '<div data-r="{},{},{},{}" class="wx-i'.format(*cur_r), 1)
-        tagged = len(parts)
-
-    cur_r = None
-    for it in keep:
-        if cur_r:
-            tag_new()
-        x, y, w, h = it['r']
-        cur_r = (x, y, w, h)
-        if w <= 0 or h <= 0:
+        if full and cy < first_h + 40:
+            hero_bg = hero_bg or it
             continue
-        t = it['t']
-        # order 只在手機版（由上往下排）有用：照元素的垂直中心排，標題才會在它的圖前面
-        style = 'left:{};top:{};width:{};height:{};z-index:{};order:{}'.format(pct(x, W), pct(y, H), pct(w, W), pct(h, H), it['z'], round(y + h / 2))
-        small = ' wx-deco' if t in ('i', 's', 'v') and w < W * 0.14 else ''
-        ar = '--ar:{}/{}'.format(w, h)
-        if t == 'b':
-            r, g, b = it['c'].split(',')[:3]
-            a = it['c'].split(',')[3] if len(it['c'].split(',')) > 3 else '1'
-            parts.append('<div class="wx-i wx-box" style="{};background:rgba({},{},{},{});border-radius:{}px"></div>'.format(style, r, g, b, a, it.get('br', 0)))
-        elif t in ('i', 'bi'):
-            fit = 'contain' if it.get('dm') in ('fit', 'fitWidth', 'legacyFit') else 'cover'
-            parts.append('<div class="wx-i wx-media{}" style="{};{}"><img src="{}" alt="" loading="lazy" style="object-fit:{}"></div>'.format(
-                small, style, ar, html.escape(media_url(it['u'], w, h)), fit))
-        elif t in ('v', 'bv'):
-            src = WIXVID.format(it['id'], vid_quality(it.get('q')))
-            parts.append('<div class="wx-i wx-media{}" style="{};{}"><video data-lazy-src="{}" poster="{}" muted loop playsinline aria-hidden="true"></video></div>'.format(
-                small, style, ar, html.escape(src), html.escape(WIXPOSTER.format(it['id']))))
-        elif t == 'p':
-            film = next(film_iter, None)
-            parts.append('<div class="wx-i wx-film" style="{}">{}</div>'.format(style, film_html(film, title)))
-        elif t == 's':
-            if it.get('svg'):
-                parts.append('<div class="wx-i wx-svg{}" style="{};{}">{}</div>'.format(small, style, ar, it['svg']))
-        elif t in ('t', 'btn'):
-            lines = it['l'] if t == 't' else [{'x': it['x'], 's': '255,255,255|16|500|display|c'}]
-            cur = None
-            ps = []
-            for ln in lines:
-                if 's' in ln:
-                    cur = ln['s']
-                color, size, weight, fam, align = (cur or '255,255,255|16|400|text|l').split('|')
-                cps = color.split(',')
-                css_color = 'rgba({},{},{},{})'.format(*cps) if len(cps) == 4 else 'rgb({})'.format(color)
-                wgt = max(int(float(weight)), WEIGHT.get(fam, 400))
-                al = {'l': 'left', 'c': 'center', 'r': 'right', 'j': 'justify', 's': 'left'}.get(align, 'left')
-                text = html.escape(ln['x']).replace('\n', '<br>')
-                if not ln['x'].strip():
-                    text = '&nbsp;'
-                size = max(float(size), 11)
-                ps.append('<p style="--fs:{};color:{};font-weight:{};text-align:{}">{}</p>'.format(size, css_color, wgt, al, text))
-            parts.append('<div class="wx-i wx-text" style="{}">{}</div>'.format(style, ''.join(ps)))
-    if cur_r:
-        tag_new()
-    return '<section class="wx" data-w="{}" data-h="{}" style="--W:{};aspect-ratio:{}/{}">\n{}\n</section>'.format(W, H, W, W, H, '\n'.join(parts))
+        if w < W * 0.15 or (w < W * 0.3 and (x < W * 0.15 or x + w > W * 0.85)):
+            deco.append(it)
+            continue
+        sec = None
+        for s in sections:
+            if s['y'] <= cy + 40:
+                sec = s
+        if sec is None:
+            deco.append(it) if not full else None
+            if full and not hero_bg:
+                hero_bg = it
+            continue
+        if full:
+            sec['band'] = sec['band'] or it
+        else:
+            sec['media'].append(it)
+    if deco:
+        el = next((s for s in sections if s['name'].lower().startswith('element')), None)
+        if el is None:
+            el = {'name': 'Elements', 'y': H, 'media': [], 'band': None}
+            sections.append(el)
+        el['deco'] = deco
+
+    # 組 HTML
+    out = []
+    facts = []
+    client = ''
+    credits = []
+    for t in credit_ts:
+        for ln in fix(ttext(t)).split('\n'):
+            ln = ln.strip()
+            if not ln:
+                continue
+            m = re.match(r'^(.*?)\s*[：:]\s*(.+)$', ln)
+            if m:
+                credits.append((m.group(1).strip(), m.group(2).strip()))
+            else:
+                credits.append(('', ln))
+    for dt, dd in credits:
+        if re.search(r'client|客戶', dt, re.I):
+            client = dd
+            break
+    if client:
+        facts.append(('CLIENT', client))
+    if studio:
+        facts.append(('STUDIO', studio))
+    if year:
+        facts.append(('YEAR', year))
+    if kind:
+        facts.append(('TYPE', kind))
+    if roles:
+        facts.append(('MY ROLE', ' · '.join(roles)))
+
+    hero_cls = 'project-hero wrap' + (' has-bg' if hero_bg else '')
+    out.append('<section class="pj-hero{}">'.format(' has-bg' if hero_bg else ''))
+    if hero_bg:
+        out.append('<div class="pj-hero-bg media">{}</div>'.format(media_tag(hero_bg)))
+    out.append('<div class="{}">'.format(hero_cls))
+    out.append('<a class="back" href="index.html">← 所有作品</a>')
+    out.append('<div><h1>{}</h1>{}</div>'.format(html.escape(head_title),
+               '<p class="sub">{}</p>'.format(html.escape(zh_sub)) if zh_sub else ''))
+    if facts:
+        out.append('<dl class="facts">{}</dl>'.format(''.join(
+            '<div><dt>{}</dt><dd>{}</dd></div>'.format(a, html.escape(b)) for a, b in facts)))
+    out.append('</div></section>')
+
+    # 影片
+    fi = iter(films)
+    film_parts = []
+    for p, cap in zip(players, film_caps):
+        f = next(fi, None)
+        c = '<figcaption class="mono">{}</figcaption>'.format(html.escape(fix(ttext(cap)))) if cap and fix(ttext(cap)).upper() != 'VIDEO' else ''
+        film_parts.append('<figure class="pj-film">{}{}</figure>'.format(film_html(f, head_title), c))
+    if film_parts:
+        out.append('<section class="wrap pj-films" aria-label="完整影片">{}</section>'.format(''.join(film_parts)))
+
+    # 概念＋我負責的部分
+    if brief_zh or brief_en or roles:
+        col1 = ''
+        if brief_zh or brief_en:
+            col1 = '<div><h2 class="eyebrow">THE BRIEF · 專案概念</h2>{}{}</div>'.format(
+                ''.join('<p class="statement">{}</p>'.format(html.escape(z).replace('\n', '<br>')) for z in brief_zh),
+                ''.join('<p class="pj-en">{}</p>'.format(html.escape(e)) for e in brief_en))
+        col2 = ''
+        if roles:
+            col2 = '<div><h2 class="eyebrow">WHAT I DID · 我負責的部分</h2><ul class="did">{}</ul></div>'.format(
+                ''.join('<li>{}</li>'.format(html.escape(r)) for r in roles))
+        out.append('<section class="section wrap pj-brief"><div class="two-col">{}{}</div></section>'.format(col1, col2))
+
+    # 素材區塊
+    for s in sections:
+        body = []
+        if s.get('band'):
+            body.append('<div class="pj-band media" style="--ar:{:.3f}">{}</div>'.format(
+                s['band']['r'][2] / max(s['band']['r'][3], 1), media_tag(s['band'])))
+        if s['media']:
+            body.append(rows_html(s['media']))
+        if s.get('deco'):
+            body.append('<div class="pj-deco">{}</div>'.format(''.join(
+                '<div class="media">{}</div>'.format(media_tag(d, 'contain')) for d in s['deco'])))
+        if not body:
+            continue
+        n = len(s['media']) + len(s.get('deco', [])) + (1 if s.get('band') else 0)
+        zh = ZH.get(s['name'].lower().strip(), '')
+        out.append('<section class="section wrap pj-sec"><div class="section-head"><h2>{}</h2><span class="mono muted">{}{:02d}</span></div>{}</section>'.format(
+            html.escape(s['name']), html.escape(zh) + ' · ' if zh else '', n, '\n'.join(body)))
+
+    # Credits
+    if credits:
+        bg = '<div class="pj-credit-bg media">{}</div>'.format(media_tag(credit_bg)) if credit_bg else ''
+        out.append('<section class="pj-credits{}">{}<div class="section wrap"><h2 class="eyebrow pj-credit-head">CREDITS</h2><dl class="credits">{}</dl></div></section>'.format(
+            ' has-bg' if credit_bg else '', bg, ''.join(
+                '<div>{}<dd>{}</dd></div>'.format('<dt>{}</dt>'.format(html.escape(a)) if a else '', html.escape(b)) for a, b in credits)))
+    return '\n'.join(out)
 
 
 def film_html(film, title):
@@ -289,8 +475,7 @@ PAGE = '''<!doctype html>
 </header>
 
 <main>
-  <div class="wrap wx-back"><a class="mono muted" href="index.html">← 全部作品</a><span class="mono muted">{no} / {total}</span></div>
-  <!-- 這一區是照舊 Wix 作品頁的版面產生的（notes/build_work_pages.py），要改請改 notes/wix-pages/{src}.json 再重新產生 -->
+  <!-- {no}/{total}。這頁由 notes/build_work_pages.py 產生，素材和文字來自舊 Wix 作品頁（notes/wix-pages/{src}.json），要改請改 json 再重新產生 -->
 {body}
 
   <nav class="pager" aria-label="上一個與下一個作品"><div class="wrap">

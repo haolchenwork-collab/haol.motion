@@ -1,45 +1,53 @@
-/* 作品頁：版面照舊 Wix 作品頁的位置產生（notes/build_work_pages.py）。
-   桌機上所有元素用百分比定位，跟著寬度等比例縮放；手機上改成由上往下排。 */
-.wx-back { display: flex; justify-content: space-between; padding-block: 20px 8px; font-size: 13px; }
+/* 作品頁（work/*.html）：新網站的版型，素材來自舊 Wix 作品頁。頁面由 notes/build_work_pages.py 產生。 */
 
-.wx {
-  position: relative;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  container-type: inline-size;
-  overflow-x: clip;
-}
-.wx-i { position: absolute; }
-.wx-box { pointer-events: none; }
-.wx-media, .wx-gallery, .wx-g-i { overflow: hidden; }
-.wx-media img, .wx-media video, .wx-g-i img, .wx-g-i video {
-  display: block; width: 100%; height: 100%; object-fit: cover;
-}
-.wx-g-i { position: absolute; }
-.wx-svg svg { display: block; width: 100%; height: 100%; }
-.wx-film .media { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; }
-.wx-film .media img, .wx-film .media video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.wx-film .media video[controls] { object-fit: contain; }
+/* 標題區：有 Wix 的背景素材時，鋪在後面並壓暗 */
+.pj-hero { position: relative; overflow: hidden; }
+.pj-hero-bg { position: absolute; inset: 0; z-index: 0; border-radius: 0; }
+.pj-hero-bg img, .pj-hero-bg video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pj-hero.has-bg::after { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(13,13,14,.55), var(--bg) 96%); }
+.pj-hero .project-hero { position: relative; z-index: 1; padding-block: 40px 32px; gap: 22px; }
+.pj-hero h1 { font-size: clamp(36px, 5.6vw, 88px); }
+
+/* 完整影片 */
+.pj-films { display: grid; gap: 12px; padding-bottom: 8px; }
+.pj-film { margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.pj-film figcaption { font-size: 12px; letter-spacing: .08em; color: var(--accent); text-transform: uppercase; }
+.pj-film .media img, .pj-film .media video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pj-film .media video[controls] { object-fit: contain; background: #000; }
 .wx-dead { display: grid; place-items: center; border: 1px dashed var(--line); }
 
-/* 文字大小也跟著版面寬度縮放：Wix 上量到的字級 / 版面寬度 */
-.wx-text p {
-  margin: 0;
-  font-size: calc(var(--fs) / var(--W) * 100cqw);
-  line-height: 1.45;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
+/* 概念 */
+.pj-brief { padding-block: 56px; }
+.pj-brief .statement + .statement { margin-top: 4px; }
+.pj-en { margin: 8px 0 0; color: var(--muted); font-size: 15px; line-height: 1.65; max-width: 68ch; }
+
+/* 素材區塊：同一列等高，寬度照素材比例分 */
+.pj-sec { padding-block: 0 56px; }
+.pj-sec .section-head { margin-bottom: 12px; }
+.pj-sec .section-head h2 { font-size: clamp(28px, 3.4vw, 48px); }
+.pj-row { display: flex; gap: 8px; margin-bottom: 8px; }
+.pj-row > .pj-cell { flex: var(--ar) 1 0; min-width: 0; aspect-ratio: var(--ar); }
+.pj-row.n1 > .pj-cell { max-height: 80vh; }
+.pj-cell img, .pj-cell video, .pj-band img, .pj-band video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pj-band { aspect-ratio: var(--ar); margin-bottom: 8px; }
+
+/* 小的裝飾 GIF：方格整齊排 */
+.pj-deco { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+.pj-deco .media { aspect-ratio: 1; background: #161618; }
+.pj-deco img { width: 100%; height: 100%; display: block; }
+
+/* Credits：有 Wix 的背景影片時鋪在後面 */
+.pj-credits { position: relative; overflow: hidden; border-top: 1px solid var(--line); }
+.pj-credits .section { position: relative; z-index: 1; padding-block: 56px; }
+.pj-credit-bg { position: absolute; inset: 0; z-index: 0; border-radius: 0; opacity: .35; }
+.pj-credit-bg img, .pj-credit-bg video { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pj-credit-head { padding-bottom: 14px; border-bottom: 1px solid var(--line); margin-bottom: 20px; color: var(--accent); }
+.pj-credits .credits { font-size: 13px; gap: 12px 28px; }
 
 @media (max-width: 700px) {
-  .wx { aspect-ratio: auto !important; display: flex; flex-direction: column; gap: 16px; padding: 16px; }
-  .wx-i { position: static; width: auto !important; height: auto !important; }
-  .wx-box, .wx-deco { display: none; }
-  .wx-media { aspect-ratio: var(--ar); }
-  .wx-film .media { aspect-ratio: 16 / 9; height: auto; }
-  .wx-gallery { position: relative; aspect-ratio: var(--gar); }
-  .wx-g-i { position: absolute; }
-  .wx-svg { max-width: 160px; aspect-ratio: var(--ar); }
-  .wx-text p { font-size: max(14px, calc(var(--fs) * 0.9px)); }
+  .pj-row { flex-wrap: wrap; }
+  .pj-row.n3 > .pj-cell, .pj-row.n4 > .pj-cell { flex-basis: calc(50% - 4px); }
+  .pj-deco { grid-template-columns: repeat(3, 1fr); }
+  .pj-hero .facts { grid-template-columns: 1fr 1fr; gap: 14px 20px; }
+  .pj-hero .facts div:last-child { grid-column: 1 / -1; }
 }
