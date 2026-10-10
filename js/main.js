@@ -206,3 +206,12 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   vids.forEach(function (v) { io.observe(v); });
 })();
 
+
+// 8. 記下選單列高度（作品頁的背景要延伸到選單後面）
+(function () {
+  var h = document.querySelector('.site-header');
+  if (!h) return;
+  function set() { document.documentElement.style.setProperty('--hh', h.offsetHeight + 'px'); }
+  set();
+  window.addEventListener('resize', set);
+})();
