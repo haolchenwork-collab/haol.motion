@@ -281,54 +281,87 @@ figcaption { font-size: 14px; color: var(--muted); }
   backdrop-filter: blur(14px);
 }
 
-/* ---------- Work 列表：圖塊＋玻璃標題 ---------- */
-.work-grid.tiles { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; grid-auto-flow: dense; }
-.tiles .card { position: relative; display: block; border-radius: 8px; overflow: hidden; isolation: isolate; }
-.tiles .card .media { border-radius: 8px; outline-offset: -2px; }
-.tiles .card .media img, .tiles .card .media video { transition: transform .6s cubic-bezier(.2,.7,.2,1), opacity .3s; }
-.tiles .card:hover .media img { transform: scale(1.04); }
-.tiles .card-cap {
+/* ---------- Work 列表：玻璃標題，兩種排法（.tiles 格狀／.strips 長條） ---------- */
+#work-list .card { position: relative; display: block; border-radius: 8px; overflow: hidden; isolation: isolate; }
+#work-list .card .media { border-radius: 8px; outline-offset: -2px; }
+#work-list .card .media img { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
+#work-list .card:hover .media img { transform: scale(1.04); }
+#work-list .card-cap {
   position: absolute; left: 10px; right: 10px; bottom: 10px; z-index: 2;
   display: flex; flex-direction: column; gap: 8px;
   padding: 10px 14px; border-radius: 6px;
   background: var(--glass-bg); border: 1px solid var(--glass-edge); box-shadow: var(--glass-hi);
   -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
-  transition: border-color .2s, background .2s;
+  transition: border-color .2s;
 }
-.tiles .card:hover .card-cap, .tiles .card:focus-visible .card-cap { border-color: rgba(198, 255, 61, .45); }
-.tiles .card:hover h3 { color: var(--accent); }
-.tiles .card-title { align-items: baseline; gap: 12px; }
-.tiles .card-title > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-.work-grid.tiles .card h3 { font-size: 18px; line-height: 1.15; }
-.tiles .card .zh { font-size: 13px; }
-.tiles .card-title .mono { font-size: 12px; flex-shrink: 0; }
-.tiles .tags { font-size: 11px; gap: 6px; }
-.tiles .tags span { padding: 2px 10px; border-color: var(--glass-edge); background: rgba(255, 255, 255, .04); }
-/* 滑鼠裝置：標籤 hover 才展開，圖片露出比較多 */
+#work-list .card:hover .card-cap, #work-list .card:focus-visible .card-cap { border-color: rgba(198, 255, 61, .45); }
+#work-list .card:hover h3 { color: var(--accent); }
+#work-list .card-title { align-items: baseline; gap: 12px; }
+#work-list .card-title > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+#work-list .card h3 { font-size: 18px; line-height: 1.15; }
+#work-list .card .zh { font-size: 13px; }
+#work-list .card-title .mono { font-size: 12px; flex-shrink: 0; }
+#work-list .tags { font-size: 11px; gap: 6px; }
+#work-list .tags span { padding: 2px 10px; border-color: var(--glass-edge); background: rgba(255, 255, 255, .04); }
+
+/* 格狀 */
+.work-grid.tiles { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; grid-auto-flow: dense; }
 @media (hover: hover) {
-  .tiles .tags { max-height: 0; opacity: 0; margin-top: -8px; overflow: hidden; transition: max-height .3s, opacity .3s, margin .3s; }
-  .tiles .card:hover .tags, .tiles .card:focus-visible .tags { max-height: 60px; opacity: 1; margin-top: 0; }
+  #work-list.tiles .tags { max-height: 0; opacity: 0; margin-top: -8px; overflow: hidden; transition: max-height .3s, opacity .3s, margin .3s; }
+  #work-list.tiles .card:hover .tags, #work-list.tiles .card:focus-visible .tags { max-height: 60px; opacity: 1; margin-top: 0; }
 }
-/* 第一張作品放大成 2×2 */
 @media (min-width: 1100px) {
-  .tiles .card:first-child:not([hidden]) { grid-column: span 2; grid-row: span 2; }
-  .tiles .card:first-child .media { aspect-ratio: auto; height: 100%; }
-  .tiles .card:first-child .media img, .tiles .card:first-child .media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-  .work-grid.tiles .card:first-child h3 { font-size: clamp(22px, 2vw, 30px); }
-  .tiles .card:first-child .card-cap { left: 16px; bottom: 16px; right: auto; max-width: calc(100% - 32px); padding: 14px 18px; }
+  #work-list.tiles .card:first-child:not([hidden]) { grid-column: span 2; grid-row: span 2; }
+  #work-list.tiles .card:first-child .media { aspect-ratio: auto; height: 100%; }
+  #work-list.tiles .card:first-child h3 { font-size: clamp(22px, 2vw, 30px); }
+  #work-list.tiles .card:first-child .card-cap { left: 16px; bottom: 16px; right: auto; max-width: calc(100% - 32px); padding: 14px 18px; }
 }
-/* 篩選列：黏在頁首下方的玻璃膠囊 */
-.filters[data-target="#work-list"] {
-  position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 20;
-  width: fit-content; max-width: 100%; margin-bottom: 20px; padding: 6px; gap: 4px;
+
+/* 長條：一支作品一條寬銀幕，玻璃帶橫跨底部 */
+.work-grid.strips { grid-template-columns: 1fr; gap: 12px; counter-reset: work; }
+#work-list.strips .card:not([hidden]) { counter-increment: work; }
+#work-list.strips .card .media { aspect-ratio: auto; height: clamp(240px, 30vw, 440px); }
+#work-list.strips .card-cap {
+  left: 16px; right: 16px; bottom: 16px;
+  flex-direction: row; align-items: center; justify-content: space-between; gap: 24px;
+  padding: 16px 22px;
+}
+#work-list.strips .card-title { flex: 1 1 auto; justify-content: flex-start; align-items: center; gap: 20px; min-width: 0; }
+#work-list.strips .card-title::before { content: counter(work, decimal-leading-zero); font-family: var(--mono); font-size: 13px; color: var(--accent); flex-shrink: 0; }
+#work-list.strips .card-title > div { flex-direction: row; align-items: baseline; gap: 16px; flex-wrap: wrap; }
+#work-list.strips .card h3 { font-size: clamp(22px, 2.6vw, 40px); white-space: nowrap; }
+#work-list.strips .card .zh { font-size: 15px; }
+#work-list.strips .card-title .mono { order: 3; font-size: 13px; margin-left: auto; }
+#work-list.strips .tags { flex-shrink: 0; flex-wrap: nowrap; font-size: 12px; }
+@media (max-width: 760px) {
+  #work-list.strips .card .media { height: auto; aspect-ratio: 16 / 10; }
+  #work-list.strips .card-cap { left: 8px; right: 8px; bottom: 8px; flex-direction: column; align-items: stretch; gap: 8px; padding: 10px 14px; }
+  #work-list.strips .card-title { gap: 12px; }
+  #work-list.strips .card-title > div { flex-direction: column; gap: 2px; }
+  #work-list.strips .card h3 { font-size: 20px; white-space: normal; }
+  #work-list.strips .card .zh { font-size: 13px; }
+  #work-list.strips .tags { flex-wrap: wrap; font-size: 11px; }
+}
+
+/* 篩選＋排法切換：黏在頁首下方的玻璃列 */
+.work-bar { position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 20; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; pointer-events: none; }
+.work-bar > * { pointer-events: auto; }
+.work-bar .filters, .view-toggle {
+  width: fit-content; max-width: 100%; margin: 0; padding: 6px; gap: 4px;
   border-radius: 999px; border: 1px solid var(--glass-edge);
   background: rgba(0, 0, 0, .45); box-shadow: var(--glass-hi);
   -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
 }
-.filters[data-target="#work-list"] button:not([aria-pressed="true"]) { background: transparent; border-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
-.filters[data-target="#work-list"] button:not([aria-pressed="true"]):hover { border-color: var(--glass-edge); }
+.work-bar .filters button:not([aria-pressed="true"]) { background: transparent; border-color: transparent; -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: none; }
+.work-bar .filters button:not([aria-pressed="true"]):hover { border-color: var(--glass-edge); }
+.view-toggle { display: flex; flex-shrink: 0; }
+.view-toggle button { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 999px; border: 0; background: transparent; color: var(--muted); cursor: pointer; }
+.view-toggle button:hover { color: var(--fg); }
+.view-toggle button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.view-toggle svg { width: 16px; height: 16px; }
 @media (max-width: 600px) {
-  .filters[data-target="#work-list"] { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
-  .filters[data-target="#work-list"] button { flex-shrink: 0; }
-  .tiles .card-cap { left: 8px; right: 8px; bottom: 8px; padding: 8px 12px; }
+  .work-bar .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .work-bar .filters button { flex-shrink: 0; }
+  .view-toggle { display: none; }
+  #work-list .card-cap { left: 8px; right: 8px; bottom: 8px; padding: 8px 12px; }
 }
