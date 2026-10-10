@@ -4,7 +4,7 @@
 .pj-hero { position: relative; overflow: hidden; }
 .pj-hero-bg { position: absolute; inset: 0; z-index: 0; border-radius: 0; }
 .pj-hero-bg img, .pj-hero-bg video { width: 100%; height: 100%; object-fit: cover; display: block; }
-.pj-hero.has-bg::after { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(13,13,14,.55), var(--bg) 96%); }
+.pj-hero.has-bg::after { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(180deg, rgba(0,0,0,.55), var(--bg) 96%); }
 .pj-hero .project-hero { position: relative; z-index: 1; padding-block: 40px 32px; gap: 22px; }
 .pj-hero h1 { font-size: clamp(36px, 5.6vw, 88px); }
 
@@ -33,7 +33,7 @@
 
 /* 小的裝飾 GIF：方格整齊排 */
 .pj-deco { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
-.pj-deco .media { aspect-ratio: 1; background: #161618; }
+.pj-deco .media { aspect-ratio: 1; background: #000; }
 .pj-deco img { width: 100%; height: 100%; display: block; }
 
 /* Credits：有 Wix 的背景影片時鋪在後面 */
@@ -51,3 +51,6 @@
   .pj-hero .facts { grid-template-columns: 1fr 1fr; gap: 14px 20px; }
   .pj-hero .facts div:last-child { grid-column: 1 / -1; }
 }
+
+/* 作品頁全部黑底：素材載入前也不顯示灰色斜線格 */
+.project-page .media { background: #000; }

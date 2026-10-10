@@ -1,14 +1,14 @@
 /* HaoChen Portfolio — 深色、以 Reel 為主的版面（設計稿 A 版）
    想換強調色，只要改 --accent 一個值。 */
 :root {
-  --bg: #0D0D0E;
+  --bg: #000;
   --surface: #18181A;
   --fg: #EEECE7;
   --muted: #A3A19B;
   --line: #2A2A2D;
   --chip: #3A3A3E;
   --accent: #C6FF3D;
-  --on-accent: #0D0D0E;
+  --on-accent: #000;
 
   --display: 'Syne', 'Noto Sans TC', system-ui, sans-serif;
   --body: 'Noto Sans TC', system-ui, -apple-system, 'PingFang TC', sans-serif;
