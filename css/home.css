@@ -167,3 +167,19 @@ html:not(.intro-playing) .reel-intro { display: none; }
   .reel-intro { display: none; }
   .reel-media.flying { transition: none; }
 }
+
+/* 玻璃效果（變數在 style.css） */
+.w .cap {
+  left: 8px; bottom: 8px; max-width: calc(100% - 16px);
+  padding: 10px 14px; border-radius: 6px;
+  background: var(--glass-bg); border: 1px solid var(--glass-edge); box-shadow: var(--glass-hi);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+}
+.lab-tile .tag {
+  background: var(--glass-bg); border: 1px solid var(--glass-edge);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+}
+.ri-panel {
+  background: rgba(14, 14, 16, 0.5); border-color: var(--glass-edge); box-shadow: var(--glass-hi);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+}

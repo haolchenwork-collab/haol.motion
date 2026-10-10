@@ -54,3 +54,12 @@
 
 /* 作品頁全部黑底：素材載入前也不顯示灰色斜線格 */
 .project-page .media { background: #000; }
+
+/* 玻璃效果：標題區的資訊欄、Credits 疊在 Wix 背景素材上時用毛玻璃面板 */
+.pj-hero .facts, .pj-credits.has-bg .section {
+  background: var(--glass-bg); border: 1px solid var(--glass-edge); border-radius: 8px; box-shadow: var(--glass-hi);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
+}
+.pj-hero .facts { padding: 18px 20px; }
+.pj-credits.has-bg .section { margin-block: 40px; padding: 32px 28px; }
+.pj-credits.has-bg .pj-credit-bg { opacity: .6; }
