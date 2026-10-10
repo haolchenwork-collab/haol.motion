@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 33
+ASSET_V = 34
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -212,7 +212,7 @@ def media_tag(it, fit='cover'):
     return '<img src="{}" alt="" loading="lazy" style="object-fit:{}">'.format(html.escape(url), fit)
 
 
-def rows_html(media, row_h=480):
+def rows_html(media, row_h=260):
     """照 Wix 上的列（y 相近的放同一列）排，同一列等高、照比例分寬度"""
     media = sorted(media, key=lambda m: (m['r'][1], m['r'][0]))
     rows = []
@@ -233,7 +233,7 @@ def rows_html(media, row_h=480):
         ars = sum(m['r'][2] / max(m['r'][3], 1) for m in row)
         cap = ars * row_h + 8 * (len(row) - 1)
         if len(row) == 1:
-            cap = min(cap, 860)                   # 單張圖最寬 860px，不撐滿整個畫面
+            cap = min(cap, 560)                   # 單張圖最寬 560px，不撐滿整個畫面
         mw = ' style="max-width:{:.0f}px"'.format(cap)
         out.append('<div class="pj-row n{}"{}>{}</div>'.format(min(len(row), 4), mw, ''.join(cells)))
     return '\n'.join(out)
@@ -415,7 +415,7 @@ def render(slug, data, films, title):
                 s['band']['r'][2] / max(s['band']['r'][3], 1), media_tag(s['band'])))
         is_el = s['name'].lower().startswith('element')
         if s['media'] and not is_el:
-            body.append(rows_html(s['media'], 480))
+            body.append(rows_html(s['media']))
         # 元素：這一區的素材和小裝飾 GIF 一起排成等大方格，填滿整個寬度
         els = s['media'] if is_el else []
         els = [e for e in els if min(e.get('o', e['r'][2:])) >= 40 and min(e['r'][2:]) >= 20]

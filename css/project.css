@@ -29,7 +29,7 @@
 @media (max-width: 700px) { .pj-brief { grid-template-columns: 1fr; } .pj-brief .eyebrow br { display: none; } }
 
 /* 素材區塊：同一列等高，寬度照素材比例分 */
-.pj-sec { padding-block: 0 56px; }
+.pj-sec { padding-block: 0 40px; }
 .pj-sec .section-head { margin-bottom: 12px; }
 .pj-sec .section-head h2 { font-size: clamp(22px, 2.2vw, 32px); }
 .pj-row { display: flex; gap: 8px; margin: 0 auto 8px; }
