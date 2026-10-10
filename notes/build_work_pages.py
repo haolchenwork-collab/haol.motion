@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = '16'
+ASSET_V = '17'
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -367,7 +367,7 @@ def render(slug, data, films, title):
     if kind:
         facts.append(('TYPE', kind))
     if roles:
-        facts.append(('MY ROLE', ' · '.join(roles)))
+        facts.append(('MY ROLE', roles))
 
     hero_cls = 'project-hero wrap' + (' has-bg' if hero_bg else '')
     out.append('<section class="pj-hero{}">'.format(' has-bg' if hero_bg else ''))
@@ -378,8 +378,15 @@ def render(slug, data, films, title):
     out.append('<div><h1>{}</h1>{}</div>'.format(html.escape(head_title),
                '<p class="sub">{}</p>'.format(html.escape(zh_sub)) if zh_sub else ''))
     if facts:
-        out.append('<dl class="facts">{}</dl>'.format(''.join(
-            '<div><dt>{}</dt><dd>{}</dd></div>'.format(a, html.escape(b)) for a, b in facts)))
+        def fact_dd(label, val):
+            if isinstance(val, list):              # 負責項目：一個一個小標籤
+                return '<dd class="pj-chips">{}</dd>'.format(''.join('<span>{}</span>'.format(html.escape(v)) for v in val))
+            m = re.match(r'^([^A-Za-z]*[\u4e00-\u9fff][^A-Za-z]*?)\s+([A-Za-z].*)$', val)
+            if m:                                  # 中英並列的名稱：中文一行、英文小字一行
+                return '<dd>{}<small>{}</small></dd>'.format(html.escape(m.group(1)), html.escape(m.group(2)))
+            return '<dd>{}</dd>'.format(html.escape(val))
+        out.append('<dl class="facts pj-facts">{}</dl>'.format(''.join(
+            '<div class="f-{}"><dt>{}</dt>{}</div>'.format(a.split()[-1].lower(), a, fact_dd(a, b)) for a, b in facts)))
     out.append('</div></section>')
 
     # 影片
