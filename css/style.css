@@ -301,19 +301,24 @@ figcaption { font-size: 14px; color: var(--muted); }
 #work-list .card:hover .media img { transform: scale(1.04); }
 #work-list .card-cap {
   position: absolute; left: 0; right: 0; bottom: 0; z-index: 2;
-  clip-path: inset(0 round 0 0 8px 8px);
   display: flex; flex-direction: column; gap: 8px;
   padding: 32px 16px 14px;
 }
-/* 玻璃沒有邊框：模糊層往上漸漸淡出到圖片裡（只遮罩模糊層，文字不受影響） */
-#work-list .card-cap::before {
-  /* 模糊層往左右下多延伸 24px，再由外層 clip-path 裁掉，避免 backdrop-filter 在邊緣漏出沒模糊到的亮邊 */
-  content: ""; position: absolute; inset: 0 -24px -24px; z-index: -1; pointer-events: none;
-  background: linear-gradient(to top, rgba(0, 0, 0, .92), rgba(0, 0, 0, .7) 60%, transparent);
-  -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px);
-  -webkit-mask-image: linear-gradient(to top, #000 50%, transparent);
-  mask-image: linear-gradient(to top, #000 50%, transparent);
+/* 底部的模糊＋壓暗都放在 .media 裡面：用圖片的模糊複本，不用 backdrop-filter（邊緣才不會漏亮邊，外光也不會把模糊吃掉） */
+#work-list .media-blur {
+  position: absolute; inset: -8px; z-index: 0; pointer-events: none;
+  background-position: center; background-size: cover;
+  filter: blur(3px);
+  -webkit-mask-image: linear-gradient(to top, #000 22%, transparent 48%);
+  mask-image: linear-gradient(to top, #000 22%, transparent 48%);
+  transition: transform .6s cubic-bezier(.2,.7,.2,1);
 }
+#work-list .card .media::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  background: linear-gradient(to top, rgba(0, 0, 0, .92), rgba(0, 0, 0, .7) 25%, transparent 50%);
+}
+#work-list .card:hover .media-blur { transform: scale(1.04); }
+#work-list .card.is-playing .media-blur { opacity: 0; }
 #work-list .card:hover h3 { color: var(--accent); }
 #work-list .card-title { align-items: baseline; gap: 12px; }
 #work-list .card-title > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
