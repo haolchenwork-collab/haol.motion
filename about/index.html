@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="../css/style.css?v=48">
+<link rel="stylesheet" href="../css/style.css?v=49">
 </head>
 <body>
 
@@ -25,58 +25,64 @@
   </div>
 </header>
 
-<main>
-  <section class="page-hero wrap">
-    <h1>About<span class="dot">.</span></h1>
-  </section>
-
-  <section class="wrap about-page">
-    <!-- 1. 個人照 -->
-    <div class="media ratio-4x5"><img src="https://static.wixstatic.com/media/f77ff6_eb79823f402641d3b574b8847a627529~mv2.png/v1/fill/w_800,h_1000,al_c,q_90,enc_auto/portrait.png" alt="廖浩辰個人照"></div>
-
-    <div style="display:flex;flex-direction:column;gap:40px;min-width:0">
-      <!-- 1. 自我介紹 -->
-      <div class="block">
-        <p class="name" style="margin:0;font-family:var(--display);font-weight:600;font-size:28px">HaoChen Liao 廖浩辰</p>
-        <p class="bio" style="margin:0;font-size:18px;max-width:62ch">擅長 2D 動態設計和角色動畫，參與過許多商業專案。目前自學 3D 風格，並在工作之餘進行創作練習。喜歡把不同媒材融合在一起，結合不同風格與技術，創造多元的作品。</p>
-      </div>
-
-      <!-- 2. 專長與工具 -->
-      <div class="block">
-        <h2>SKILLS &amp; TOOLS</h2>
-        <div class="tags skills"><span>2D Motion Graphics</span><span>2D Character Animation</span><span>3D Motion</span><span>Compositing</span><span>2D FX</span><span>After Effects</span><span>Cinema 4D</span></div>
-      </div>
-
-      <!-- 3. 工作經歷 -->
-      <div class="block exp">
-        <h2>EXPERIENCE</h2>
-        <div>
-          <div class="exp-row">
-            <span class="years">2022 – Now</span>
-            <div><strong>Mixcode 混合編碼</strong><span class="role">2D Motion Designer · 2D Character · Compositing · 3D Motion</span><span class="projects">GMA 32nd、TIAF、Good Financial Series EP7、Break Ball</span></div>
-          </div>
-          <div class="exp-row">
-            <span class="years">2021 – 2022</span>
-            <div><strong>Nulls Design 空集設計</strong><span class="role">2D Motion Designer · 2D Character · 3D Motion · 2D FX</span><span class="projects">Gogoro Promote、新竹市消防博物館</span></div>
-          </div>
-          <div class="exp-row">
-            <span class="years">2019 – 2021</span>
-            <div><strong>27 Design 二棲設計</strong><span class="role">2D Motion Designer</span><span class="projects">Taiwan National Day、GMA 31st、Disney Channel Ident</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 4. 合作客戶 -->
-      <div class="block">
-        <h2>CLIENTS</h2>
-        <ul class="client-list">
-          <li>Disney Channel</li><li>Gogoro</li><li>金曲獎</li><li>台中市影視發展基金會</li><li>新竹市消防博物館</li><li>[其他客戶]</li>
-        </ul>
-      </div>
-
-      <!-- 5. 履歷：PDF 放 files/HaoChen-Liao-CV.pdf -->
-      <a class="more" href="../files/HaoChen-Liao-CV.pdf" style="align-self:flex-start">下載履歷 PDF ↓</a>
+<main class="about-bento">
+  <section class="wrap ab-grid">
+    <!-- 1. 名字＋介紹 -->
+    <div class="ab-tile ab-intro">
+      <div class="ab-label"><span>About</span><span>廖浩辰</span></div>
+      <h1>HaoChen<br>Liao<span class="dot">.</span></h1>
+      <p class="ab-role">2D Motion Designer <b>/</b> 3D Artist</p>
+      <p class="ab-bio">擅長 2D 動態設計和角色動畫，參與過許多商業專案。目前自學 3D 風格，並在工作之餘進行創作練習。喜歡把不同媒材融合在一起，結合不同風格與技術，創造多元的作品。</p>
     </div>
+
+    <!-- 2. 個人照（玻璃標籤） -->
+    <figure class="ab-tile ab-photo">
+      <img src="https://static.wixstatic.com/media/f77ff6_eb79823f402641d3b574b8847a627529~mv2.png/v1/fill/w_900,h_1100,al_c,q_90,enc_auto/portrait.png" alt="廖浩辰個人照">
+      <figcaption><span class="pulse"></span>Based in Taiwan · Open for work</figcaption>
+    </figure>
+
+    <!-- 3. 數字 -->
+    <div class="ab-tile ab-stat"><b>2019</b><span>開始做動態設計</span></div>
+    <div class="ab-tile ab-stat"><b>15</b><span>商業專案</span></div>
+    <div class="ab-tile ab-stat accent"><b>3</b><span>合作過的工作室</span></div>
+
+    <!-- 4. 經歷：時間軸 -->
+    <div class="ab-tile ab-exp">
+      <div class="ab-label"><span>Experience</span><span>2019 — Now</span></div>
+      <div class="ab-track" aria-hidden="true">
+        <span style="--l:0%;--w:28.6%;--c:#5CC8FF"></span>
+        <span style="--l:28.6%;--w:14.3%;--c:#FF8A3D"></span>
+        <span style="--l:42.9%;--w:57.1%;--c:var(--accent)"></span>
+      </div>
+      <div class="ab-years" aria-hidden="true"><span>2019</span><span>2021</span><span>2022</span><span>Now</span></div>
+      <ol class="ab-jobs">
+        <li style="--c:var(--accent)"><span class="yr">2022 – Now</span><strong>Mixcode 混合編碼</strong><span class="role">2D Motion · 2D Character · Compositing · 3D Motion</span><span class="proj">TIAF、金曲獎 GMA、Good Financial、破蛋者</span></li>
+        <li style="--c:#FF8A3D"><span class="yr">2021 – 2022</span><strong>Nulls Design 空集設計</strong><span class="role">2D Motion · 2D Character · 3D Motion · 2D FX</span><span class="proj">Gogoro、新竹市消防博物館</span></li>
+        <li style="--c:#5CC8FF"><span class="yr">2019 – 2021</span><strong>27 Design 二棲設計</strong><span class="role">2D Motion</span><span class="proj">國慶、金曲獎 GMA 31、Disney Channel</span></li>
+      </ol>
+    </div>
+
+    <!-- 5. 專長與工具 -->
+    <div class="ab-tile ab-skills">
+      <div class="ab-label"><span>Skills &amp; Tools</span></div>
+      <div class="ab-apps"><span class="ae">Ae</span><span class="c4d">C4D</span></div>
+      <ul class="ab-chips">
+        <li>2D Motion Graphics</li><li>2D Character Animation</li><li>3D Motion</li><li>Compositing</li><li>2D FX</li>
+      </ul>
+    </div>
+
+    <!-- 6. 合作客戶：跑馬燈 -->
+    <div class="ab-tile ab-clients">
+      <div class="ab-label"><span>Clients &amp; Projects</span></div>
+      <div class="ab-marquee"><div class="ab-marquee-track"><span>Disney Channel</span><i>✳</i><span>Gogoro</span><i>✳</i><span>金曲獎 GMA</span><i>✳</i><span>金馬獎 Golden Horse</span><i>✳</i><span>台灣燈會</span><i>✳</i><span>台中國際動畫影展</span><i>✳</i><span>國慶 Taiwan National Day</span><i>✳</i><span>瀚草文創</span><i>✳</i><span>薩泰爾娛樂</span><i>✳</i><span>美好金融</span><i>✳</i><span>新竹市消防局</span><i>✳</i><span>Disney Channel</span><i>✳</i><span>Gogoro</span><i>✳</i><span>金曲獎 GMA</span><i>✳</i><span>金馬獎 Golden Horse</span><i>✳</i><span>台灣燈會</span><i>✳</i><span>台中國際動畫影展</span><i>✳</i><span>國慶 Taiwan National Day</span><i>✳</i><span>瀚草文創</span><i>✳</i><span>薩泰爾娛樂</span><i>✳</i><span>美好金融</span><i>✳</i><span>新竹市消防局</span><i>✳</i></div></div>
+    </div>
+
+    <!-- 7. 聯絡 -->
+    <a class="ab-tile ab-contact" href="mailto:haolchen.work@gmail.com">
+      <span class="ab-label"><span>Contact</span></span>
+      <span class="big">Let's make<br>things move ↗</span>
+      <span class="mail">haolchen.work@gmail.com</span>
+    </a>
   </section>
 </main>
 
@@ -95,6 +101,6 @@
   </div>
 </footer>
 
-<script src="../js/main.js?v=48"></script>
+<script src="../js/main.js?v=49"></script>
 </body>
 </html>
