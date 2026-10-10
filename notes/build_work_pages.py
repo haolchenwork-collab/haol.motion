@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = '14'
+ASSET_V = '15'
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -389,18 +389,13 @@ def render(slug, data, films, title):
     if film_parts:
         out.append('<section class="wrap pj-films" aria-label="完整影片">{}</section>'.format(''.join(film_parts)))
 
-    # 概念＋我負責的部分
-    if brief_zh or brief_en or roles:
-        col1 = ''
-        if brief_zh or brief_en:
-            col1 = '<div><h2 class="eyebrow">THE BRIEF · 專案概念</h2>{}{}</div>'.format(
-                ''.join('<p class="statement">{}</p>'.format(html.escape(z).replace('\n', '<br>')) for z in brief_zh),
-                ''.join('<p class="pj-en">{}</p>'.format(html.escape(e)) for e in brief_en))
-        col2 = ''
-        if roles:
-            col2 = '<div><h2 class="eyebrow">WHAT I DID · 我負責的部分</h2><ul class="did">{}</ul></div>'.format(
-                ''.join('<li>{}</li>'.format(html.escape(r)) for r in roles))
-        out.append('<section class="section wrap pj-brief"><div class="two-col">{}{}</div></section>'.format(col1, col2))
+    # 專案概念：左邊小標，右邊中文（每段一行）＋英文。負責項目已經在上面的資訊欄，這裡不重複
+    if brief_zh or brief_en:
+        zh_ps = [ln.strip() for z in brief_zh for ln in z.split('\n') if ln.strip()]
+        en_ps = [ln.strip() for e in brief_en for ln in e.split('\n') if ln.strip()]
+        out.append('<section class="section wrap pj-brief"><h2 class="eyebrow">THE BRIEF<br>專案概念</h2><div class="pj-brief-body">{}{}</div></section>'.format(
+            ''.join('<p class="pj-zh">{}</p>'.format(html.escape(z)) for z in zh_ps),
+            '<div class="pj-en">{}</div>'.format(''.join('<p>{}</p>'.format(html.escape(e)) for e in en_ps)) if en_ps else ''))
 
     # 素材區塊
     for s in sections:
