@@ -76,6 +76,46 @@ document.querySelectorAll('video[data-vimeo-fallback]').forEach(function (v) {
   if (p && p.catch) p.catch(function () {});
 });
 
+// 3c. 沒有案例頁的作品：點卡片在本頁跳出完整影片。data-film="vimeo:編號" 或 mp4 網址
+var filmBox;
+function filmNode(src, title) {
+  var el;
+  if (src.indexOf('vimeo:') === 0) {
+    el = document.createElement('iframe');
+    el.src = 'https://player.vimeo.com/video/' + encodeURIComponent(src.slice(6)) + '?autoplay=1&title=0&byline=0&portrait=0&dnt=1';
+    el.allow = 'autoplay; fullscreen; picture-in-picture';
+    el.allowFullscreen = true;
+    el.title = title;
+  } else {
+    el = document.createElement('video');
+    el.src = src; el.controls = true; el.autoplay = true; el.playsInline = true;
+  }
+  return el;
+}
+function openFilm(src, title) {
+  if (!filmBox) {
+    filmBox = document.createElement('dialog');
+    filmBox.className = 'film-box';
+    filmBox.innerHTML = '<div class="film-inner"><div class="film-bar"><span class="film-title mono"></span><button type="button" class="film-close">關閉 ✕</button></div><div class="media ratio-16x9 film-media"></div></div>';
+    document.body.appendChild(filmBox);
+    filmBox.querySelector('.film-close').addEventListener('click', function () { filmBox.close(); });
+    filmBox.addEventListener('click', function (e) { if (e.target === filmBox) filmBox.close(); });
+    filmBox.addEventListener('close', function () { filmBox.querySelector('.film-media').innerHTML = ''; });
+  }
+  var m = filmBox.querySelector('.film-media');
+  m.innerHTML = '';
+  m.appendChild(filmNode(src, title));
+  filmBox.querySelector('.film-title').textContent = title;
+  if (filmBox.showModal) filmBox.showModal(); else filmBox.setAttribute('open', '');
+}
+document.querySelectorAll('a[data-film]').forEach(function (el) {
+  el.addEventListener('click', function (e) {
+    e.preventDefault();
+    var h = el.querySelector('h3');
+    openFilm(el.getAttribute('data-film'), h ? h.textContent : '影片');
+  });
+});
+
 // 4. 篩選按鈕（作品列表、LAB）：按鈕 data-filter，項目 data-tags（空白分隔）。
 document.querySelectorAll('.filters').forEach(function (bar) {
   var target = document.querySelector(bar.getAttribute('data-target'));
@@ -104,8 +144,11 @@ if (box) {
     boxMedia.innerHTML = '';
     var m = entry.querySelector('.media').cloneNode(true);
     m.classList.remove('ratio-1x1');
+    var film = entry.getAttribute('data-film');
     var loop = entry.getAttribute('data-loop');
-    if (loop) {
+    if (film) {
+      m.appendChild(filmNode(film, entry.querySelector('h3').textContent));
+    } else if (loop) {
       var v = document.createElement('video');
       v.src = loop; v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
       v.addEventListener('error', function () { v.remove(); });

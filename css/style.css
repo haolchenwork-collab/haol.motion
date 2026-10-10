@@ -249,3 +249,13 @@ figcaption { font-size: 14px; color: var(--muted); }
 .block { display: flex; flex-direction: column; gap: 12px; }
 .block h2 { margin: 0; font-family: var(--mono); font-weight: 500; font-size: 13px; letter-spacing: 0.08em; color: var(--muted); }
 .client-list { margin: 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px 32px; font-family: var(--display); font-weight: 600; font-size: 20px; }
+
+/* 作品影片跳出視窗（js/main.js 3c） */
+.film-box { width: min(1280px, 94vw, calc((100vh - 100px) * 16 / 9)); max-width: none; padding: 0; border: 0; background: transparent; color: var(--fg); }
+.film-box::backdrop { background: rgba(0, 0, 0, 0.88); }
+.film-inner { display: flex; flex-direction: column; gap: 10px; }
+.film-bar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.film-title { color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.film-close { min-height: 40px; padding: 0 16px; background: var(--accent); color: var(--on-accent); border: 0; border-radius: 999px; font: inherit; font-weight: 500; cursor: pointer; flex: none; }
+.film-media { background: #000; border-radius: 6px; }
+.film-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; background: #000; }

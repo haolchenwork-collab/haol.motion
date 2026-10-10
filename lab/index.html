@@ -9,7 +9,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="../css/style.css?v=5">
+<link rel="stylesheet" href="../css/style.css?v=6">
 </head>
 <body>
 
@@ -42,49 +42,70 @@
     </div>
 
     <!-- 新增實驗：複製最上面一則，編號 +1，放在最前面。
-         圖片放 images/lab/，循環動畫放 videos/lab/（data-loop 可省略） -->
+         點開時播的影片寫在 data-film（vimeo:編號 或 mp4 網址）；data-tags 填技術才會出現在篩選裡 -->
     <div class="lab-grid" id="lab-list">
-      <button type="button" class="lab-card" id="lab-006" data-entry data-tags="3d" data-loop="../videos/lab/lab-006.mp4" aria-haspopup="dialog">
-        <div class="media ratio-1x1"><img src="../images/lab/lab-006.jpg" alt=""></div>
-        <div class="lab-meta"><span class="lab-no">LAB-006</span><span>[日期]</span></div>
-        <h3>[實驗標題]</h3>
-        <p class="lab-note">[這次在試什麼，一兩句]</p>
-        <div class="tags"><span>3D</span><span>C4D</span></div>
-      </button>
-      <button type="button" class="lab-card" id="lab-005" data-entry data-tags="character" data-loop="../videos/lab/lab-005.mp4" aria-haspopup="dialog">
-        <div class="media ratio-1x1"><img src="../images/lab/lab-005.jpg" alt=""></div>
-        <div class="lab-meta"><span class="lab-no">LAB-005</span><span>[日期]</span></div>
-        <h3>[實驗標題]</h3>
-        <p class="lab-note">[這次在試什麼，一兩句]</p>
-        <div class="tags"><span>角色</span><span>AE</span></div>
-      </button>
-      <button type="button" class="lab-card" id="lab-004" data-entry data-tags="material 3d" data-loop="../videos/lab/lab-004.mp4" aria-haspopup="dialog">
-        <div class="media ratio-1x1"><img src="../images/lab/lab-004.jpg" alt=""></div>
-        <div class="lab-meta"><span class="lab-no">LAB-004</span><span>[日期]</span></div>
-        <h3>[實驗標題]</h3>
-        <p class="lab-note">[這次在試什麼，一兩句]</p>
-        <div class="tags"><span>材質</span><span>C4D</span></div>
-      </button>
-      <button type="button" class="lab-card" id="lab-003" data-entry data-tags="transition" data-loop="../videos/lab/lab-003.mp4" aria-haspopup="dialog">
-        <div class="media ratio-1x1"><img src="../images/lab/lab-003.jpg" alt=""></div>
-        <div class="lab-meta"><span class="lab-no">LAB-003</span><span>[日期]</span></div>
-        <h3>[實驗標題]</h3>
-        <p class="lab-note">[這次在試什麼，一兩句]</p>
-        <div class="tags"><span>轉場</span><span>AE</span></div>
-      </button>
-      <button type="button" class="lab-card" id="lab-002" data-entry data-tags="character" data-loop="../videos/lab/lab-002.mp4" aria-haspopup="dialog">
-        <div class="media ratio-1x1"><img src="../images/lab/lab-002.jpg" alt=""></div>
-        <div class="lab-meta"><span class="lab-no">LAB-002</span><span>[日期]</span></div>
-        <h3>[實驗標題]</h3>
-        <p class="lab-note">[這次在試什麼，一兩句]</p>
-        <div class="tags"><span>角色</span><span>2D</span></div>
-      </button>
-      <button type="button" class="lab-card" id="lab-001" data-entry data-tags="graphic" aria-haspopup="dialog">
-        <div class="media ratio-1x1"><img src="../images/lab/lab-001.jpg" alt="2024 新年紅包袋設計"></div>
-        <div class="lab-meta"><span class="lab-no">LAB-001</span><span>2024.01</span></div>
+      <button type="button" class="lab-card" id="lab-009" data-entry data-tags="" data-film="https://video.wixstatic.com/video/f77ff6_3617f1ff050f4dc994a767e7e5c05f4c/720p/mp4/file.mp4" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://static.wixstatic.com/media/f77ff6_3617f1ff050f4dc994a767e7e5c05f4cf000.jpg/v1/fill/w_960,h_960,q_85/f77ff6_3617f1ff050f4dc994a767e7e5c05f4cf000.jpg" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-009</span><span>2024.01</span></div>
         <h3>2024 Lunar Year 紅包袋</h3>
         <p class="lab-note">[設計概念，一兩句]</p>
-        <div class="tags"><span>平面</span><span>插畫</span></div>
+        <div class="tags"><span>[技術]</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-008" data-entry data-tags="" data-film="vimeo:896800326" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://i.vimeocdn.com/video/1772248893-20da0ecbf4f4a577938dcb1d3b9483b8642452c9cb9f7056d7aadd481b00ae8a-d_960" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-008</span><span>2023.12</span></div>
+        <h3>Star</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>[技術]</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-007" data-entry data-tags="" data-film="vimeo:896424412" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://i.vimeocdn.com/video/1771665485-370457a1135f15385030ad9d0752fffd4207660a79b74d59d0fcebb5c7190eed-d_960" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-007</span><span>2023.10</span></div>
+        <h3>Halloween</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>[技術]</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-006" data-entry data-tags="" data-film="vimeo:896424483" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://i.vimeocdn.com/video/1771665663-2575cec5c54c7777da7722f5941b6ac16e0509676dd7d2b241849fd9e06f8b19-d_960" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-006</span><span>2023.08</span></div>
+        <h3>Walk</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>[技術]</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-005" data-entry data-tags="" data-film="vimeo:896424463" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://i.vimeocdn.com/video/1771665618-f174f66db62d1dffd22df0d638417792f1fcb2fee4a095d71a9bb8196b3103e6-d_960" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-005</span><span>2023.07</span></div>
+        <h3>Ice Cream</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>[技術]</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-004" data-entry data-tags="" data-film="vimeo:896424451" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://i.vimeocdn.com/video/1771665602-7d610c89769604fd865237d5c6d4ba8cf3ecb806adcb610f0d7c0b031ccbec0e-d_960" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-004</span><span>2023.06</span></div>
+        <h3>Sakura</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>[技術]</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-003" data-entry data-tags="" data-film="vimeo:896424437" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://i.vimeocdn.com/video/1771665523-eb78efce2ee1576905916ffcea59c9cc1a59bc9cda7e18f21476340c746081ef-d_960" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-003</span><span>2023.04</span></div>
+        <h3>Enoshima</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>[技術]</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-002" data-entry data-tags="" data-film="vimeo:896424427" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://i.vimeocdn.com/video/1771666448-d50d590238fdde7c4ac11a2334bf1b756b4e638a01dd9b1855a8dfe207f63027-d_960" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-002</span><span>2023.03</span></div>
+        <h3>Snow</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>[技術]</span></div>
+      </button>
+      <button type="button" class="lab-card" id="lab-001" data-entry data-tags="" data-film="vimeo:896424420" aria-haspopup="dialog">
+        <div class="media ratio-1x1"><img src="https://i.vimeocdn.com/video/1771665490-700df9e690d4f25a3477571e64b01f37d10a933ee61c2473481e2daacce0b87a-d_960" alt="" loading="lazy"></div>
+        <div class="lab-meta"><span class="lab-no">LAB-001</span><span>2023.01</span></div>
+        <h3>Rabbit</h3>
+        <p class="lab-note">[這次在試什麼，一兩句]</p>
+        <div class="tags"><span>[技術]</span></div>
       </button>
     </div>
   </section>
@@ -115,6 +136,6 @@
   </div>
 </footer>
 
-<script src="../js/main.js?v=5"></script>
+<script src="../js/main.js?v=6"></script>
 </body>
 </html>
