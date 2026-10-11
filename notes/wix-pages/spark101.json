@@ -1,0 +1,141 @@
+{
+"W": 980,
+"H": 2000,
+"items": [
+{
+"t": "t",
+"r": [
+204,
+100,
+541,
+30
+],
+"l": [
+{
+"x": "SPARK 101",
+"s": "255,255,255|23.9|400|display-extrabold|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+130,
+300,
+19
+],
+"l": [
+{
+"x": "台北 101 雙跨年 主視覺",
+"s": "255,255,255|13|400|display-extrabold|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+167,
+419,
+51
+],
+"l": [
+{
+"x": "Branding / 2025 / Mixcode Studio / Role 2D Motion",
+"s": "255,255,255|18|400|display|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+230,
+520,
+150
+],
+"l": [
+{
+"x": "SPARK 所代表的不僅是一場活動的開始結束，而是串起不同世代、情感與個人記憶的象徵。\n在設計上，以中性俐落的無襯線字體展現台北101作為國際地標的姿態，並以中心 A 字的光暈流動作為視覺焦點，象徵火花綻放的瞬間，呼應日夜轉換的情緒節奏，讓 SPARK 的能量從 11 月到隔年 2 月的節慶季節，如同一束光持續閃耀。",
+"s": "255,255,255|18|400|display|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+400,
+520,
+150
+],
+"l": [
+{
+"x": "SPARK is more than the beginning or end of an event. It is a symbol that connects generations, emotions and personal memories.\nIn the visual design, a clean and neutral sans-serif typeface expresses the iconic presence of Taipei 101 as an international landmark.\nThe flowing glow centered on the letter “A” becomes the visual focal point, symbolizing the very moment a spark ignites.\nThis radiant motion echoes the emotional rhythm between day and night, allowing SPARK’s energy to shine continuously throughout the festive season, from November to February, like a beam of light that never fades.",
+"s": "255,255,255|18|400|display|l"
+}
+]
+},
+{
+"t": "p",
+"r": [
+204,
+560,
+572,
+322
+]
+},
+{
+"t": "t",
+"r": [
+161,
+1600,
+132,
+32
+],
+"l": [
+{
+"x": "Credit",
+"s": "255,255,255|25.1|400|display-bold|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+279,
+1650,
+436,
+240
+],
+"l": [
+{
+"x": "CLIENT：台北金融大樓股份有限公司 Taipei 101",
+"s": "255,255,255|15|400|text|l"
+},
+{
+"x": "PRODUCTION：MixCode Studio"
+},
+{
+"x": "ART DIRECTOR：柯鈞譯 Chiunyi Ko、李孟栩 TuBo Lee"
+},
+{
+"x": "PROJECT MANAGER：陳安 Chen An"
+},
+{
+"x": "KEY VISUAL DESIGN：mollychang.cagw"
+},
+{
+"x": "GUIDELINE DESIGN：周邑勳 Zhou Yi Xun"
+},
+{
+"x": "GRAPHIC DESIGN：林義軒 I Hsuan Lin、侯函伶 Islene Hou"
+},
+{
+"x": "2D MOTION：廖浩辰 Haochen Liao"
+}
+]
+}
+]
+}
