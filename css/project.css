@@ -20,13 +20,14 @@
 .wx-dead { display: grid; place-items: center; border: 1px dashed var(--line); }
 
 /* 概念 */
-.pj-brief { padding-block: 48px; display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 16px 40px; border-bottom: 1px solid var(--line); }
-.pj-brief .eyebrow { line-height: 1.7; color: var(--accent); }
+.pj-brief { padding-block: 48px; display: grid; grid-template-columns: 260px minmax(0, 1fr); gap: 16px 40px; border-bottom: 1px solid var(--line); }
+.pj-brief-h { margin: 0; white-space: nowrap; font-family: var(--display); font-weight: 800; font-size: clamp(22px, 2.2vw, 32px); line-height: 1.15; }
+.pj-brief-h small { display: block; margin-top: 8px; font-size: 12px; font-weight: 400; letter-spacing: .08em; }
 .pj-brief-body { max-width: 760px; display: flex; flex-direction: column; gap: 10px; }
 .pj-zh { margin: 0; font-size: clamp(18px, 1.6vw, 22px); line-height: 1.8; letter-spacing: .02em; text-wrap: pretty; }
 .pj-en { margin-top: 14px; padding-top: 16px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
 .pj-en p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
-@media (max-width: 700px) { .pj-brief { grid-template-columns: 1fr; } .pj-brief .eyebrow br { display: none; } }
+@media (max-width: 700px) { .pj-brief { grid-template-columns: 1fr; } }
 
 /* 素材區塊：同一列等高，寬度照素材比例分 */
 .pj-sec { padding-block: 0 40px; }

@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 81
+ASSET_V = 82
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -413,7 +413,7 @@ def render(slug, data, films, title):
     if brief_zh or brief_en:
         zh_ps = [ln.strip() for z in brief_zh for ln in z.split('\n') if ln.strip()]
         en_ps = [ln.strip() for e in brief_en for ln in e.split('\n') if ln.strip()]
-        out.append('<section class="section wrap pj-brief"><h2 class="eyebrow">THE BRIEF<br>專案概念</h2><div class="pj-brief-body">{}{}</div></section>'.format(
+        out.append('<section class="section wrap pj-brief"><h2 class="pj-brief-h">The Brief<small class="mono muted">專案概念</small></h2><div class="pj-brief-body">{}{}</div></section>'.format(
             ''.join('<p class="pj-zh">{}</p>'.format(html.escape(z)) for z in zh_ps),
             '<div class="pj-en">{}</div>'.format(''.join('<p>{}</p>'.format(html.escape(e)) for e in en_ps)) if en_ps else ''))
 
