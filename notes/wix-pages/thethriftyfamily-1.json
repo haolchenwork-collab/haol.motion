@@ -1,1 +1,219 @@
-{"W": 993, "H": 3147, "items": [{"t": "b", "r": [0, 30, 993, 90], "c": "150,255,2", "br": 0}, {"t": "bi", "r": [0, 77, 993, 517], "u": "e62f00aac24d4fd980405a4917176b64.gif"}, {"t": "t", "r": [199, 103, 541, 30], "l": [{"x": "Golden Horse Award 61st", "s": "255,255,255|23.9|400|display-extrabold|l"}]}, {"t": "t", "r": [199, 135, 197, 19], "l": [{"x": "金馬61 動態設計", "s": "255,255,255|13|700|display-extrabold|l"}]}, {"t": "t", "r": [199, 162, 438, 48], "l": [{"x": "Award/ 2024 / Mixcode Studio / Role Motion (Lowerthird、Nomimees、Package)", "s": "255,255,255|18|400|display|l"}]}, {"t": "t", "r": [199, 235, 481, 77], "l": [{"x": "第61屆金馬獎頒獎典禮延續「時刻之間」主題，並探索時間的視覺可能性；我們將習慣的時間、日月的變換、燈光的亮暗等元素轉化至典禮設計中。", "s": "255,255,255|18|400|display|l"}]}, {"t": "t", "r": [199, 288, 632, 83], "l": [{"x": "The 61st Golden Horse Awards ceremony continues the theme of \"Moments in Between\" and explores the visual possibilities of time. We incorporate familiar elements of time, such as the changing of day and night and the shifting brightness of lights, into the ceremony's design.", "s": "255,255,255|16|400|display|l"}]}, {"t": "t", "r": [199, 604, 246, 32], "l": [{"x": "Award HightLight", "s": "255,255,255|25.1|400|display-bold|l"}]}, {"t": "p", "r": [199, 647, 596, 734]}, {"t": "t", "r": [199, 1393, 185, 32], "l": [{"x": "Nominees", "s": "255,255,255|25.1|400|display-bold|l"}]}, {"t": "p", "r": [199, 1437, 596, 336]}, {"t": "t", "r": [114, 1880, 145, 32], "l": [{"x": "Lower third", "s": "255,255,255|25.1|400|display-bold|l"}]}, {"t": "i", "r": [291, 1829, 582, 134], "u": "af773ba24b8f4f729f1fdd3bccde2ca7.gif", "o": [2952, 720]}, {"t": "t", "r": [199, 2038, 132, 32], "l": [{"x": "Process", "s": "255,255,255|25.1|400|display-bold|l"}]}, {"t": "g", "r": [199, 2082, 596, 407], "gi": [{"x": 0, "y": 0, "w": 724, "h": 407, "u": "2bbbae825e3f461ba7f65d89f172ad90.gif"}, {"x": 729, "y": 0, "w": 721, "h": 407, "u": "9a6a3944fea04e7b8dc6c7188b28aebd.gif"}]}, {"t": "i", "r": [199, 2527, 596, 434], "u": "44686ec773464058b594394b76329a00.webp", "o": [1920, 1399]}]}
+{
+"W": 993,
+"H": 3147,
+"items": [
+{
+"t": "b",
+"r": [
+0,
+30,
+993,
+90
+],
+"c": "150,255,2",
+"br": 0
+},
+{
+"t": "bi",
+"r": [
+0,
+77,
+993,
+517
+],
+"u": "e62f00aac24d4fd980405a4917176b64.gif"
+},
+{
+"t": "t",
+"r": [
+199,
+103,
+541,
+30
+],
+"l": [
+{
+"x": "Golden Horse Award 61st",
+"s": "255,255,255|23.9|400|display-extrabold|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+199,
+135,
+197,
+19
+],
+"l": [
+{
+"x": "金馬61 動態設計",
+"s": "255,255,255|13|700|display-extrabold|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+199,
+162,
+438,
+48
+],
+"l": [
+{
+"x": "Award/ 2024 / Mixcode Studio / Role Motion (Lowerthird、Nomimees、Package)",
+"s": "255,255,255|18|400|display|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+199,
+235,
+481,
+77
+],
+"l": [
+{
+"x": "第61屆金馬獎頒獎典禮延續「時刻之間」主題，並探索時間的視覺可能性；我們將習慣的時間、日月的變換、燈光的亮暗等元素轉化至典禮設計中。",
+"s": "255,255,255|18|400|display|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+199,
+288,
+632,
+83
+],
+"l": [
+{
+"x": "The 61st Golden Horse Awards ceremony continues the theme of \"Moments in Between\" and explores the visual possibilities of time. We incorporate familiar elements of time, such as the changing of day and night and the shifting brightness of lights, into the ceremony's design.",
+"s": "255,255,255|16|400|display|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+199,
+604,
+246,
+32
+],
+"l": [
+{
+"x": "Award HightLight",
+"s": "255,255,255|25.1|400|display-bold|l"
+}
+]
+},
+{
+"t": "p",
+"r": [
+199,
+647,
+596,
+734
+]
+},
+{
+"t": "t",
+"r": [
+199,
+1393,
+185,
+32
+],
+"l": [
+{
+"x": "Nominees",
+"s": "255,255,255|25.1|400|display-bold|l"
+}
+]
+},
+{
+"t": "p",
+"r": [
+199,
+1437,
+596,
+336
+]
+},
+{
+"t": "t",
+"r": [
+114,
+1880,
+145,
+32
+],
+"l": [
+{
+"x": "Lower third",
+"s": "255,255,255|25.1|400|display-bold|l"
+}
+]
+},
+{
+"t": "i",
+"r": [
+291,
+1829,
+582,
+134
+],
+"u": "af773ba24b8f4f729f1fdd3bccde2ca7.gif",
+"o": [
+2952,
+720
+]
+},
+{
+"t": "t",
+"r": [
+199,
+2038,
+132,
+32
+],
+"l": [
+{
+"x": "Process",
+"s": "255,255,255|25.1|400|display-bold|l"
+}
+]
+},
+{
+"t": "g",
+"r": [
+199,
+2082,
+596,
+407
+],
+"gi": [
+{
+"x": 0,
+"y": 0,
+"w": 724,
+"h": 407,
+"u": "2bbbae825e3f461ba7f65d89f172ad90.gif"
+},
+{
+"x": 729,
+"y": 0,
+"w": 721,
+"h": 407,
+"u": "9a6a3944fea04e7b8dc6c7188b28aebd.gif"
+}
+]
+}
+]
+}

@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 87
+ASSET_V = 88
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -248,6 +248,29 @@ def rows_html(media, row_h=260):
     return '\n'.join(out)
 
 
+CREDIT_DIR = os.path.join(ROOT, 'notes', 'credits')
+
+
+def credit_groups(slug):
+    """notes/credits/<slug>.txt：Wix 上只有 credit 圖的作品，改用這裡的文字（## 開新分組，職稱：名字）"""
+    path = os.path.join(CREDIT_DIR, slug + '.txt')
+    if not os.path.exists(path):
+        return None
+    groups = []
+    for ln in open(path, encoding='utf-8'):
+        ln = ln.rstrip('\n').strip()
+        if not ln or (ln.startswith('#') and not ln.startswith('##')):
+            continue
+        if ln.startswith('##'):
+            groups.append((ln[2:].strip(), []))
+            continue
+        m = re.match(r'^(.*?)\s*[：:]\s*(.+)$', ln)
+        if not groups:
+            groups.append(('', []))
+        groups[-1][1].append((m.group(1), m.group(2)) if m else ('', ln))
+    return groups
+
+
 def render(slug, data, films, title):
     W = data['W']
     items, H = fit_players(data['items'], data['H'])
@@ -441,7 +464,14 @@ def render(slug, data, films, title):
             html.escape(s['name']), html.escape(zh) + ' · ' if zh else '', n, '\n'.join(body)))
 
     # Credits
-    if credits:
+    groups = credit_groups(slug)
+    if groups:
+        out.append('<section class="pj-credits"><div class="section wrap"><h2 class="eyebrow pj-credit-head">CREDITS</h2>{}</div></section>'.format(''.join(
+            '<div class="pj-cgroup">{}<dl class="credits">{}</dl></div>'.format(
+                '<h3 class="pj-cgroup-h mono">{}</h3>'.format(html.escape(g)) if g else '',
+                ''.join('<div>{}<dd>{}</dd></div>'.format('<dt>{}</dt>'.format(html.escape(a)) if a else '', html.escape(b)) for a, b in rows))
+            for g, rows in groups)))
+    elif credits:
         bg = '<div class="pj-credit-bg media">{}</div>'.format(media_tag(credit_bg)) if credit_bg else ''
         out.append('<section class="pj-credits{}">{}<div class="section wrap"><h2 class="eyebrow pj-credit-head">CREDITS</h2><dl class="credits">{}</dl></div></section>'.format(
             ' has-bg' if credit_bg else '', bg, ''.join(
