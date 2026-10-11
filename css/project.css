@@ -139,3 +139,9 @@
   .pj-hero .pj-facts .pj-chips { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; text-align: left; scrollbar-width: none; }
 }
 @media (max-width: 700px) { .pj-hero .pj-facts .pj-chips { gap: 6px; } .pj-hero .pj-facts .pj-chips span { font-size: 11px; padding: 5px 9px; letter-spacing: 0; } }
+/* 資訊欄壓扁、分隔線統一同一種顏色 */
+.pj-hero .pj-facts { --fl: rgba(255,255,255,.16); border-top: 1px solid var(--fl); border-bottom: 1px solid var(--fl); }
+.pj-hero .pj-facts > div { padding-top: 12px; padding-bottom: 13px; gap: 6px; border-color: var(--fl) !important; }
+.pj-hero .pj-facts dd { line-height: 1.3; }
+.pj-hero .pj-facts .pj-chips span { padding: 3px 10px; }
+@media (max-width: 700px) { .pj-hero .pj-facts > div { padding: 10px 0 !important; } }
