@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 77
+ASSET_V = 78
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -18,6 +18,7 @@ VTHUMB = 'https://i.vimeocdn.com/video/{}-d_1280'
 
 # 檔名, Wix json, 標題, 中文, 年份, Vimeo 編號（依頁面上播放器的順序）, Vimeo 縮圖, 沒有 Vimeo 時用的 Wix 影片
 PAGES = [
+    ('new-taipei-dome', 'newtaipeidome', 'New Taipei Dome', '新北市大巨蛋 宣傳影片', '2025', []),
     ('tiaf-2023', 'tiaf2023', 'TIAF 2023', '台中國際動畫影展 形象片', '2023', ['852277020']),
     ('taiwan-lantern-festival-2025', 'tlf2025', 'Taiwan Lantern Festival', '2025 台灣燈會', '2025', ['1067632531']),
     ('golden-horse-61', 'thethriftyfamily-1', 'Golden Horse 61st', '第 61 屆金馬獎', '2024', ['1046285324', '1046277623']),
@@ -57,8 +58,11 @@ WEIGHT = {'display-extrabold': 800, 'display-bold': 700, 'display-medium': 500, 
 
 def media_url(u, w_px, h_px):
     """u 是去掉 f77ff6_ 和 ~mv2 的檔名，例如 60a6...581.gif"""
-    stem, ext = u.rsplit('.', 1)
-    full = 'f77ff6_{}~mv2.{}'.format(stem, ext)
+    if '~mv2' in u:                               # 別的 Wix 帳號的圖（例如 JP Space 01d8fa_）直接用完整檔名
+        full = u
+    else:
+        stem, ext = u.rsplit('.', 1)
+        full = 'f77ff6_{}~mv2.{}'.format(stem, ext)
     w, h = max(1, round(w_px * 2)), max(1, round(h_px * 2))
     return 'https://static.wixstatic.com/media/{0}/v1/fill/w_{1},h_{2},al_c,q_85/{0}'.format(full, w, h)
 
