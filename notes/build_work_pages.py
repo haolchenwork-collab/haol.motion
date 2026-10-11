@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 76
+ASSET_V = 77
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -30,7 +30,6 @@ PAGES = [
     ('gma31-best-taiwanese-male', 'gma31besttaiwanesemale', 'GMA 31st · Best Taiwanese Male', '第 31 屆金曲獎 最佳台語男歌手', '2020', ['464960271']),
     ('disney-channel-ident', 'disneychannel', 'Disney Channel Ident', '迪士尼頻道 識別動畫', '2020', ['411747351']),
     ('national-day-2019', 'nationday2019', 'Taiwan National Day', '2019 國慶 Taiwan Forward', '2019', ['364585226']),
-    ('hsinchu-fire-museum', 'hsinchufiremuseum', 'Hsinchu Fire Museum', '新竹市消防博物館', '', ['dead']),
     ('dragon-boat-festival', 'dragonboatfestival', 'Dragon Boat Festival', '空集端午', '2021', ['884537476']),
     ('esthesia-collision', 'ntub108thesthesiacollision', 'Esthesia Collision', '感知游擊 畢業展預告', '2019', ['336784431']),
 ]
