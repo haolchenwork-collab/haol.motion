@@ -115,3 +115,30 @@
   .pj-hero .pj-facts dd { font-size: 16px; }
   .pj-hero .pj-facts .f-role { grid-column: 1 / -1; border-left: 0 !important; border-top: 1px solid var(--line) !important; padding-left: 0 !important; }
 }
+/* 資訊欄內容一律單行：欄寬照內容，角色欄吃剩下的空間 */
+.pj-hero .pj-facts { grid-template-columns: auto auto auto minmax(0, 1fr); }
+.pj-hero .pj-facts > div { padding-right: 40px; }
+.pj-hero .pj-facts dd, .pj-hero .pj-facts dt { white-space: nowrap; }
+.pj-hero .pj-facts .pj-chips { flex-wrap: nowrap; overflow: hidden; }
+@media (max-width: 700px) {
+  .pj-hero .pj-facts { grid-template-columns: auto auto minmax(0, 1fr); }
+  .pj-hero .pj-facts dd { font-size: 14px; }
+  .pj-hero .pj-facts .pj-chips { flex-wrap: wrap; }
+}
+/* 寬度不夠放角色時，角色獨立一行（仍是單行） */
+@media (max-width: 1280px) and (min-width: 701px) {
+  .pj-hero .pj-facts { grid-template-columns: auto auto minmax(0, 1fr); }
+  .pj-hero .pj-facts .f-role { grid-column: 1 / -1; border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
+}
+/* 手機：每項一列，標籤在左、內容在右；角色標籤橫向滑動，不換行 */
+@media (max-width: 700px) {
+  .pj-hero .pj-facts { display: block; }
+  .pj-hero .pj-facts > div { flex-direction: row; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 14px 0 !important; border-left: 0 !important; border-top: 1px solid var(--line) !important; }
+  .pj-hero .pj-facts > div:first-child { border-top: 0 !important; }
+  .pj-hero .pj-facts dd { font-size: 16px; text-align: right; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .pj-hero .pj-facts dd small { display: none; }
+  .pj-hero .pj-facts .f-role { flex-direction: column; align-items: flex-start; }
+  .pj-hero .pj-facts .pj-chips { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; text-align: left; scrollbar-width: none; }
+}
+@media (max-width: 700px) { .pj-hero .pj-facts .pj-chips { gap: 6px; } .pj-hero .pj-facts .pj-chips span { font-size: 11px; padding: 5px 9px; letter-spacing: 0; } }
