@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 91
+ASSET_V = 92
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -58,7 +58,7 @@ VTHUMBS = {
 }
 
 # 自訂封面：用本站 images/ 裡的截圖取代 Vimeo 縮圖
-COVERS = {'1204108119:e924efaed1': '../images/food-taipei-cover.jpg'}
+COVERS = {'1160088595': '../images/new-taipei-dome-cover.jpg', '1204108119:e924efaed1': '../images/food-taipei-cover.jpg'}
 
 HEADER_GREEN = '150,255,2'
 WEIGHT = {'display-extrabold': 800, 'display-bold': 700, 'display-medium': 500, 'display': 500, 'text': 400}
