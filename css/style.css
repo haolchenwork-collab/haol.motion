@@ -456,7 +456,6 @@ figcaption { font-size: 14px; color: var(--muted); }
 @keyframes pt-flip-in { from { transform: perspective(1800px) rotateY(60deg); opacity: 0; filter: brightness(.4); } }
 /* 新頁還沒跑到 JS 前先藏住內容，避免閃一下 */
 .pt-in main, .pt-in .site-footer { opacity: 0; }
-.scroll-bar { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 50; background: linear-gradient(90deg, var(--accent), #3DFFD8); transform: scaleX(0); transform-origin: left; pointer-events: none; }
 .motion .rv { opacity: 0; transform: translateY(28px) scale(.985); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
 .motion .rv.in { opacity: 1; transform: none; }
 .spot { position: relative; isolation: isolate; }

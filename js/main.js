@@ -216,22 +216,12 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   window.addEventListener('resize', set);
 })();
 
-// 10. 全站動態：捲動進度條、內容依序滑入、滑鼠光暈、數字跳動、換頁淡出
+// 10. 全站動態：內容依序滑入、滑鼠光暈、數字跳動、換頁淡出
 (function () {
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
   var root = document.documentElement;
   root.classList.add('motion');
 
-  // 捲動進度條
-  var bar = document.createElement('div');
-  bar.className = 'scroll-bar';
-  document.body.appendChild(bar);
-  function progress() {
-    var max = root.scrollHeight - innerHeight;
-    bar.style.transform = 'scaleX(' + (max > 0 ? scrollY / max : 0) + ')';
-  }
-  addEventListener('scroll', progress, { passive: true });
-  progress();
 
   // 內容依序滑入（同一層的兄弟元素錯開時間）
   var sel = '.tile:not(.t-reel), .ab-tile, #work-list .card, .lab-card, .lab-tile, .pj-hero > *, .pj-sec, .pj-row, .site-footer .wrap > *, .page-head > *, .work-bar';
