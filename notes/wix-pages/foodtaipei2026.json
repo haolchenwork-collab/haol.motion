@@ -1,0 +1,156 @@
+{
+"W": 980,
+"H": 2000,
+"items": [
+{
+"t": "t",
+"r": [
+204,
+100,
+541,
+30
+],
+"l": [
+{
+"x": "FOOD TAIPEI 2026",
+"s": "255,255,255|23.9|400|display-extrabold|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+130,
+300,
+19
+],
+"l": [
+{
+"x": "台北國際食品系列展 品牌動畫",
+"s": "255,255,255|13|400|display-extrabold|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+167,
+419,
+51
+],
+"l": [
+{
+"x": "Branding / 2026 / Muzixiii Studio / Role 3D Artist",
+"s": "255,255,255|18|400|display|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+230,
+520,
+150
+],
+"l": [
+{
+"x": "以「精準食代・綠色智慧」為核心，把五大展區化為五位個性鮮明的角色。\n從廚房展開一場冒險，串起食材、加工、生技、包裝到餐飲服務的食品產業鏈。\n延續展區 Icon 的特徵，以高彩度、圓潤造型與故事敘事，讓產業變得親切有溫度。",
+"s": "255,255,255|18|400|display|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+400,
+520,
+150
+],
+"l": [
+{
+"x": "This brand animation turns the five exhibitions of FOOD TAIPEI MEGA SHOWS into five distinctive characters.\nStarting from a lively kitchen, their journey links the whole food industry chain, from ingredients to food service.\nInspired by the exhibition icons, each character gets its own materials, colours, expressions and motion.",
+"s": "255,255,255|18|400|display|l"
+}
+]
+},
+{
+"t": "p",
+"r": [
+204,
+560,
+572,
+322
+]
+},
+{
+"t": "t",
+"r": [
+161,
+1600,
+132,
+32
+],
+"l": [
+{
+"x": "Credit",
+"s": "255,255,255|25.1|400|display-bold|l"
+}
+]
+},
+{
+"t": "t",
+"r": [
+279,
+1650,
+436,
+240
+],
+"l": [
+{
+"x": "CLIENT：2026 台北國際食品展覽會 Food Taipei Mega Shows",
+"s": "255,255,255|15|400|text|l"
+},
+{
+"x": "PRODUCTION：目子拾參創意 Muzixiii Studio"
+},
+{
+"x": "DIRECTOR：李芹羽 Amber Lee、曹書睿 Ray Tsao"
+},
+{
+"x": "PRODUCER：許文賢 Wenshan Xu"
+},
+{
+"x": "STORYBOARD：蔡宜家 Ikea Tsai"
+},
+{
+"x": "LEAD 3D ARTIST：蔡宜家 Ikea Tsai"
+},
+{
+"x": "3D ARTIST：蔡宜家 Ikea Tsai、佟紹魁 Shaokuei Tong、盧長禧 Bonnie Lu、廖浩辰 Haochen Liao"
+},
+{
+"x": "COMPOSITING：蔡宜家 Ikea Tsai"
+},
+{
+"x": "CHARACTER DESIGN：蔡宜家 Ikea Tsai"
+},
+{
+"x": "RIGGING：蔡宜家 Ikea Tsai"
+},
+{
+"x": "GENERATIVE AI DEVELOPMENT：杜沂芩 Evie Du"
+},
+{
+"x": "MUSIC & SOUND DESIGN：三十而立 sincerely music"
+},
+{
+"x": "MUSIC / SOUND EFX：陳品先 Stanley_C"
+}
+]
+}
+]
+}

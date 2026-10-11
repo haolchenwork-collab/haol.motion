@@ -41,7 +41,8 @@ document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
     // 首頁 Reel：先拿掉靜音循環的那支，換成有聲音、有控制列的完整播放器
     btn.parentNode.querySelectorAll('[data-reel-bg]').forEach(function (f) { f.remove(); });
     var frame = document.createElement('iframe');
-    frame.src = 'https://player.vimeo.com/video/' + encodeURIComponent(id) + '?autoplay=1&title=0&byline=0&portrait=0';
+    var h = btn.getAttribute('data-vimeo-h');  // 不公開影片需要的私人連結碼
+    frame.src = 'https://player.vimeo.com/video/' + encodeURIComponent(id) + '?autoplay=1&title=0&byline=0&portrait=0' + (h ? '&h=' + encodeURIComponent(h) : '');
     frame.allow = 'autoplay; fullscreen; picture-in-picture';
     frame.allowFullscreen = true;
     frame.title = btn.getAttribute('aria-label') || '影片';
