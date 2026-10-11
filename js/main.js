@@ -289,7 +289,41 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
     nums.forEach(function (n) { nio.observe(n); });
   }
 
-  // 換頁：站內連結先淡出再跳轉
+  // 換頁轉場：螢光綠色塊從下往上蓋住（寫著要去的頁名），新頁面載入後再往上滑開
+  var pt = document.createElement('div');
+  pt.className = 'pt';
+  pt.setAttribute('aria-hidden', 'true');
+  pt.innerHTML = '<span class="pt-label"></span>';
+  document.body.appendChild(pt);
+  var label = pt.firstChild;
+  function nameFor(url, a) {
+    var path = url.pathname;
+    if (/\/work\/[^/]+\.html$/.test(path) && !/index\.html$/.test(path)) {
+      var t = a.querySelector('h3, strong');
+      return t ? t.textContent.trim() : 'Work';
+    }
+    if (/\/work\//.test(path)) return 'Work';
+    if (/\/lab\//.test(path)) return 'Lab';
+    if (/\/about\//.test(path)) return 'About';
+    return 'Home';
+  }
+  // 從站內點進來的：一開始就蓋著，再滑開
+  var incoming = null;
+  try { incoming = sessionStorage.getItem('pt'); sessionStorage.removeItem('pt'); } catch (err) {}
+  if (incoming !== null) {
+    label.textContent = incoming;
+    pt.classList.toggle('long', incoming.length > 12);
+    pt.classList.add('on');
+    root.classList.remove('pt-in');
+    pt.offsetWidth;
+    requestAnimationFrame(function () { pt.classList.add('out'); });
+    pt.addEventListener('transitionend', function done(ev) {
+      if (ev.target !== pt) return;
+      pt.removeEventListener('transitionend', done);
+      pt.classList.remove('on', 'out');
+    });
+  }
+  root.classList.remove('pt-in');
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank' || a.hasAttribute('data-film') || a.hasAttribute('download')) return;
@@ -297,9 +331,13 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
     if (url.origin !== location.origin || url.protocol.indexOf('http') !== 0) return;
     if (url.pathname === location.pathname && url.hash) return;
     e.preventDefault();
-    root.classList.add('leaving');
-    setTimeout(function () { location.href = url.href; }, 280);
+    var name = nameFor(url, a);
+    label.textContent = name;
+    pt.classList.toggle('long', name.length > 12);
+    try { sessionStorage.setItem('pt', name); } catch (err) {}
+    pt.classList.add('in');
+    setTimeout(function () { location.href = url.href; }, 620);
   });
-  addEventListener('pageshow', function (e) { if (e.persisted) root.classList.remove('leaving'); });
+  addEventListener('pageshow', function (e) { if (e.persisted) pt.classList.remove('in', 'on', 'out'); });
 })();
 
