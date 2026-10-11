@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 78
+ASSET_V = 79
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -18,7 +18,7 @@ VTHUMB = 'https://i.vimeocdn.com/video/{}-d_1280'
 
 # 檔名, Wix json, 標題, 中文, 年份, Vimeo 編號（依頁面上播放器的順序）, Vimeo 縮圖, 沒有 Vimeo 時用的 Wix 影片
 PAGES = [
-    ('new-taipei-dome', 'newtaipeidome', 'New Taipei Dome', '新北市大巨蛋 宣傳影片', '2025', []),
+    ('new-taipei-dome', 'newtaipeidome', 'New Taipei Dome', '新北市大巨蛋 宣傳影片', '2025', ['1160088595']),
     ('tiaf-2023', 'tiaf2023', 'TIAF 2023', '台中國際動畫影展 形象片', '2023', ['852277020']),
     ('taiwan-lantern-festival-2025', 'tlf2025', 'Taiwan Lantern Festival', '2025 台灣燈會', '2025', ['1067632531']),
     ('golden-horse-61', 'thethriftyfamily-1', 'Golden Horse 61st', '第 61 屆金馬獎', '2024', ['1046285324', '1046277623']),
@@ -36,6 +36,7 @@ PAGES = [
 ]
 
 VTHUMBS = {
+    '1160088595': '2114854610-347c642096680d9d03582391dfe4e5fa8f5d9f7810216e43c52974bd5c24fa89',
     '852277020': '1707358898-6cf7469ad96512fa2e7b1263941865910c4da98f896ddbfa3b40169299178a05',
     '726967776': '1463521733-8dfbd9f5793710e302b53d33e5f2ccc88f342b96d79074cbb57e0e76fda21e27',
     '727259221': '1464066480-16cb27bdf77c2674ce986267333f7087b241889b113f83c74cc9969372faf8ea',
@@ -366,8 +367,7 @@ def render(slug, data, films, title):
         if re.search(r'client|客戶', dt, re.I):
             client = dd
             break
-    if client:
-        facts.append(('CLIENT', client))
+    # 客戶不放在上方資訊欄（統一只在 Credits 出現）
     if studio:
         facts.append(('STUDIO', studio))
     if year:
