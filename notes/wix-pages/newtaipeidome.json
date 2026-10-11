@@ -3,20 +3,6 @@
 "H": 2000,
 "items": [
 {
-"t": "i",
-"r": [
-0,
-0,
-980,
-551
-],
-"u": "01d8fa_0dd90988a66e4f81a9efa6ef3d9109c1~mv2.jpg",
-"o": [
-1920,
-1080
-]
-},
-{
 "t": "t",
 "r": [
 204,
@@ -120,25 +106,40 @@
 "x": "ANIMATION STUDIO：JP SPACE"
 },
 {
-"x": "創意總監：蔣承翰 Jiang Jiang"
+"x": "CREATIVE DIRECTOR：蔣承翰 Jiang Jiang"
 },
 {
-"x": "策略總監：許軒瑜 Hsuan Yu Hsu"
+"x": "STRATEGY DIRECTOR：許軒瑜 Hsuan Yu Hsu"
 },
 {
-"x": "商務開發：陳韻 Mia C"
+"x": "BUSINESS DEVELOPMENT：陳韻 Mia C"
 },
 {
-"x": "專案經理：李亭 Ting"
+"x": "PROJECT MANAGER：李亭 Ting"
 },
 {
-"x": "分鏡繪製／美術設計：侯旅雯 BIBI"
+"x": "STORYBOARD & ART DESIGN：侯旅雯 BIBI"
 },
 {
-"x": "動態製作：廖浩辰 Haochen Liao、魏嘉樂 ChiaLe"
+"x": "MOTION：廖浩辰 Haochen Liao、魏嘉樂 ChiaLe"
 },
 {
-"x": "配樂／編曲／混音／音效設計：徐皮 Ping Hsu"
+"x": "MUSIC & SOUND DESIGN：徐皮 Ping Hsu"
+}
+]
+},
+{
+"t": "t",
+"r": [
+204,
+400,
+326,
+200
+],
+"l": [
+{
+"x": "The New Taipei Dome is more than a venue. It is a blueprint for the future of city life.\nBuilt on five core values (culture, lifestyle, innovation, vitality and sustainability), the animation moves through four scenes: morning outlook, passionate competition, arts in bloom and building the future.\nEchoing New Taipei's \"Garden City\" image, leaves and flowers tie the scenes together, and characters transition close to the camera to bring energy into a soft atmosphere.",
+"s": "255,255,255|18|400|display|l"
 }
 ]
 }
