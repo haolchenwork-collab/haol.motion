@@ -279,17 +279,20 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
     nums.forEach(function (n) { nio.observe(n); });
   }
 
-  // 換頁轉場：翻頁。舊頁以左邊為軸往左翻走，新頁以右邊為軸翻進來
-  function pivot() {
-    var m = document.querySelector('main');
-    var top = m ? m.getBoundingClientRect().top : 0;
-    root.style.setProperty('--pt-y', (innerHeight / 2 - top) + 'px');
-  }
+  // 換頁轉場：一片毛玻璃從下往上滑過蓋住頁面，新頁載入後再往上滑開
+  var glass = document.createElement('div');
+  glass.className = 'pt-glass';
+  glass.setAttribute('aria-hidden', 'true');
+  document.body.appendChild(glass);
   var incoming = null;
   try { incoming = sessionStorage.getItem('pt'); sessionStorage.removeItem('pt'); } catch (err) {}
-  if (incoming !== null) { pivot(); root.classList.add('pt-enter'); }
+  if (incoming !== null) {
+    glass.classList.add('on');
+    glass.offsetWidth;
+    requestAnimationFrame(function () { requestAnimationFrame(function () { glass.classList.add('out'); }); });
+    setTimeout(function () { glass.classList.remove('on', 'out'); }, 1100);
+  }
   root.classList.remove('pt-in');
-  setTimeout(function () { root.classList.remove('pt-enter'); }, 1000);
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank' || a.hasAttribute('data-film') || a.hasAttribute('download')) return;
@@ -298,10 +301,9 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
     if (url.pathname === location.pathname && url.hash) return;
     e.preventDefault();
     try { sessionStorage.setItem('pt', '1'); } catch (err) {}
-    pivot();
-    root.classList.add('pt-leave');
-    setTimeout(function () { location.href = url.href; }, 520);
+    glass.classList.add('in');
+    setTimeout(function () { location.href = url.href; }, 560);
   });
-  addEventListener('pageshow', function (e) { if (e.persisted) root.classList.remove('pt-leave'); });
+  addEventListener('pageshow', function (e) { if (e.persisted) glass.classList.remove('in', 'on', 'out'); });
 })();
 

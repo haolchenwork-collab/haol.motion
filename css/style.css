@@ -336,7 +336,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 }
 
 /* 篩選：黏在頁首下方的玻璃列 */
-.work-bar { position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 20; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; pointer-events: none; }
+.work-bar { position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 8; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; pointer-events: none; }
 .work-bar > * { pointer-events: auto; }
 .work-bar .filters {
   width: fit-content; max-width: 100%; margin: 0; padding: 6px; gap: 4px;
@@ -448,12 +448,14 @@ figcaption { font-size: 14px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .k-track, .k-star { animation: none; } }
 
 /* ---------- 全站動態 ---------- */
-/* 換頁轉場：翻頁 */
-.pt-leave main, .pt-leave .site-footer { transform-origin: left var(--pt-y, 50vh); animation: pt-flip-out .52s cubic-bezier(.55,0,.75,.2) forwards; }
-.pt-enter main, .pt-enter .site-footer { transform-origin: right var(--pt-y, 50vh); animation: pt-flip-in .8s cubic-bezier(.2,.7,.2,1) both; }
-.pt-leave .site-footer, .pt-enter .site-footer { --pt-y: -40vh; }
-@keyframes pt-flip-out { to { transform: perspective(1800px) rotateY(-75deg); opacity: 0; filter: brightness(.4); } }
-@keyframes pt-flip-in { from { transform: perspective(1800px) rotateY(60deg); opacity: 0; filter: brightness(.4); } }
+/* 換頁轉場：毛玻璃從下往上滑過（選單留在最上面） */
+.pt-glass { position: fixed; inset: 0; z-index: 9; pointer-events: none; transform: translateY(100%); visibility: hidden;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02) 30%, rgba(0,0,0,.35));
+  -webkit-backdrop-filter: blur(28px) saturate(150%); backdrop-filter: blur(28px) saturate(150%);
+  border-top: 1px solid rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 -30px 60px rgba(0,0,0,.35); }
+.pt-glass.in { visibility: visible; transform: none; transition: transform .56s cubic-bezier(.76,0,.24,1); }
+.pt-glass.on { visibility: visible; transform: none; border-top-color: transparent; }
+.pt-glass.on.out { transform: translateY(-100%); border-bottom: 1px solid rgba(255,255,255,.18); transition: transform .8s .1s cubic-bezier(.76,0,.24,1); }
 /* 新頁還沒跑到 JS 前先藏住內容，避免閃一下 */
 .pt-in main, .pt-in .site-footer { opacity: 0; }
 .motion .rv { opacity: 0; transform: translateY(28px) scale(.985); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
