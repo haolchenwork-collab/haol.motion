@@ -115,21 +115,18 @@
   .pj-hero .pj-facts dd { font-size: 16px; }
   .pj-hero .pj-facts .f-role { grid-column: 1 / -1; border-left: 0 !important; border-top: 1px solid var(--line) !important; padding-left: 0 !important; }
 }
-/* 資訊欄內容一律單行：欄寬照內容，角色欄吃剩下的空間 */
-.pj-hero .pj-facts { grid-template-columns: auto auto auto minmax(0, 1fr); }
-.pj-hero .pj-facts > div { padding-right: 40px; }
+/* 資訊欄內容一律單行：每欄照內容寬，角色欄放不下時整欄換到下一列（不會被切掉） */
+.pj-hero .pj-facts { display: flex; flex-wrap: wrap; }
+.pj-hero .pj-facts > div { flex: 0 0 auto; padding-right: 40px; }
+.pj-hero .pj-facts .f-role { flex: 1 0 auto; }
 .pj-hero .pj-facts dd, .pj-hero .pj-facts dt { white-space: nowrap; }
-.pj-hero .pj-facts .pj-chips { flex-wrap: nowrap; overflow: hidden; }
-@media (max-width: 700px) {
-  .pj-hero .pj-facts { grid-template-columns: auto auto minmax(0, 1fr); }
-  .pj-hero .pj-facts dd { font-size: 14px; }
-  .pj-hero .pj-facts .pj-chips { flex-wrap: wrap; }
-}
-/* 寬度不夠放角色時，角色獨立一行（仍是單行） */
-@media (max-width: 1280px) and (min-width: 701px) {
-  .pj-hero .pj-facts { grid-template-columns: auto auto minmax(0, 1fr); }
-  .pj-hero .pj-facts .f-role { grid-column: 1 / -1; border-left: 0; padding-left: 0; border-top: 1px solid var(--line); }
-}
+.pj-hero .pj-facts .pj-chips { flex-wrap: nowrap; }
+/* 字不要太重：數值用內文字體中等粗細，拿掉編號 */
+.pj-hero .pj-facts dt::before { content: none; }
+.pj-hero .pj-facts dt { color: var(--accent); }
+.pj-hero .pj-facts dd { font-family: var(--body, 'Noto Sans TC', system-ui, sans-serif); font-weight: 500; font-size: clamp(16px, 1.3vw, 19px); letter-spacing: 0; }
+.pj-hero .pj-facts .f-year dd { color: inherit; }
+.pj-hero .pj-facts .pj-chips span { font-family: inherit; font-size: 13px; letter-spacing: 0; }
 /* 手機：每項一列，標籤在左、內容在右；角色標籤橫向滑動，不換行 */
 @media (max-width: 700px) {
   .pj-hero .pj-facts { display: block; }
