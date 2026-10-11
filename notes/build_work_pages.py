@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 89
+ASSET_V = 90
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -18,6 +18,7 @@ VTHUMB = 'https://i.vimeocdn.com/video/{}-d_1280'
 
 # 檔名, Wix json, 標題, 中文, 年份, Vimeo 編號（依頁面上播放器的順序）, Vimeo 縮圖, 沒有 Vimeo 時用的 Wix 影片
 PAGES = [
+    ('food-taipei-2026', 'foodtaipei2026', 'FOOD TAIPEI 2026', '台北國際食品系列展 品牌動畫', '2026', ['1204108119:e924efaed1']),
     ('spark-101', 'spark101', 'SPARK 101', '台北 101 雙跨年 主視覺', '2025', ['1167946988']),
     ('new-taipei-dome', 'newtaipeidome', 'New Taipei Dome', '新北市大巨蛋 宣傳影片', '2025', ['1160088595']),
     ('tiaf-2023', 'tiaf2023', 'TIAF 2023', '台中國際動畫影展 形象片', '2023', ['852277020']),
@@ -37,6 +38,7 @@ PAGES = [
 ]
 
 VTHUMBS = {
+    '1204108119:e924efaed1': '2172364145-f996ea6db8d4c7655bf1a6e8477a8a09ae2e46d8a1492963b4730cfb12d620bf',
     '1167946988': '2126123597-6fb6fc6b1f99f93fdfa0041d9f28c99a69dfb9cc9bc019868212fbb23d4abeb2',
     '1160088595': '2114854610-347c642096680d9d03582391dfe4e5fa8f5d9f7810216e43c52974bd5c24fa89',
     '852277020': '1707358898-6cf7469ad96512fa2e7b1263941865910c4da98f896ddbfa3b40169299178a05',
@@ -490,9 +492,10 @@ def film_html(film, title):
             WIXVID.format(vid, '720p'), WIXPOSTER.format(vid))
     thumb = VTHUMB.format(VTHUMBS[film]) if film in VTHUMBS else ''
     return ('<div class="media ratio-16x9"><img src="{}" alt="{} 影片封面">'
-            '<button class="player" type="button" data-vimeo="{}" aria-label="播放 {} 完整影片">'
+            '<button class="player" type="button" data-vimeo="{}"{} aria-label="播放 {} 完整影片">'
             '<span class="play round"><svg width="26" height="30" viewBox="0 0 18 20" aria-hidden="true"><path d="M3 2 L16 10 L3 18 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg></span>'
-            '</button></div>').format(thumb, html.escape(title), film, html.escape(title))
+            '</button></div>').format(thumb, html.escape(title), film.split(':')[0],
+                                     ' data-vimeo-h="{}"'.format(film.split(':')[1]) if ':' in film else '', html.escape(title))
 
 
 PAGE = '''<!doctype html>
