@@ -289,15 +289,17 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
     nums.forEach(function (n) { nio.observe(n); });
   }
 
-  // 換頁轉場：舊頁模糊縮小淡出，一條細綠線掃過；新頁從模糊變清楚
-  var line = document.createElement('div');
-  line.className = 'pt-line';
-  document.body.appendChild(line);
+  // 換頁轉場：翻頁。舊頁以左邊為軸往左翻走，新頁以右邊為軸翻進來
+  function pivot() {
+    var m = document.querySelector('main');
+    var top = m ? m.getBoundingClientRect().top : 0;
+    root.style.setProperty('--pt-y', (innerHeight / 2 - top) + 'px');
+  }
   var incoming = null;
   try { incoming = sessionStorage.getItem('pt'); sessionStorage.removeItem('pt'); } catch (err) {}
-  if (incoming !== null) root.classList.add('pt-enter');
+  if (incoming !== null) { pivot(); root.classList.add('pt-enter'); }
   root.classList.remove('pt-in');
-  setTimeout(function () { root.classList.remove('pt-enter'); }, 900);
+  setTimeout(function () { root.classList.remove('pt-enter'); }, 1000);
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank' || a.hasAttribute('data-film') || a.hasAttribute('download')) return;
@@ -306,8 +308,9 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
     if (url.pathname === location.pathname && url.hash) return;
     e.preventDefault();
     try { sessionStorage.setItem('pt', '1'); } catch (err) {}
+    pivot();
     root.classList.add('pt-leave');
-    setTimeout(function () { location.href = url.href; }, 450);
+    setTimeout(function () { location.href = url.href; }, 520);
   });
   addEventListener('pageshow', function (e) { if (e.persisted) root.classList.remove('pt-leave'); });
 })();

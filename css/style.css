@@ -448,14 +448,12 @@ figcaption { font-size: 14px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .k-track, .k-star { animation: none; } }
 
 /* ---------- 全站動態 ---------- */
-/* 換頁轉場：模糊縮小淡出＋細綠線 */
-.pt-line { position: fixed; left: 0; right: 0; top: 50%; height: 1px; z-index: 200; background: var(--accent); box-shadow: 0 0 12px var(--accent); transform: scaleX(0); transform-origin: left; pointer-events: none; }
-.pt-leave main, .pt-leave .site-footer { filter: blur(10px); opacity: 0; transform: scale(.97); transition: filter .45s ease, opacity .45s ease, transform .45s cubic-bezier(.4,0,.2,1); }
-.pt-leave .pt-line { transform: scaleX(1); transition: transform .45s cubic-bezier(.76,0,.24,1); }
-.pt-enter main, .pt-enter .site-footer { animation: pt-enter .8s cubic-bezier(.2,.7,.2,1) both; }
-.pt-enter .pt-line { transform: scaleX(1); transform-origin: right; animation: pt-line-out .6s cubic-bezier(.76,0,.24,1) forwards; }
-@keyframes pt-enter { from { filter: blur(10px); opacity: 0; transform: scale(1.02); } }
-@keyframes pt-line-out { to { transform: scaleX(0); } }
+/* 換頁轉場：翻頁 */
+.pt-leave main, .pt-leave .site-footer { transform-origin: left var(--pt-y, 50vh); animation: pt-flip-out .52s cubic-bezier(.55,0,.75,.2) forwards; }
+.pt-enter main, .pt-enter .site-footer { transform-origin: right var(--pt-y, 50vh); animation: pt-flip-in .8s cubic-bezier(.2,.7,.2,1) both; }
+.pt-leave .site-footer, .pt-enter .site-footer { --pt-y: -40vh; }
+@keyframes pt-flip-out { to { transform: perspective(1800px) rotateY(-75deg); opacity: 0; filter: brightness(.4); } }
+@keyframes pt-flip-in { from { transform: perspective(1800px) rotateY(60deg); opacity: 0; filter: brightness(.4); } }
 /* 新頁還沒跑到 JS 前先藏住內容，避免閃一下 */
 .pt-in main, .pt-in .site-footer { opacity: 0; }
 .scroll-bar { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 50; background: linear-gradient(90deg, var(--accent), #3DFFD8); transform: scaleX(0); transform-origin: left; pointer-events: none; }
