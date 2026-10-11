@@ -92,3 +92,26 @@
 
 /* 作品頁內容拉寬，跟首頁一樣用滿畫面 */
 .project-page main .wrap { max-width: 1440px; padding-inline: clamp(16px, 8vw, 160px); }
+
+/* 資訊欄 v2：不用框，改成整寬的規格列。上下細線、欄間細線，數值用大字標題字體，標籤前面有編號 */
+.pj-hero .pj-facts {
+  background: none; border: 0; border-radius: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none;
+  width: 100%; display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, .7fr) minmax(0, .9fr) minmax(0, 2fr);
+  border-top: 1px solid var(--text, #EDEBE6); border-bottom: 1px solid var(--line); counter-reset: fact; margin-top: 8px;
+}
+.pj-hero .pj-facts > div { padding: 18px 24px 22px; border-left: 1px solid var(--line); gap: 14px; counter-increment: fact; }
+.pj-hero .pj-facts > div:first-child { border-left: 0; padding-left: 0; }
+.pj-hero .pj-facts dt { display: flex; gap: 10px; font-size: 11px; letter-spacing: .12em; color: var(--muted); }
+.pj-hero .pj-facts dt::before { content: counter(fact, decimal-leading-zero); color: var(--accent); }
+.pj-hero .pj-facts dd { font-family: var(--display); font-weight: 800; font-size: clamp(18px, 1.7vw, 26px); line-height: 1.15; letter-spacing: -.01em; }
+.pj-hero .pj-facts dd small { font-family: var(--mono); font-weight: 400; font-size: 11px; letter-spacing: .06em; margin-top: 6px; }
+.pj-hero .pj-facts .f-year dd { color: var(--accent); }
+.pj-hero .pj-facts .pj-chips { font-family: inherit; font-weight: 400; font-size: inherit; gap: 8px; }
+.pj-hero .pj-facts .pj-chips span { font-family: var(--mono); font-size: 12px; letter-spacing: .04em; padding: 6px 12px; border: 1px solid rgba(198,255,61,.45); color: var(--accent); background: rgba(198,255,61,.06); }
+@media (max-width: 700px) {
+  .pj-hero .pj-facts { grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr); }
+  .pj-hero .pj-facts > div { padding: 14px 12px 16px !important; border-left: 1px solid var(--line) !important; border-top: 0 !important; gap: 10px; }
+  .pj-hero .pj-facts > div:first-child { border-left: 0 !important; padding-left: 0 !important; }
+  .pj-hero .pj-facts dd { font-size: 16px; }
+  .pj-hero .pj-facts .f-role { grid-column: 1 / -1; border-left: 0 !important; border-top: 1px solid var(--line) !important; padding-left: 0 !important; }
+}
