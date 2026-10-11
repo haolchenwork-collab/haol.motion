@@ -448,18 +448,16 @@ figcaption { font-size: 14px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .k-track, .k-star { animation: none; } }
 
 /* ---------- 全站動態 ---------- */
-/* 換頁轉場：螢光綠色塊 */
-.pt { position: fixed; inset: 0; z-index: 200; display: grid; place-items: center; padding: 24px; background: var(--accent); color: var(--on-accent); pointer-events: none; transform: translateY(100%); visibility: hidden; }
-.pt-label { font-family: var(--display); font-weight: 800; font-size: clamp(44px, 10vw, 170px); line-height: .9; letter-spacing: -.04em; text-transform: uppercase; text-align: center; opacity: 0; transform: translateY(40px); }
-.pt.long .pt-label { font-size: clamp(36px, 6.4vw, 110px); max-width: 14ch; }
-.pt.in { visibility: visible; transform: none; transition: transform .55s cubic-bezier(.76,0,.24,1); }
-.pt.in .pt-label { opacity: 1; transform: none; transition: opacity .3s .25s, transform .45s .2s cubic-bezier(.2,.7,.2,1); }
-.pt.on { visibility: visible; transform: none; }
-.pt.on .pt-label { opacity: 1; transform: none; }
-.pt.on.out { transform: translateY(-100%); transition: transform .7s .15s cubic-bezier(.76,0,.24,1); }
-.pt.on.out .pt-label { opacity: 0; transform: translateY(-40px); transition: opacity .3s, transform .4s; }
-/* 新頁還沒跑到 JS 前先用綠色蓋住，避免閃一下 */
-.pt-in body::before { content: ""; position: fixed; inset: 0; z-index: 200; background: var(--accent); }
+/* 換頁轉場：模糊縮小淡出＋細綠線 */
+.pt-line { position: fixed; left: 0; right: 0; top: 50%; height: 1px; z-index: 200; background: var(--accent); box-shadow: 0 0 12px var(--accent); transform: scaleX(0); transform-origin: left; pointer-events: none; }
+.pt-leave main, .pt-leave .site-footer { filter: blur(10px); opacity: 0; transform: scale(.97); transition: filter .45s ease, opacity .45s ease, transform .45s cubic-bezier(.4,0,.2,1); }
+.pt-leave .pt-line { transform: scaleX(1); transition: transform .45s cubic-bezier(.76,0,.24,1); }
+.pt-enter main, .pt-enter .site-footer { animation: pt-enter .8s cubic-bezier(.2,.7,.2,1) both; }
+.pt-enter .pt-line { transform: scaleX(1); transform-origin: right; animation: pt-line-out .6s cubic-bezier(.76,0,.24,1) forwards; }
+@keyframes pt-enter { from { filter: blur(10px); opacity: 0; transform: scale(1.02); } }
+@keyframes pt-line-out { to { transform: scaleX(0); } }
+/* 新頁還沒跑到 JS 前先藏住內容，避免閃一下 */
+.pt-in main, .pt-in .site-footer { opacity: 0; }
 .scroll-bar { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 50; background: linear-gradient(90deg, var(--accent), #3DFFD8); transform: scaleX(0); transform-origin: left; pointer-events: none; }
 .motion .rv { opacity: 0; transform: translateY(28px) scale(.985); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
 .motion .rv.in { opacity: 1; transform: none; }
