@@ -279,20 +279,12 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
     nums.forEach(function (n) { nio.observe(n); });
   }
 
-  // 換頁轉場：一片毛玻璃從下往上滑過蓋住頁面，新頁載入後再往上滑開
-  var glass = document.createElement('div');
-  glass.className = 'pt-glass';
-  glass.setAttribute('aria-hidden', 'true');
-  document.body.appendChild(glass);
+  // 換頁轉場：快速淡出淡入（選單不動）
   var incoming = null;
   try { incoming = sessionStorage.getItem('pt'); sessionStorage.removeItem('pt'); } catch (err) {}
-  if (incoming !== null) {
-    glass.classList.add('on');
-    glass.offsetWidth;
-    requestAnimationFrame(function () { requestAnimationFrame(function () { glass.classList.add('out'); }); });
-    setTimeout(function () { glass.classList.remove('on', 'out'); }, 1100);
-  }
+  if (incoming !== null) root.classList.add('pt-enter');
   root.classList.remove('pt-in');
+  setTimeout(function () { root.classList.remove('pt-enter'); }, 500);
   document.addEventListener('click', function (e) {
     var a = e.target.closest && e.target.closest('a[href]');
     if (!a || e.defaultPrevented || e.metaKey || e.ctrlKey || e.shiftKey || a.target === '_blank' || a.hasAttribute('data-film') || a.hasAttribute('download')) return;
@@ -301,9 +293,9 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
     if (url.pathname === location.pathname && url.hash) return;
     e.preventDefault();
     try { sessionStorage.setItem('pt', '1'); } catch (err) {}
-    glass.classList.add('in');
-    setTimeout(function () { location.href = url.href; }, 560);
+    root.classList.add('pt-leave');
+    setTimeout(function () { location.href = url.href; }, 220);
   });
-  addEventListener('pageshow', function (e) { if (e.persisted) glass.classList.remove('in', 'on', 'out'); });
+  addEventListener('pageshow', function (e) { if (e.persisted) root.classList.remove('pt-leave'); });
 })();
 

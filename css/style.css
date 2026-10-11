@@ -448,14 +448,10 @@ figcaption { font-size: 14px; color: var(--muted); }
 @media (prefers-reduced-motion: reduce) { .k-track, .k-star { animation: none; } }
 
 /* ---------- 全站動態 ---------- */
-/* 換頁轉場：毛玻璃從下往上滑過（選單留在最上面） */
-.pt-glass { position: fixed; inset: 0; z-index: 9; pointer-events: none; transform: translateY(100%); visibility: hidden;
-  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02) 30%, rgba(0,0,0,.35));
-  -webkit-backdrop-filter: blur(28px) saturate(150%); backdrop-filter: blur(28px) saturate(150%);
-  border-top: 1px solid rgba(255,255,255,.18); box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 -30px 60px rgba(0,0,0,.35); }
-.pt-glass.in { visibility: visible; transform: none; transition: transform .56s cubic-bezier(.76,0,.24,1); }
-.pt-glass.on { visibility: visible; transform: none; border-top-color: transparent; }
-.pt-glass.on.out { transform: translateY(-100%); border-bottom: 1px solid rgba(255,255,255,.18); transition: transform .8s .1s cubic-bezier(.76,0,.24,1); }
+/* 換頁轉場：快速淡出淡入 */
+.pt-leave main, .pt-leave .site-footer { opacity: 0; transition: opacity .22s ease; }
+.pt-enter main, .pt-enter .site-footer { animation: pt-fade .4s ease both; }
+@keyframes pt-fade { from { opacity: 0; } }
 /* 新頁還沒跑到 JS 前先藏住內容，避免閃一下 */
 .pt-in main, .pt-in .site-footer { opacity: 0; }
 .motion .rv { opacity: 0; transform: translateY(28px) scale(.985); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.7,.2,1); }
