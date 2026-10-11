@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 90
+ASSET_V = 91
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -56,6 +56,9 @@ VTHUMBS = {
     '884537476': '1753667350-3d3fdd3433809653da8fa6b4b9ef3d737b596cc1a74e077afe28126270c13131',
     '336784431': '783722627-b021172247e0a04b5f8b3fcbabf1ca020a8087f271e0cd8420a3de3b7148c6a1',
 }
+
+# 自訂封面：用本站 images/ 裡的截圖取代 Vimeo 縮圖
+COVERS = {'1204108119:e924efaed1': '../images/food-taipei-cover.jpg'}
 
 HEADER_GREEN = '150,255,2'
 WEIGHT = {'display-extrabold': 800, 'display-bold': 700, 'display-medium': 500, 'display': 500, 'text': 400}
@@ -491,6 +494,7 @@ def film_html(film, title):
         return '<div class="media ratio-16x9"><video src="{}" poster="{}" controls playsinline preload="none"></video></div>'.format(
             WIXVID.format(vid, '720p'), WIXPOSTER.format(vid))
     thumb = VTHUMB.format(VTHUMBS[film]) if film in VTHUMBS else ''
+    thumb = COVERS.get(film, thumb)       # 指定的封面圖（影片某一格的截圖）
     return ('<div class="media ratio-16x9"><img src="{}" alt="{} 影片封面">'
             '<button class="player" type="button" data-vimeo="{}"{} aria-label="播放 {} 完整影片">'
             '<span class="play round"><svg width="26" height="30" viewBox="0 0 18 20" aria-hidden="true"><path d="M3 2 L16 10 L3 18 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg></span>'
