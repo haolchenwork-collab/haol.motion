@@ -218,6 +218,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 .lab-card { position: relative; display: block; aspect-ratio: 1 / 1; text-align: left; font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; border-radius: 4px; overflow: hidden; }
 .lab-card.cr-big { grid-column: span 2; grid-row: span 2; }
 .lab-card.cr-wide { grid-column: span 2; aspect-ratio: 2 / 1; }
+.lab-card.cr-tall { grid-row: span 2; aspect-ratio: auto; }
 .lab-card .media { position: absolute; inset: 0; border-radius: 0; outline: 2px solid transparent; outline-offset: -2px; transition: outline-color .2s; }
 .lab-card .media img { width: 100%; height: 100%; object-fit: cover; transition: transform .6s cubic-bezier(.2,.7,.2,1); }
 .lab-card:hover .media, .lab-card:focus-visible .media { outline-color: var(--accent); }
@@ -243,6 +244,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 .lightbox-inner { display: flex; flex-wrap: wrap; gap: 24px; padding: 24px; }
 .lightbox .media { flex: 2 1 420px; aspect-ratio: 1 / 1; max-height: 70vh; }
 .lightbox .media.is-wide { aspect-ratio: 16 / 9; }
+.lightbox .media.is-tall { flex: 0 0 auto; aspect-ratio: 9 / 16; height: 70vh; max-width: 100%; margin: 0 auto; }
 .lightbox-text { flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 12px; }
 .lightbox-text h3 { margin: 0; font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1.2; }
 .lightbox-text p { margin: 0; }

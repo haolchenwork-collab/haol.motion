@@ -145,6 +145,7 @@ if (box) {
     boxMedia.innerHTML = '';
     var m = entry.querySelector('.media').cloneNode(true);
     if (entry.classList.contains('cr-wide')) m.classList.add('is-wide');
+    if (entry.classList.contains('cr-tall')) m.classList.add('is-tall');
     var film = entry.getAttribute('data-film');
     var loop = entry.getAttribute('data-loop');
     if (film) {
