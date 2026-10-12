@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 94
+ASSET_V = 95
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -20,6 +20,7 @@ VTHUMB = 'https://i.vimeocdn.com/video/{}-d_1280'
 PAGES = [
     ('food-taipei-2026', 'foodtaipei2026', 'FOOD TAIPEI 2026', '台北國際食品系列展 品牌動畫', '2026', ['1204108119:e924efaed1']),
     ('spark-101', 'spark101', 'SPARK 101', '台北 101 雙跨年 主視覺', '2025', ['1167946988']),
+    ('presidential-cup-2025', 'presidentialcup2025', 'Presidential Cup 2025', '總統盃全民運動賽事', '2025', ['1150916273']),
     ('new-taipei-dome', 'newtaipeidome', 'New Taipei Dome', '新北市大巨蛋 宣傳影片', '2025', ['1160088595']),
     ('tiaf-2023', 'tiaf2023', 'TIAF 2023', '台中國際動畫影展 形象片', '2023', ['852277020']),
     ('taiwan-lantern-festival-2025', 'tlf2025', 'Taiwan Lantern Festival', '2025 台灣燈會', '2025', ['1067632531']),
@@ -40,6 +41,7 @@ PAGES = [
 VTHUMBS = {
     '1204108119:e924efaed1': '2172364145-f996ea6db8d4c7655bf1a6e8477a8a09ae2e46d8a1492963b4730cfb12d620bf',
     '1167946988': '2126123597-6fb6fc6b1f99f93fdfa0041d9f28c99a69dfb9cc9bc019868212fbb23d4abeb2',
+    '1150916273': '2101917842-d850faaf59668d3a8517e32270420a62623ebef2dc6ab408bfd9ac7781a33edc',
     '1160088595': '2114854610-347c642096680d9d03582391dfe4e5fa8f5d9f7810216e43c52974bd5c24fa89',
     '852277020': '1707358898-6cf7469ad96512fa2e7b1263941865910c4da98f896ddbfa3b40169299178a05',
     '726967776': '1463521733-8dfbd9f5793710e302b53d33e5f2ccc88f342b96d79074cbb57e0e76fda21e27',
@@ -65,7 +67,9 @@ WEIGHT = {'display-extrabold': 800, 'display-bold': 700, 'display-medium': 500, 
 
 
 def media_url(u, w_px, h_px):
-    """u 是去掉 f77ff6_ 和 ~mv2 的檔名，例如 60a6...581.gif"""
+    """u 是去掉 f77ff6_ 和 ~mv2 的檔名，例如 60a6...581.gif；本站的檔案（../ 開頭）或完整網址直接用"""
+    if u.startswith(('../', 'http')):
+        return u
     if '~mv2' in u:                               # 別的 Wix 帳號的圖（例如 JP Space 01d8fa_）直接用完整檔名
         full = u
     else:
@@ -138,7 +142,7 @@ def posters_to_videos(items):
     """Wix 影片的封面圖（檔名是影片 id 加 f000.jpg）換回會動的影片；同位置已經有影片的就直接拿掉"""
     out, seen = [], set()
     for it in items:
-        if it['t'] in ('v', 'bv'):
+        if it['t'] in ('v', 'bv') and 'id' in it:
             seen.add((it['id'], tuple(it['r'])))
     for it in items:
         m = re.match(r'^([0-9a-f]{32})f\d{3}\.jpg$', it.get('u', '')) if it['t'] in ('i', 'bi') else None
@@ -174,7 +178,7 @@ FIX = {'Lowerthirt': 'Lower third', 'Award HightLight': 'Award Highlight', 'Prid
        'Award 33st': 'Award 33rd', 'Award 31st': 'Award 31st', 'BallBreaker': 'Ballbreaker'}
 ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫面', 'logo': '標準字', 'lower third': '字卡',
       'making of': '幕後', 'title': '片名', 'original': '原始畫面', 'animation': '動畫', 'compositing': '合成',
-      'stage': '舞台', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素'}
+      'stage': '舞台', 'logo animation': 'LOGO 動態', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素'}
 
 
 # 作品中文名以浩辰提供的為準（覆蓋 Wix 頁上的寫法）
@@ -216,6 +220,9 @@ def split_roles(s):
 def media_tag(it, fit='cover'):
     """一個素材（圖片、GIF 或 Wix 影片）"""
     x, y, w, h = it['r']
+    if it['t'] in ('v', 'bv') and it.get('src'):      # 本站的循環影片（例如從 Behance GIF 轉成的 mp4）
+        return '<video data-lazy-src="{}" poster="{}" muted loop playsinline aria-hidden="true"></video>'.format(
+            html.escape(it['src']), html.escape(it.get('poster', '')))
     if it['t'] in ('v', 'bv'):
         return '<video data-lazy-src="{}" poster="{}" muted loop playsinline aria-hidden="true"></video>'.format(
             html.escape(WIXVID.format(it['id'], vid_quality(it.get('q')))), html.escape(WIXPOSTER.format(it['id'])))
@@ -345,7 +352,7 @@ def render(slug, data, films, title):
         if it['t'] not in ('i', 'bi', 'v', 'bv'):
             continue
         x, y, w, h = it['r']
-        key = it.get('u') or it.get('id')
+        key = it.get('u') or it.get('src') or it.get('id')
         full = w >= W * 0.9
         if full and h < 60:
             continue                              # Wix 上的細分隔線
