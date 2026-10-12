@@ -529,6 +529,7 @@ PAGE = '''<!doctype html>
 <script>try{{if(sessionStorage.getItem("pt")!==null&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("pt-in")}}catch(e){{}}</script>
 <link rel="stylesheet" href="../css/style.css?v={v}">
 <link rel="stylesheet" href="../css/project.css?v={v}">
+<script data-goatcounter="https://haolmotion.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body class="project-page">
 
