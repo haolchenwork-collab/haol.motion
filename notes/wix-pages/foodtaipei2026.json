@@ -1,4 +1,5 @@
 {
+"part": [20, 44],
 "W": 980,
 "H": 2000,
 "items": [
@@ -42,7 +43,7 @@
 ],
 "l": [
 {
-"x": "Branding / 2026 / Muzixiii Studio / Role 3D Artist",
+"x": "Branding / 2026 / Muzixiii Studio / Role 3D Motion",
 "s": "255,255,255|18|400|display|l"
 }
 ]
