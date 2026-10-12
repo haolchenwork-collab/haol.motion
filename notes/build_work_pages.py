@@ -433,6 +433,8 @@ def render(slug, data, films, title):
         facts.append(('MY ROLE', roles))
     # 個人負責段落（秒數）：json 最上層寫 "part": [開始秒, 結束秒]，結束秒用影片總長
     part = data.get('part')
+    if part:
+        facts.append(('MY PART', part))           # 手機版用的獨立一列（桌機版藏起來，時間碼跟在角色標籤後面）
 
     hero_cls = 'project-hero wrap' + (' has-bg' if hero_bg else '')
     out.append('<section class="pj-hero{}">'.format(' has-bg' if hero_bg else ''))
@@ -444,6 +446,8 @@ def render(slug, data, films, title):
                '<p class="sub">{}</p>'.format(html.escape(zh_sub)) if zh_sub else ''))
     if facts:
         def fact_dd(label, val):
+            if label == 'MY PART':
+                return '<dd>{}</dd>'.format(part_html(val))
             if isinstance(val, list):              # 負責項目：一個一個小標籤
                 return '<dd class="pj-chips">{}{}</dd>'.format(''.join('<span>{}</span>'.format(html.escape(v)) for v in val),
                                                           part_html(part) if part and label == 'MY ROLE' else '')
