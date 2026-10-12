@@ -349,8 +349,10 @@ figcaption { font-size: 14px; color: var(--muted); }
 /* 格狀 */
 .work-grid.tiles { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; grid-auto-flow: dense; }
 @media (hover: hover) {
-  #work-list.tiles .tags { opacity: 0; transition: opacity .3s; }
-  #work-list.tiles .card:hover .tags, #work-list.tiles .card:focus-visible .tags { opacity: 1; }
+  /* 中文副標和標籤先收起來，滑過卡片才往上滑出（標題會跟著被推上去一點） */
+  #work-list.tiles .zh, #work-list.tiles .tags { max-height: 0; opacity: 0; overflow: hidden; transform: translateY(8px); transition: max-height .35s cubic-bezier(.2,.7,.2,1), opacity .3s, transform .35s cubic-bezier(.2,.7,.2,1); }
+  #work-list.tiles .card:hover .zh, #work-list.tiles .card:focus-visible .zh,
+  #work-list.tiles .card:hover .tags, #work-list.tiles .card:focus-visible .tags { max-height: 44px; opacity: 1; transform: none; }
 }
 
 /* 篩選：黏在頁首下方的玻璃列 */
