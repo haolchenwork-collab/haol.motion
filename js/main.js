@@ -117,7 +117,7 @@ document.querySelectorAll('a[data-film]').forEach(function (el) {
   });
 });
 
-// 4. 篩選按鈕（作品列表、LAB）：按鈕 data-filter，項目 data-tags（空白分隔）。
+// 4. 篩選按鈕（作品列表）：按鈕 data-filter，項目 data-tags（空白分隔）。
 document.querySelectorAll('.filters').forEach(function (bar) {
   var target = document.querySelector(bar.getAttribute('data-target'));
   if (!target) return;
@@ -136,7 +136,7 @@ document.querySelectorAll('.filters').forEach(function (bar) {
   });
 });
 
-// 5. LAB 點開放大：複製該則的畫面與文字到對話框。
+// 5. CREATIVE 點開放大：複製該件的畫面與文字到對話框。
 var box = document.querySelector('dialog.lightbox');
 if (box) {
   var boxMedia = box.querySelector('.lightbox-media');
@@ -144,7 +144,7 @@ if (box) {
   function openEntry(entry) {
     boxMedia.innerHTML = '';
     var m = entry.querySelector('.media').cloneNode(true);
-    m.classList.remove('ratio-1x1');
+    if (entry.classList.contains('cr-wide')) m.classList.add('is-wide');
     var film = entry.getAttribute('data-film');
     var loop = entry.getAttribute('data-loop');
     if (film) {
@@ -157,11 +157,13 @@ if (box) {
     }
     boxMedia.appendChild(m);
     boxText.innerHTML = '';
-    boxText.appendChild(entry.querySelector('.lab-meta').cloneNode(true));
+    var meta = entry.querySelector('.lab-meta');
+    if (meta) { var d = document.createElement('p'); d.className = 'mono muted'; d.textContent = 'PERSONAL WORK · ' + meta.textContent; boxText.appendChild(d); }
     boxText.appendChild(entry.querySelector('h3').cloneNode(true));
     var note = entry.querySelector('.lab-note');
     if (note) { var p = document.createElement('p'); p.textContent = note.textContent; boxText.appendChild(p); }
-    boxText.appendChild(entry.querySelector('.tags').cloneNode(true));
+    var tags = entry.querySelector('.tags');
+    if (tags) boxText.appendChild(tags.cloneNode(true));
     if (box.showModal) box.showModal(); else box.setAttribute('open', '');
   }
   document.querySelectorAll('.lab-card[data-entry]').forEach(function (entry) {
@@ -170,7 +172,7 @@ if (box) {
   box.querySelector('.lightbox-close').addEventListener('click', function () { box.close(); });
   box.addEventListener('click', function (e) { if (e.target === box) box.close(); });
   box.addEventListener('close', function () { boxMedia.innerHTML = ''; });
-  // 從首頁點進來（#lab-005）就直接打開那一則
+  // 從首頁點進來（#lab-005）就直接打開那一件
   if (location.hash) {
     var hit = document.getElementById(location.hash.slice(1));
     if (hit && hit.hasAttribute('data-entry')) openEntry(hit);

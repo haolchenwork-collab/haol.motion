@@ -5,10 +5,10 @@
 ## 資料夾
 
 ```
-index.html            首頁：Reel、精選 6 件、合作單位、最新 4 則 Creative、簡介
+index.html            首頁：Reel、精選 6 件、合作單位、精選 4 件個人創作、簡介
 work/index.html       作品列表：全部作品，可依類型篩選
 work/tiaf-2023.html   案例頁（新增作品時複製這個檔）
-lab/index.html        CREATIVE 個人創作（網址仍是 /lab/）：依技術篩選，點開放大
+lab/index.html        CREATIVE 個人創作（網址仍是 /lab/）：大小格混排的作品牆，點開播放
 about/index.html      About：自介、專長、經歷、客戶、履歷
 css/style.css         所有樣式；換強調色改 --accent
 js/main.js            滑過播放、點了才載入影片
@@ -42,13 +42,13 @@ files/                放履歷 PDF
 4. 卡片的 `data-tags` 決定它出現在哪個篩選：brand（品牌宣傳）、event（典禮與活動）、title（片頭與識別）、exhibition（展覽）。
 5. 記得更新案例頁底部「上一個／下一個」的連結。
 
-## 新增一則 CREATIVE 個人創作
+## 新增一件 CREATIVE 個人創作
 
-1. 打開 `lab/index.html`，複製最上面那一則，貼在它前面。
-2. 編號 +1（id 和 No.00X 都要改）、填日期、標題、一兩句說明。
-3. `data-tags` 填技術：3d、character、material、transition、graphic，可以填多個，用空白隔開。
-4. 圖片放 `images/lab/`，循環動畫放 `videos/lab/`。
-5. 首頁的 Creative 區塊只放最新 4 則，記得一起換。
+1. 打開 `lab/index.html`，複製最上面那一件，貼在它前面。
+2. 改 id（例如 lab-009）、日期、標題和 `data-film`（vimeo:編號 或 mp4 網址）。
+3. class 加 `cr-big` 是大格（2×2），加 `cr-wide` 是橫的寬格，適合 16:9 的作品；不加就是一般方格。
+4. 想在點開時多一段說明，在 h3 後面加 `<p class="lab-note">一兩句</p>`。
+5. 首頁的 Creative 區塊放 4 件精選，想換就改 `index.html` 裡的 lab-tile。
 
 ## 免費上線（擇一）
 
