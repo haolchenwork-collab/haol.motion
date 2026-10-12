@@ -340,7 +340,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 /* 左欄：標題＋中文；右欄：年份＋標籤（標籤在年份下方） */
 #work-list .card-cap { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 4px; align-items: baseline; }
 #work-list .card-title, #work-list .card-title > div { display: contents; }
-#work-list .card h3 { grid-column: 1 / -1; grid-row: 1; padding-right: 52px; font-size: 24px; line-height: 1.15; }  /* 跨兩欄，右側留給年份，不被標籤寬度擠到 */
+#work-list .card h3 { grid-column: 1 / -1; grid-row: 1; padding-right: 52px; font-size: 22px; line-height: 1.15; }  /* 跨兩欄，右側留給年份，不被標籤寬度擠到 */
 #work-list .card .zh { grid-column: 1; grid-row: 2; font-size: 13px; align-self: center; text-wrap: balance; }
 #work-list .card-title .mono { grid-column: 2; grid-row: 1; justify-self: end; font-size: 12px; color: rgba(255, 255, 255, .7); }
 #work-list .tags { grid-column: 2; grid-row: 2; justify-self: end; align-self: center; flex-wrap: nowrap; font-size: 11px; gap: 6px; }
@@ -368,7 +368,7 @@ figcaption { font-size: 14px; color: var(--muted); }
   .work-bar .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .work-bar .filters button { flex-shrink: 0; }
     #work-list .card-cap { padding: 24px 12px 10px; }
-  #work-list .card h3 { font-size: 21px; }
+  #work-list .card h3 { font-size: 20px; }
   #work-list .tags span { padding: 2px 8px; }
 }
 
