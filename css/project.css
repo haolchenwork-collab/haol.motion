@@ -168,3 +168,9 @@
   .pj-hero .pj-facts .f-part { display: flex; }
   .pj-hero .pj-facts .f-part .pj-part { margin-left: 0; font-size: 13px; }
 }
+/* 手機：角色標籤也靠右（標籤多時從左往右排、可橫向滑動，不會被切掉開頭） */
+@media (max-width: 700px) {
+  .pj-hero .pj-facts .f-role { flex-direction: row; align-items: center; }
+  .pj-hero .pj-facts .f-role .pj-chips { min-width: 0; }
+  .pj-hero .pj-facts .f-role .pj-chips > :first-child { margin-left: auto; }
+}
