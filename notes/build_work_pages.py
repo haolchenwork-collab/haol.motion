@@ -258,7 +258,7 @@ def rows_html(media, row_h=260):
         if len(row) == 1:
             cap = min(cap, 560)                   # 單張圖最寬 560px，不撐滿整個畫面
         mw = ' style="max-width:{:.0f}px"'.format(cap)
-        if len(row) == 1 and row[0].get('wide'):  # json 標 "wide": true 的素材撐滿內容寬度（重要的主素材）
+        if any(m.get('wide') for m in row):        # json 標 "wide": true 的素材，整列撐滿內容寬度（重要的主素材）
             mw = ''
         out.append('<div class="pj-row n{}"{}>{}</div>'.format(min(len(row), 4), mw, ''.join(cells)))
     return '\n'.join(out)
