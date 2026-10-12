@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 97
+ASSET_V = 105
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -183,7 +183,7 @@ ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫�
 
 
 # 作品中文名以浩辰提供的為準（覆蓋 Wix 頁上的寫法）
-SUB_FIX = {}
+SUB_FIX = {'food-taipei-2026': '台北國際食品展 宣傳'}
 
 
 def fix(t):
@@ -286,6 +286,21 @@ def credit_groups(slug):
             groups.append(('', []))
         groups[-1][1].append((m.group(1), m.group(2)) if m else ('', ln))
     return groups
+
+
+def tc(sec):
+    return '{}:{:02d}'.format(int(sec) // 60, int(sec) % 60)
+
+
+def part_html(part):
+    # 角色標籤旁的負責段落：小時間軸（亮的那段是自己做的）＋時間碼，點了從那一秒開始播
+    a, b = part
+    total = b                                    # 負責到結尾時，結束秒就是影片總長
+    if len(part) > 2:
+        total = part[2]                          # 只負責中間一段：[開始, 結束, 影片總長]
+    return ('<button class="pj-part" type="button" data-t="{a}" aria-label="從 {ta} 開始播放（個人負責 {ta}–{tb}）">'
+            '<i class="pj-part-bar" style="--s:{s:.1f}%;--e:{e:.1f}%"></i><span>{ta}–{tb}</span></button>').format(
+        a=int(a), ta=tc(a), tb=tc(b), s=100 * a / total, e=100 * b / total)
 
 
 def render(slug, data, films, title):
@@ -416,6 +431,8 @@ def render(slug, data, films, title):
         facts.append(('TYPE', kind))
     if roles:
         facts.append(('MY ROLE', roles))
+    # 個人負責段落（秒數）：json 最上層寫 "part": [開始秒, 結束秒]，結束秒用影片總長
+    part = data.get('part')
 
     hero_cls = 'project-hero wrap' + (' has-bg' if hero_bg else '')
     out.append('<section class="pj-hero{}">'.format(' has-bg' if hero_bg else ''))
@@ -428,7 +445,8 @@ def render(slug, data, films, title):
     if facts:
         def fact_dd(label, val):
             if isinstance(val, list):              # 負責項目：一個一個小標籤
-                return '<dd class="pj-chips">{}</dd>'.format(''.join('<span>{}</span>'.format(html.escape(v)) for v in val))
+                return '<dd class="pj-chips">{}{}</dd>'.format(''.join('<span>{}</span>'.format(html.escape(v)) for v in val),
+                                                          part_html(part) if part and label == 'MY ROLE' else '')
             m = re.match(r'^([^A-Za-z]*[\u4e00-\u9fff][^A-Za-z]*?)\s+([A-Za-z].*)$', val)
             if m:                                  # 中英並列的名稱：中文一行、英文小字一行
                 return '<dd>{}<small>{}</small></dd>'.format(html.escape(m.group(1)), html.escape(m.group(2)))
@@ -538,7 +556,7 @@ PAGE = '''<!doctype html>
     <a class="logo" href="../index.html">HAOCHEN<span class="dot">.</span><span class="zh">浩辰</span></a>
     <nav class="nav" aria-label="主選單">
       <a href="index.html" aria-current="page">WORK</a>
-      <a href="../lab/index.html">LAB</a>
+      <a href="../lab/index.html">CREATIVE</a>
       <a href="../about/index.html">ABOUT</a>
       <a href="#contact">CONTACT</a>
     </nav>

@@ -153,3 +153,11 @@
 /* 中間的影片和素材收窄一點、置中（不要撐滿整個內容欄） */
 .pj-film { width: min(100%, 960px); margin-inline: auto; }
 .pj-sec .pj-row, .pj-sec .pj-band, .pj-sec .pj-elements { width: min(100%, 960px); margin-inline: auto; }
+
+/* 個人負責段落：角色標籤後面的小時間軸＋時間碼（單行，點了從那一秒播放） */
+.pj-hero .pj-facts .pj-part { display: inline-flex; align-items: center; gap: 8px; margin-left: 6px; padding: 0; border: 0; background: none; color: var(--muted); font: 400 12px/1 var(--mono); letter-spacing: .04em; cursor: pointer; white-space: nowrap; }
+.pj-part-bar { position: relative; display: block; width: 56px; height: 3px; background: rgba(255,255,255,.16); }
+.pj-part-bar::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--s); right: calc(100% - var(--e)); background: var(--accent); }
+.pj-hero .pj-facts .pj-part:hover, .pj-hero .pj-facts .pj-part:focus-visible { color: var(--accent); }
+@media (max-width: 700px) { .pj-hero .pj-facts .pj-part { font-size: 11px; } .pj-part-bar { width: 40px; } }
+.pj-hero .pj-facts .pj-part span { padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; }

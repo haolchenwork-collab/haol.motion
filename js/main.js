@@ -42,12 +42,29 @@ document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
     btn.parentNode.querySelectorAll('[data-reel-bg]').forEach(function (f) { f.remove(); });
     var frame = document.createElement('iframe');
     var h = btn.getAttribute('data-vimeo-h');  // 不公開影片需要的私人連結碼
-    frame.src = 'https://player.vimeo.com/video/' + encodeURIComponent(id) + '?autoplay=1&title=0&byline=0&portrait=0' + (h ? '&h=' + encodeURIComponent(h) : '');
+    frame.src = 'https://player.vimeo.com/video/' + encodeURIComponent(id) + '?autoplay=1&title=0&byline=0&portrait=0' + (h ? '&h=' + encodeURIComponent(h) : '') +
+      (btn.getAttribute('data-t') ? '#t=' + parseInt(btn.getAttribute('data-t'), 10) + 's' : '');
     frame.allow = 'autoplay; fullscreen; picture-in-picture';
     frame.allowFullscreen = true;
     frame.title = btn.getAttribute('aria-label') || '影片';
     btn.parentNode.appendChild(frame);
     btn.remove();
+  });
+});
+
+// 3a. 作品頁資訊欄的負責段落：點了捲到影片，從那一秒開始播
+document.querySelectorAll('.pj-part[data-t]').forEach(function (part) {
+  part.addEventListener('click', function () {
+    var t = part.getAttribute('data-t');
+    var film = document.querySelector('.pj-film');
+    if (!film) return;
+    film.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    var btn = film.querySelector('.player[data-vimeo]');
+    var frame = film.querySelector('iframe');
+    var video = film.querySelector('video');
+    if (btn) { btn.setAttribute('data-t', t); btn.click(); }
+    else if (frame) { frame.src = frame.src.split('#')[0] + '#t=' + parseInt(t, 10) + 's'; }
+    else if (video) { video.currentTime = +t; video.play(); }
   });
 });
 
