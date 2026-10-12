@@ -323,7 +323,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 }
 /* 底部的模糊＋壓暗都放在 .media 裡面：用圖片的模糊複本，不用 backdrop-filter（邊緣才不會漏亮邊，外光也不會把模糊吃掉） */
 #work-list .media-blur {
-  position: absolute; inset: -8px; z-index: 0; pointer-events: none;
+  position: absolute; inset: 0; z-index: 0; pointer-events: none;  /* 跟圖片同一個框，模糊複本才會對齊，不會出現錯位的邊線 */
   background-position: center; background-size: cover;
   filter: blur(3px);
   -webkit-mask-image: linear-gradient(to top, #000 22%, transparent 48%);
