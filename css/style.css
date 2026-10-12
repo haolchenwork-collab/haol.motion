@@ -337,19 +337,20 @@ figcaption { font-size: 14px; color: var(--muted); }
 #work-list .card:hover .media-blur { transform: scale(1.04); }
 #work-list .card.is-playing .media-blur { opacity: 0; }
 #work-list .card:hover h3 { color: var(--accent); }
-#work-list .card-title { align-items: baseline; gap: 12px; }
-#work-list .card-title > div { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-#work-list .card h3 { font-size: 18px; line-height: 1.15; }
-#work-list .card .zh { font-size: 13px; }
-#work-list .card-title .mono { font-size: 12px; flex-shrink: 0; color: rgba(255, 255, 255, .7); }
-#work-list .tags { font-size: 11px; gap: 6px; }
+/* 左欄：標題＋中文；右欄：年份＋標籤（標籤在年份下方） */
+#work-list .card-cap { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 4px; align-items: baseline; }
+#work-list .card-title, #work-list .card-title > div { display: contents; }
+#work-list .card h3 { grid-column: 1 / -1; grid-row: 1; padding-right: 52px; font-size: 24px; line-height: 1.15; }  /* 跨兩欄，右側留給年份，不被標籤寬度擠到 */
+#work-list .card .zh { grid-column: 1; grid-row: 2; font-size: 13px; align-self: center; text-wrap: balance; }
+#work-list .card-title .mono { grid-column: 2; grid-row: 1; justify-self: end; font-size: 12px; color: rgba(255, 255, 255, .7); }
+#work-list .tags { grid-column: 2; grid-row: 2; justify-self: end; align-self: center; flex-wrap: nowrap; font-size: 11px; gap: 6px; }
 #work-list .tags span { padding: 2px 10px; border-color: var(--glass-edge); background: rgba(255, 255, 255, .04); }
 
 /* 格狀 */
 .work-grid.tiles { grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 12px; grid-auto-flow: dense; }
 @media (hover: hover) {
-  #work-list.tiles .tags { max-height: 0; opacity: 0; margin-top: -8px; overflow: hidden; transition: max-height .3s, opacity .3s, margin .3s; }
-  #work-list.tiles .card:hover .tags, #work-list.tiles .card:focus-visible .tags { max-height: 60px; opacity: 1; margin-top: 0; }
+  #work-list.tiles .tags { opacity: 0; transition: opacity .3s; }
+  #work-list.tiles .card:hover .tags, #work-list.tiles .card:focus-visible .tags { opacity: 1; }
 }
 
 /* 篩選：黏在頁首下方的玻璃列 */
@@ -367,6 +368,8 @@ figcaption { font-size: 14px; color: var(--muted); }
   .work-bar .filters { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .work-bar .filters button { flex-shrink: 0; }
     #work-list .card-cap { padding: 24px 12px 10px; }
+  #work-list .card h3 { font-size: 21px; }
+  #work-list .tags span { padding: 2px 8px; }
 }
 
 /* ---------- About：拼貼格狀（跟首頁同一套語彙） ---------- */
