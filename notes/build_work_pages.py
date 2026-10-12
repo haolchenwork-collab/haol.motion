@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 96
+ASSET_V = 97
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -25,6 +25,7 @@ PAGES = [
     ('tiaf-2023', 'tiaf2023', 'TIAF 2023', '台中國際動畫影展 形象片', '2023', ['852277020']),
     ('taiwan-lantern-festival-2025', 'tlf2025', 'Taiwan Lantern Festival', '2025 台灣燈會', '2025', ['1067632531']),
     ('golden-horse-61', 'thethriftyfamily-1', 'Golden Horse 61st', '第 61 屆金馬獎', '2024', ['1046285324', '1046277623']),
+    ('lunar-new-year-2024', 'redenvelope2024', 'Lunar New Year 2024', '2024 紅包袋設計', '2024', ['wix:ef6ff46b183645bd941adaa4a8258424']),
     ('thrifty-family', 'thethriftyfamily', 'The Thrifty Family', '省省吧！我家富貴發 影集片頭', '2024', ['1017416780']),
     ('ballbreaker', 'breakball', 'Ballbreaker', '破蛋者', '2023', ['843768853']),
     ('gma33-best-mv', 'gma33bestmv', 'GMA 33rd · Best MV', '第 33 屆金曲獎 最佳MV獎', '2022', ['726967776']),
@@ -178,7 +179,7 @@ FIX = {'Lowerthirt': 'Lower third', 'Award HightLight': 'Award Highlight', 'Prid
        'Award 33st': 'Award 33rd', 'Award 31st': 'Award 31st', 'BallBreaker': 'Ballbreaker'}
 ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫面', 'logo': '標準字', 'lower third': '字卡',
       'making of': '幕後', 'title': '片名', 'original': '原始畫面', 'animation': '動畫', 'compositing': '合成',
-      'stage': '舞台', 'logo animation': 'LOGO 動態', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素'}
+      'stage': '舞台', 'exhibit': '展示', 'logo animation': 'LOGO 動態', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素'}
 
 
 # 作品中文名以浩辰提供的為準（覆蓋 Wix 頁上的寫法）
