@@ -340,10 +340,10 @@ figcaption { font-size: 14px; color: var(--muted); }
 /* 左欄：標題＋中文；右欄：年份＋標籤（標籤在年份下方） */
 #work-list .card-cap { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: 12px; row-gap: 0; align-items: baseline; }
 #work-list .card-title, #work-list .card-title > div { display: contents; }
-#work-list .card h3 { grid-column: 1 / -1; grid-row: 1; font-size: 22px; line-height: 1.05; }
+#work-list .card h3 { grid-column: 1 / -1; grid-row: 1; padding-right: 52px; font-size: 22px; line-height: 1.05; }
 #work-list .card .zh { grid-column: 1; grid-row: 2; font-size: 13px; align-self: center; text-wrap: balance; }
-#work-list .card-title .mono { grid-column: 2; grid-row: 2; justify-self: end; align-self: center; font-size: 12px; color: rgba(255, 255, 255, .7); }
-#work-list .tags { grid-column: 2; grid-row: 3; justify-self: end; align-self: center; flex-wrap: nowrap; font-size: 11px; gap: 6px; }
+#work-list .card-title .mono { grid-column: 2; grid-row: 1; justify-self: end; align-self: end; font-size: 12px; color: rgba(255, 255, 255, .7); }
+#work-list .tags { grid-column: 2; grid-row: 2; justify-self: end; align-self: center; flex-wrap: nowrap; font-size: 11px; gap: 6px; }
 #work-list .tags span { padding: 2px 10px; border-color: var(--glass-edge); background: rgba(255, 255, 255, .04); }
 
 /* 格狀 */
