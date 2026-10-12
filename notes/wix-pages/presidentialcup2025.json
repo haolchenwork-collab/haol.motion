@@ -1,0 +1,271 @@
+{
+ "W": 980,
+ "H": 2500,
+ "items": [
+  {
+   "t": "t",
+   "r": [
+    204,
+    100,
+    541,
+    30
+   ],
+   "l": [
+    {
+     "x": "Presidential Cup 2025",
+     "s": "255,255,255|23.9|400|display-extrabold|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    130,
+    300,
+    19
+   ],
+   "l": [
+    {
+     "x": "總統盃全民運動賽事",
+     "s": "255,255,255|13|400|display-extrabold|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    167,
+    419,
+    51
+   ],
+   "l": [
+    {
+     "x": "Branding / 2025 / Mixcode Studio / Role 2D Animator、2D Compositor",
+     "s": "255,255,255|18|400|display|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    230,
+    520,
+    150
+   ],
+   "l": [
+    {
+     "x": "「全民主場，等你上場！」以開放與參與感，向所有人發出號召。",
+     "s": "255,255,255|18|400|display|l"
+    },
+    {
+     "x": "打破專業運動員的視角與門檻，聚焦民間各處蓄勢待發的動能。"
+    },
+    {
+     "x": "以充滿爆發力的標準字與全動畫影像，捕捉全民上場的瞬間。"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    400,
+    520,
+    150
+   ],
+   "l": [
+    {
+     "x": "We Play Bold. A call for everyone to take the stage at the Presidential Cup.",
+     "s": "255,255,255|18|400|display|l"
+    },
+    {
+     "x": "The focus shifts from professional athletes to the raw, latent energy of the people."
+    },
+    {
+     "x": "Explosive typography and fluid full animation capture the moment anyone steps up."
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "r": [
+    204,
+    560,
+    572,
+    322
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    1000,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Logo Animation",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    1050,
+    572,
+    322
+   ],
+   "src": "../videos/presidential-cup/logo-01.mp4",
+   "poster": "../images/presidential-cup/logo-01.jpg",
+   "o": [
+    1920,
+    1080
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    1400,
+    300,
+    261
+   ],
+   "src": "../videos/presidential-cup/logo-02.mp4",
+   "poster": "../images/presidential-cup/logo-02.jpg",
+   "o": [
+    1500,
+    1307
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    510,
+    1400,
+    363,
+    261
+   ],
+   "src": "../videos/presidential-cup/logo-03.mp4",
+   "poster": "../images/presidential-cup/logo-03.jpg",
+   "o": [
+    995,
+    717
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    1700,
+    320,
+    180
+   ],
+   "src": "../videos/presidential-cup/logo-04.mp4",
+   "poster": "../images/presidential-cup/logo-04.jpg",
+   "o": [
+    1920,
+    1080
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    530,
+    1700,
+    180,
+    180
+   ],
+   "src": "../videos/presidential-cup/logo-05.mp4",
+   "poster": "../images/presidential-cup/logo-05.jpg",
+   "o": [
+    1500,
+    1500
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    161,
+    1950,
+    132,
+    32
+   ],
+   "l": [
+    {
+     "x": "Credit",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    279,
+    2000,
+    436,
+    400
+   ],
+   "l": [
+    {
+     "x": "客戶 Client：文化總會 GACC",
+     "s": "255,255,255|15|400|text|l"
+    },
+    {
+     "x": "製作團隊 Production House：MixCode Studio"
+    },
+    {
+     "x": "藝術指導 Art Director：李孟栩 TuBo Lee、柯鈞譯 Chiun Yi Ko"
+    },
+    {
+     "x": "專案製片 Project Manager：黃詩軒 Xuan Huang"
+    },
+    {
+     "x": "創意文案 Creative & Copywriter：孫非比 Phoebe Sun"
+    },
+    {
+     "x": "平面設計 Graphic Designer：宋政傑 Cheng Chieh Sung"
+    },
+    {
+     "x": "產品設計 Industrial Designer：梁崇栢 Bryan Leung"
+    },
+    {
+     "x": "分鏡腳本 Storyboard Artist：熊天瑀 Tien Yu Hsiung"
+    },
+    {
+     "x": "動態腳本 Motion board Artist：阿力平 Alipin Huang"
+    },
+    {
+     "x": "美術設定 Concept Artist：熊天瑀 Tien Yu Hsiung、許煒莉 Weily Hsu"
+    },
+    {
+     "x": "逐格動畫 Cel Artist：丁豆 DING DO、熊天瑀 Tien Yu Hsiung"
+    },
+    {
+     "x": "2D動畫設計 2D Animator：廖浩辰 Hao Chen Liao"
+    },
+    {
+     "x": "合成 2D Compositor：廖浩辰 Hao Chen Liao"
+    },
+    {
+     "x": "音樂製作 Music Team：腦地帶 D.I Now"
+    },
+    {
+     "x": "作曲 Composer：周家光 Ka Kong Joi、林憶君 Lena-J"
+    },
+    {
+     "x": "音效設計 Sound Designer：周家光 Ka Kong Joi"
+    },
+    {
+     "x": "混音 / 母帶 Mixing & Mastering：阿輝／蘇祥輝 Shawn Su"
+    }
+   ]
+  }
+ ],
+ "source": "https://www.behance.net/gallery/232290751/_"
+}
