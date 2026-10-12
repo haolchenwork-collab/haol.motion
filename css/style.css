@@ -192,7 +192,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 .section-intro { margin: -16px 0 32px; color: var(--muted); max-width: 62ch; }
 
 /* 列表頁標題 */
-.page-hero { padding-block: 44px 24px; display: flex; flex-direction: column; gap: 16px; }
+.page-hero { padding-block: 22px 16px; display: flex; flex-direction: column; gap: 8px; }
 .page-hero h1 { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(36px, 5vw, 72px); line-height: 0.95; letter-spacing: -0.02em; }
 .page-hero h1 .dot { color: var(--accent); }
 .page-hero p { margin: 0; max-width: none; font-size: 16px; color: var(--muted); }
