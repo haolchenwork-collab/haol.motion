@@ -161,13 +161,6 @@
 .pj-hero .pj-facts .pj-part:hover, .pj-hero .pj-facts .pj-part:focus-visible { color: var(--accent); }
 @media (max-width: 700px) { .pj-hero .pj-facts .pj-part { font-size: 11px; } .pj-part-bar { width: 40px; } }
 .pj-hero .pj-facts .pj-part span { padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; }
-/* 負責段落：桌機跟在角色標籤後面；手機改成自己一列，標籤在左、時間碼在右，跟其他欄一致 */
-.pj-hero .pj-facts .f-part { display: none; }
-@media (max-width: 700px) {
-  .pj-hero .pj-facts .f-role .pj-part { display: none; }
-  .pj-hero .pj-facts .f-part { display: flex; }
-  .pj-hero .pj-facts .f-part .pj-part { margin-left: 0; font-size: 13px; }
-}
 /* 手機：角色標籤也靠右（標籤多時從左往右排、可橫向滑動，不會被切掉開頭） */
 @media (max-width: 700px) {
   .pj-hero .pj-facts .f-role { flex-direction: row; align-items: center; }
