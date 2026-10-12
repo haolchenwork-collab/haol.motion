@@ -25,7 +25,7 @@ PAGES = [
     ('tiaf-2023', 'tiaf2023', 'TIAF 2023', '台中國際動畫影展 形象片', '2023', ['852277020']),
     ('taiwan-lantern-festival-2025', 'tlf2025', 'Taiwan Lantern Festival', '2025 台灣燈會', '2025', ['1067632531']),
     ('golden-horse-61', 'thethriftyfamily-1', 'Golden Horse 61st', '第 61 屆金馬獎', '2024', ['1046285324', '1046277623']),
-    ('lunar-new-year-2024', 'redenvelope2024', 'Lunar New Year 2024', '2024 紅包袋設計', '2024', ['wix:ef6ff46b183645bd941adaa4a8258424']),
+    ('lunar-new-year-2024', 'redenvelope2024', 'Lunar New Year 2024', '2024 紅包袋設計', '2024', ['wix:ef6ff46b183645bd941adaa4a8258424:auto']),
     ('thrifty-family', 'thethriftyfamily', 'The Thrifty Family', '省省吧！我家富貴發 影集片頭', '2024', ['1017416780']),
     ('ballbreaker', 'breakball', 'Ballbreaker', '破蛋者', '2023', ['843768853']),
     ('gma33-best-mv', 'gma33bestmv', 'GMA 33rd · Best MV', '第 33 屆金曲獎 最佳MV獎', '2022', ['726967776']),
@@ -500,7 +500,10 @@ def film_html(film, title):
     if not film or film == 'dead':
         return '<div class="media ratio-16x9 wx-dead"><span class="mono muted">影片已下架</span></div>'
     if film.startswith('wix:'):
-        vid = film[4:]
+        vid, _, opt = film[4:].partition(':')
+        if opt == 'auto':                      # 一打開就靜音自動循環播放（控制列可開聲音）
+            return '<div class="media ratio-16x9"><video src="{}" poster="{}" controls autoplay muted loop playsinline preload="auto"></video></div>'.format(
+                WIXVID.format(vid, '720p'), WIXPOSTER.format(vid))
         return '<div class="media ratio-16x9"><video src="{}" poster="{}" controls playsinline preload="none"></video></div>'.format(
             WIXVID.format(vid, '720p'), WIXPOSTER.format(vid))
     thumb = VTHUMB.format(VTHUMBS[film]) if film in VTHUMBS else ''
