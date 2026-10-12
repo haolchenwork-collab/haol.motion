@@ -462,6 +462,6 @@ figcaption { font-size: 14px; color: var(--muted); }
 .ab-stat.accent.spot::after, .ab-contact.spot::after { background: radial-gradient(360px circle at var(--mx, 50%) var(--my, 50%), rgba(255, 255, 255, .35), transparent 60%); }
 .magnet { display: inline-block; transition: transform .25s cubic-bezier(.2,.7,.2,1); }
 
-/* 預覽圖裁切對齊上方（卡片、作品頁封面） */
-.media > img, .media > video, .pj-film .media img { object-position: center top; }
-.media-blur { background-position: center top; }
+/* 預覽圖裁切對齊下方（卡片、作品頁封面） */
+.media > img, .media > video, .pj-film .media img { object-position: center bottom; }
+.media-blur { background-position: center bottom; }
