@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 105
+ASSET_V = 106
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -317,7 +317,7 @@ def render(slug, data, films, title):
     head_title = fix(ttext(big[0])) if big else title
     zh_sub = SUB_FIX.get(slug) or (ttext(big[1]) if len(big) > 1 else '')
     role_t = next((t for t in texts if re.search(r'/\s*(19|20)\d\d\s*/', ttext(t))), None)
-    kind = year = studio = ''
+    kind = year = studio = role_lead = ''
     roles = []
     if role_t:
         parts = [p.strip() for p in fix(ttext(role_t)).split('/')]
@@ -327,6 +327,10 @@ def render(slug, data, films, title):
         m = re.search(r'\bRole\b', rest)
         if m:
             studio, roles = rest[:m.start()].strip(' /'), split_roles(rest[m.end():])
+            # 「Motion：Lowerthird、Nominees、Package」→ 前面一個 Motion 標籤，細線隔開，後面三個項目
+            lead = re.match(r'^\s*([^：:(（]+?)\s*[：:]\s*(.+)$', rest[m.end():])
+            if lead:
+                role_lead, roles = lead.group(1), split_roles(lead.group(2))
         else:
             studio = rest
     headings = [t for t in texts if len(t['l']) == 1 and '\n' not in ttext(t) and tstyle(t)[0] >= 24 and tstyle(t)[1] == 'display-bold']
@@ -445,7 +449,9 @@ def render(slug, data, films, title):
     if facts:
         def fact_dd(label, val):
             if isinstance(val, list):              # 負責項目：一個一個小標籤
-                return '<dd class="pj-chips">{}{}</dd>'.format(''.join('<span>{}</span>'.format(html.escape(v)) for v in val),
+                return '<dd class="pj-chips">{}{}{}</dd>'.format(
+                    '<span class="pj-lead">{}</span><i class="pj-sep" aria-hidden="true"></i>'.format(html.escape(role_lead)) if role_lead and label == 'MY ROLE' else '',
+                    ''.join('<span>{}</span>'.format(html.escape(v)) for v in val),
                                                           part_html(part) if part and label == 'MY ROLE' else '')
             m = re.match(r'^([^A-Za-z]*[\u4e00-\u9fff][^A-Za-z]*?)\s+([A-Za-z].*)$', val)
             if m:                                  # 中英並列的名稱：中文一行、英文小字一行

@@ -167,3 +167,10 @@
   .pj-hero .pj-facts .f-role .pj-chips { min-width: 0; }
   .pj-hero .pj-facts .f-role .pj-chips > :first-child { margin-left: auto; }
 }
+/* 角色有總類時（Motion：A、B、C）：總類標籤在前，細線隔開，後面是各項目 */
+.pj-sep { display: block; flex: none; align-self: center; width: 1px; height: 14px; background: rgba(255,255,255,.28); margin: 0 2px; }
+/* 手機：角色標籤放不下時整組換到下一行靠右，不被切掉 */
+@media (max-width: 700px) {
+  .pj-hero .pj-facts .f-role { flex-wrap: wrap; row-gap: 8px; }
+  .pj-hero .pj-facts .f-role .pj-chips { margin-left: auto; max-width: 100%; }
+}
