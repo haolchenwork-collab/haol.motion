@@ -149,3 +149,7 @@
 .pj-cgroup + .pj-cgroup { margin-top: 28px; }
 .pj-cgroup-h { margin: 0 0 12px; font-size: 12px; font-weight: 500; color: var(--accent); letter-spacing: .06em; }
 .pj-cgroup .credits { grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+
+/* 中間的影片和素材收窄一點、置中（不要撐滿整個內容欄） */
+.pj-film { width: min(100%, 960px); margin-inline: auto; }
+.pj-sec .pj-row, .pj-sec .pj-band, .pj-sec .pj-elements { width: min(100%, 960px); margin-inline: auto; }
