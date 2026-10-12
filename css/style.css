@@ -221,7 +221,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 .lab-card p { margin: 0; font-size: 14px; color: var(--muted); }
 .lab-meta { display: flex; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; }
 .lab-no { color: var(--accent); }
-.lab-card[hidden], .card[hidden] { display: none; }
+.lab-card[hidden], .card[hidden], #work-list .card[hidden] { display: none; }
 
 /* LAB 放大檢視 */
 .lightbox { width: min(1100px, calc(100% - 32px)); max-height: calc(100% - 32px); padding: 0; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); color: var(--fg); }
