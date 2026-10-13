@@ -80,9 +80,15 @@
 .t-about { grid-column: span 5; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 24px; margin-top: 32px; }
 .t-about .statement { margin: 0; font-family: var(--body); font-weight: 700; font-size: clamp(20px, 1.9vw, 26px); line-height: 1.45; }
 .t-about .statement em { font-style: normal; color: var(--accent); }
-.t-about .facts-row { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; border-top: 1px solid var(--line); padding-top: 16px; }
-.t-about .facts-row b { display: block; font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1; font-variant-numeric: tabular-nums; }
-.t-about .facts-row span { font-size: 12px; color: var(--muted); }
+.t-about { container-type: inline-size; }
+.t-about .facts-row { display: grid; grid-template-columns: repeat(3, minmax(max-content, 1fr)); column-gap: 20px; border-top: 1px solid var(--line); padding-top: 16px; }
+.t-about .facts-row > div { display: flex; flex-direction: column; gap: 6px; }
+.t-about .facts-row b { display: block; font-family: var(--display); font-weight: 800; font-size: clamp(17px, 8cqi, 28px); line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.t-about .facts-row span { font-size: 12px; color: var(--muted); white-space: nowrap; }
+@container (max-width: 300px) {
+  .t-about .facts-row { grid-template-columns: repeat(3, minmax(0, auto)); justify-content: space-between; column-gap: 14px; }
+  .t-about .facts-row span { white-space: normal; }
+}
 .t-about .who { display: flex; align-items: center; gap: 14px; }
 .t-about .who .media { width: 56px; height: 56px; border-radius: 999px; flex: none; }
 .t-about .who p { margin: 0; font-size: 14px; line-height: 1.4; }
