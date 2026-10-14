@@ -355,19 +355,23 @@ figcaption { font-size: 14px; color: var(--muted); }
   #work-list.tiles .card:hover .tags, #work-list.tiles .card:focus-visible .tags { max-height: 44px; opacity: 1; transform: none; }
 }
 
-/* 透視：滑過時卡片朝游標傾斜，亮面跟著游標走（只在滑鼠裝置，main.js 加上 .tilt） */
-#work-list .card.tilt.in, #work-list .card.tilt:not(.rv) {
-  transform: perspective(900px) rotateX(var(--tx, 0deg)) rotateY(var(--ty, 0deg)) scale(var(--ts, 1));
-  transition: transform .6s cubic-bezier(.2,.7,.2,1), opacity .8s ease;
-  will-change: transform;
+/* 透視空間：整面作品牆是 3D 空間裡往後倒的一塊固定平面；滑過的卡片往前浮起（main.js 加上 .work-space） */
+.work-space { perspective: 1400px; perspective-origin: 50% var(--vy, 50%); }
+.work-space #work-list {
+  transform-style: preserve-3d; transform-origin: 50% var(--vy, 50%);
+  transform: rotateX(var(--sx, 14deg));  /* 往後倒的角度，要更斜就調大 */
 }
-#work-list .card.tilt.is-tilting { transition: transform .12s ease-out, opacity .8s ease; }
-#work-list .card.tilt::after {
+.work-space #work-list .card.in, .work-space #work-list .card:not(.rv) {
+  transform: translateZ(var(--cz, 0px));
+  transition: transform .5s cubic-bezier(.2,.7,.2,1), opacity .8s ease;
+}
+@media (hover: hover) { .work-space #work-list .card:hover { --cz: 60px; z-index: 5; } }
+.work-space #work-list .card::after {
   content: ""; position: absolute; inset: 0; z-index: 3; border-radius: 8px; pointer-events: none;
   background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .16), transparent 55%);
   opacity: 0; transition: opacity .4s;
 }
-#work-list .card.tilt:hover::after { opacity: 1; }
+.work-space #work-list .card:hover::after { opacity: 1; }
 
 /* 篩選：黏在頁首下方的玻璃列 */
 .work-bar { position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 8; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; pointer-events: none; }
