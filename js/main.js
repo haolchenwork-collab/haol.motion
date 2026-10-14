@@ -218,6 +218,44 @@ if (depthGrid && matchMedia('(hover: hover)').matches) {
   depthGrid.addEventListener('focusin', setDepth);
 }
 
+// 4c. 首頁作品區分割變形：游標靠近哪一欄／哪一列，那一欄／列就變寬／變高，其他的讓出空間。
+//     只在桌機（可懸停、寬度 > 1000px）啟用；減少動態時不啟用，維持原本固定格線。
+var splitGrid = document.querySelector('.home .works');
+if (splitGrid && !reduceMotion) {
+  var splitMq = matchMedia('(hover: hover) and (min-width: 1001px)');
+  var GROW_X = 0.9, GROW_Y = 0.7, SPREAD = 0.3, EASE_K = 0.12;
+  var tx = null, ty = null, cur = [1, 1, 1, 1, 1, 1], raf = 0;
+  var weights = function (p, k) {
+    return [0, 1, 2].map(function (i) {
+      if (p === null) return 1;
+      var d = (p - (i + 0.5) / 3) / SPREAD;
+      return 1 + k * Math.exp(-d * d);
+    });
+  };
+  var tick = function () {
+    var goal = weights(tx, GROW_X).concat(weights(ty, GROW_Y)), moving = false;
+    for (var i = 0; i < 6; i++) {
+      cur[i] += (goal[i] - cur[i]) * EASE_K;
+      if (Math.abs(goal[i] - cur[i]) > 0.002) moving = true; else cur[i] = goal[i];
+    }
+    ['--c1', '--c2', '--c3', '--r1', '--r2', '--r3'].forEach(function (name, i) {
+      splitGrid.style.setProperty(name, cur[i].toFixed(4) + 'fr');
+    });
+    raf = moving ? requestAnimationFrame(tick) : 0;
+  };
+  var kick = function () { if (!raf) raf = requestAnimationFrame(tick); };
+  splitGrid.addEventListener('pointermove', function (e) {
+    var r = splitGrid.getBoundingClientRect();
+    tx = Math.min(1, Math.max(0, (e.clientX - r.left) / r.width));
+    ty = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
+    kick();
+  });
+  splitGrid.addEventListener('pointerleave', function () { tx = ty = null; kick(); });
+  var applySplit = function () { splitGrid.classList.toggle('is-split', splitMq.matches); };
+  applySplit();
+  if (splitMq.addEventListener) splitMq.addEventListener('change', applySplit);
+}
+
 // 5. CREATIVE 點開放大：複製該件的畫面與文字到對話框。
 var box = document.querySelector('dialog.lightbox');
 if (box) {
