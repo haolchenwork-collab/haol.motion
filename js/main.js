@@ -33,6 +33,28 @@ document.querySelectorAll('.card[data-loop], .w[data-loop]').forEach(function (c
   });
 });
 
+// 2b. Work 卡片透視：依游標位置傾斜（手機、減少動態時不啟用）
+if (canHover && !reduceMotion) {
+  document.querySelectorAll('#work-list .card').forEach(function (card) {
+    var MAX = 7;  // 最大傾斜角度（度）
+    card.classList.add('tilt');
+    card.addEventListener('pointermove', function (e) {
+      var r = card.getBoundingClientRect();
+      var px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+      card.classList.add('is-tilting');
+      card.style.setProperty('--ty', ((px - 0.5) * 2 * MAX).toFixed(2) + 'deg');
+      card.style.setProperty('--tx', ((0.5 - py) * 2 * MAX).toFixed(2) + 'deg');
+      card.style.setProperty('--ts', '1.02');
+      card.style.setProperty('--gx', (px * 100).toFixed(1) + '%');
+      card.style.setProperty('--gy', (py * 100).toFixed(1) + '%');
+    });
+    card.addEventListener('pointerleave', function () {
+      card.classList.remove('is-tilting');
+      ['--tx', '--ty', '--ts'].forEach(function (k) { card.style.removeProperty(k); });
+    });
+  });
+}
+
 // 3. 影片：點了才載入 Vimeo 播放器，頁面開啟比較快。
 document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
   btn.addEventListener('click', function () {
