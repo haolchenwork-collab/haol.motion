@@ -301,19 +301,6 @@ figcaption { font-size: 14px; color: var(--muted); }
 /* ---------- Work 列表：玻璃標題，格狀圖塊 ---------- */
 #work-list .card { position: relative; display: block; border-radius: 8px; isolation: isolate; }
 #work-list .card .media { border-radius: 8px; outline: 0; aspect-ratio: 2.1 / 1; }
-/* hover 外光：螢光綠到青色、紫色的漸層光暈，緩慢流動＋呼吸（沒有外框） */
-#work-list .card::before {
-  content: ""; position: absolute; inset: -2px; z-index: -1; border-radius: 10px; pointer-events: none;
-  background: linear-gradient(90deg, var(--accent), #3DFFD8, #7A5CFF, var(--accent)) 0 0 / 300% 100% repeat-x;
-  filter: blur(14px); opacity: 0; transition: opacity .3s;
-}
-#work-list .card:hover::before, #work-list .card:focus-visible::before { animation: glow-flow 4s linear infinite, glow-breathe 2.4s ease-in-out infinite; }
-@keyframes glow-flow { to { background-position: 150% 0; } }  /* 位移剛好一個漸層長度，循環不會跳 */
-@keyframes glow-breathe { 0%, 100% { opacity: .25; } 50% { opacity: .7; } }
-@media (prefers-reduced-motion: reduce) {
-  #work-list .card:hover::before { animation: none; }
-  #work-list .card:hover::before { opacity: .45; }
-}
 #work-list .card .media img { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
 #work-list .card:hover .media img { transform: scale(1.04); }
 #work-list .card-cap {
