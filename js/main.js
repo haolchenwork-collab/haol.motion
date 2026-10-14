@@ -146,12 +146,58 @@ document.querySelectorAll('.filters').forEach(function (bar) {
     var c = document.createElement('span'); c.className = 'count'; c.textContent = n; btn.appendChild(c);
     btn.addEventListener('click', function () {
       buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
-      items.forEach(function (it) {
-        it.hidden = !(f === 'all' || it.getAttribute('data-tags').split(' ').indexOf(f) !== -1);
+      filterItems(target, items, function (it) {
+        return f === 'all' || it.getAttribute('data-tags').split(' ').indexOf(f) !== -1;
       });
     });
   });
 });
+
+// 篩選切換動畫：留下的項目從舊位置滑到新位置，被篩掉的在原地淡出，新出現的淡入。
+// 做法是 FLIP：先記下舊位置，套用新的 hidden，再用 transform 從舊位置補間回來。
+function filterItems(target, items, keep) {
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || !Element.prototype.animate;
+  // 上一次切換還沒播完就又點：先把動畫停掉、把淡出中的項目立刻收好（onfinish 是非同步的，不能等它）
+  items.forEach(function (it) {
+    it.getAnimations().forEach(function (a) { a.cancel(); });
+    if (it._leave) it._leave();
+  });
+  if (reduce) { items.forEach(function (it) { it.hidden = !keep(it); }); return; }
+
+  var EASE = 'cubic-bezier(.2,.7,.2,1)', DUR = 480;
+  var box = target.getBoundingClientRect();
+  var first = new Map();
+  items.forEach(function (it) { if (!it.hidden) first.set(it, it.getBoundingClientRect()); });
+  if (getComputedStyle(target).position === 'static') target.style.position = 'relative';
+
+  var leaving = [], entering = [];
+  items.forEach(function (it) {
+    var show = keep(it);
+    if (!show && !it.hidden) leaving.push(it);
+    else if (show && it.hidden) { it.hidden = false; entering.push(it); }
+  });
+  // 要離開的先拿出排版、釘在原本的位置，等淡出完才真的藏起來
+  leaving.forEach(function (it) {
+    var r = first.get(it);
+    Object.assign(it.style, { position: 'absolute', left: (r.left - box.left) + 'px', top: (r.top - box.top) + 'px', width: r.width + 'px', height: r.height + 'px', margin: '0', pointerEvents: 'none' });
+    it._leave = function () {
+      it._leave = null; it.hidden = true;
+      it.getAnimations().forEach(function (a) { a.cancel(); });
+      ['position', 'left', 'top', 'width', 'height', 'margin', 'pointerEvents'].forEach(function (k) { it.style[k] = ''; });
+    };
+    it.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.94)' }], { duration: DUR * 0.6, easing: EASE, fill: 'forwards' })
+      .onfinish = function () { if (it._leave) it._leave(); };
+  });
+  first.forEach(function (r, it) {
+    if (leaving.indexOf(it) !== -1) return;
+    var now = it.getBoundingClientRect();
+    var dx = r.left - now.left, dy = r.top - now.top;
+    if (dx || dy) it.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: DUR, easing: EASE });
+  });
+  entering.forEach(function (it, i) {
+    it.animate([{ opacity: 0, transform: 'scale(.94)' }, { opacity: 1, transform: 'none' }], { duration: DUR, delay: 120 + i * 30, easing: EASE, fill: 'backwards' });
+  });
+}
 
 // 5. CREATIVE 點開放大：複製該件的畫面與文字到對話框。
 var box = document.querySelector('dialog.lightbox');
