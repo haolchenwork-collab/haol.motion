@@ -206,13 +206,13 @@ if (depthGrid && matchMedia('(hover: hover)').matches) {
     var on = e.target.closest && e.target.closest('.card');
     if (!on || !depthGrid.contains(on)) return;
     var a = on.getBoundingClientRect(), ax = a.left + a.width / 2, ay = a.top + a.height / 2;
-    var cards = depthGrid.querySelectorAll('.card'), far = 0, dist = [];
-    cards.forEach(function (c, i) {
+    // 以畫面寬度的 70% 當「最遠」，畫面內看得到的卡片就會用到完整的遠近範圍
+    var far = Math.max(window.innerWidth * 0.7, 1);
+    depthGrid.querySelectorAll('.card').forEach(function (c) {
       var b = c.getBoundingClientRect();
-      dist[i] = Math.hypot(b.left + b.width / 2 - ax, b.top + b.height / 2 - ay);
-      if (!c.hidden && dist[i] > far) far = dist[i];
+      var d = Math.hypot(b.left + b.width / 2 - ax, b.top + b.height / 2 - ay);
+      c.style.setProperty('--depth', Math.min(1, d / far).toFixed(3));
     });
-    cards.forEach(function (c, i) { c.style.setProperty('--depth', far ? (dist[i] / far).toFixed(3) : '0'); });
   };
   depthGrid.addEventListener('pointerover', setDepth);
   depthGrid.addEventListener('focusin', setDepth);
