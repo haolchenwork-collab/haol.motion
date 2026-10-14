@@ -225,7 +225,7 @@ if (depthGrid && matchMedia('(hover: hover)').matches) {
 var splitGrid = document.querySelector('.home .works');
 if (splitGrid && !reduceMotion) {
   var splitMq = matchMedia('(hover: hover) and (min-width: 1001px)');
-  var FLOW_X = 0.35, FLOW_Y = 0.25, SPREAD = 0.3, PICK_X = 0.9, PICK_Y = 0.7, EASE_K = 0.12;
+  var FLOW_X = 0.2, FLOW_Y = 0.15, SPREAD = 0.3, PICK_X = 0.5, PICK_Y = 0.4, EASE_K = 0.12;
   // 每張卡片佔的欄、列（跟 home.css 的 .works.is-split 一致）
   var cells = [[[0, 1], [0, 1]], [[2], [0]], [[2], [1]], [[0], [2]], [[1], [2]], [[2], [2]]];
   var cards = Array.prototype.slice.call(splitGrid.querySelectorAll('.w'));
