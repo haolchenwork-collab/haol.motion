@@ -340,10 +340,14 @@ figcaption { font-size: 14px; color: var(--muted); }
   #work-list.tiles .zh, #work-list.tiles .tags { max-height: 0; opacity: 0; overflow: hidden; transform: translateY(8px); transition: max-height .35s cubic-bezier(.2,.7,.2,1), opacity .3s, transform .35s cubic-bezier(.2,.7,.2,1); }
   #work-list.tiles .card:hover .zh, #work-list.tiles .card:focus-visible .zh,
   #work-list.tiles .card:hover .tags, #work-list.tiles .card:focus-visible .tags { max-height: 44px; opacity: 1; transform: none; }
-  /* 焦點：滑過一張時，那張沿 Z 軸往前浮起（放大＋陰影），其他卡片壓暗並稍微退後 */
-  #work-list .card { transition: filter .35s ease, transform .45s cubic-bezier(.2,.7,.2,1), box-shadow .45s cubic-bezier(.2,.7,.2,1); }
-  #work-list .card:hover, #work-list .card:focus-visible { z-index: 3; transform: scale(1.035); box-shadow: 0 24px 48px -12px rgba(0, 0, 0, .9); }
-  #work-list:has(.card:hover, .card:focus-visible) .card:not(:hover):not(:focus-visible) { filter: brightness(.35) saturate(.5); transform: scale(.985); }
+  /* 焦點：滑過一張時，那張沿 Z 軸往前浮起（放大＋陰影）；其他卡片壓暗並往後退，
+     離得越遠退越多（--depth 0～1 由 main.js 依距離算出） */
+  #work-list .card { transition: filter .35s ease, transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s cubic-bezier(.2,.7,.2,1); }
+  #work-list .card:hover, #work-list .card:focus-visible { z-index: 3; transform: scale(1.07); box-shadow: 0 32px 64px -16px rgba(0, 0, 0, .95); }
+  #work-list:has(.card:hover, .card:focus-visible) .card:not(:hover):not(:focus-visible) {
+    filter: brightness(calc(.5 - var(--depth, .5) * .25)) saturate(.5);
+    transform: scale(calc(.97 - var(--depth, .5) * .07));
+  }
   @media (prefers-reduced-motion: reduce) { #work-list .card, #work-list:has(.card:hover, .card:focus-visible) .card { transform: none; } }
 }
 
