@@ -218,14 +218,19 @@ if (depthGrid && matchMedia('(hover: hover)').matches) {
   depthGrid.addEventListener('focusin', setDepth);
 }
 
-// 4c. 首頁作品區分割變形：游標靠近哪一欄／哪一列，那一欄／列就變寬／變高，其他的讓出空間。
+// 4c. 首頁作品區分割變形：兩層疊加。
+//     ① 格線跟著游標連續微動：游標靠近哪一欄／列，那一欄／列就稍微變寬／變高。
+//     ② 停在哪一張，就再把那張所在的欄與列明顯撐大，選中的是哪張一眼就看得出來。
 //     只在桌機（可懸停、寬度 > 1000px）啟用；減少動態時不啟用，維持原本固定格線。
 var splitGrid = document.querySelector('.home .works');
 if (splitGrid && !reduceMotion) {
   var splitMq = matchMedia('(hover: hover) and (min-width: 1001px)');
-  var GROW_X = 0.9, GROW_Y = 0.7, SPREAD = 0.3, EASE_K = 0.12;
-  var tx = null, ty = null, cur = [1, 1, 1, 1, 1, 1], raf = 0;
-  var weights = function (p, k) {
+  var FLOW_X = 0.35, FLOW_Y = 0.25, SPREAD = 0.3, PICK_X = 0.9, PICK_Y = 0.7, EASE_K = 0.12;
+  // 每張卡片佔的欄、列（跟 home.css 的 .works.is-split 一致）
+  var cells = [[[0, 1], [0, 1]], [[2], [0]], [[2], [1]], [[0], [2]], [[1], [2]], [[2], [2]]];
+  var cards = Array.prototype.slice.call(splitGrid.querySelectorAll('.w'));
+  var tx = null, ty = null, picked = -1, cur = [1, 1, 1, 1, 1, 1], raf = 0;
+  var flow = function (p, k) {
     return [0, 1, 2].map(function (i) {
       if (p === null) return 1;
       var d = (p - (i + 0.5) / 3) / SPREAD;
@@ -233,7 +238,13 @@ if (splitGrid && !reduceMotion) {
     });
   };
   var tick = function () {
-    var goal = weights(tx, GROW_X).concat(weights(ty, GROW_Y)), moving = false;
+    var goal = flow(tx, FLOW_X).concat(flow(ty, FLOW_Y)), moving = false;
+    if (picked >= 0) {
+      var c = cells[picked];
+      // 大張跨兩欄兩列，撐大的量分給兩條，整體放大的感覺跟小張差不多
+      c[0].forEach(function (i) { goal[i] += PICK_X / c[0].length; });
+      c[1].forEach(function (i) { goal[3 + i] += PICK_Y / c[1].length; });
+    }
     for (var i = 0; i < 6; i++) {
       cur[i] += (goal[i] - cur[i]) * EASE_K;
       if (Math.abs(goal[i] - cur[i]) > 0.002) moving = true; else cur[i] = goal[i];
@@ -250,7 +261,18 @@ if (splitGrid && !reduceMotion) {
     ty = Math.min(1, Math.max(0, (e.clientY - r.top) / r.height));
     kick();
   });
-  splitGrid.addEventListener('pointerleave', function () { tx = ty = null; kick(); });
+  // 只在換到另一張時才改「選中」，同一張裡移動不會跳
+  var pick = function (e) {
+    var on = e.target.closest && e.target.closest('.w');
+    var idx = on ? cards.indexOf(on) : -1;
+    if (idx >= 0 && idx !== picked) { picked = idx; kick(); }
+  };
+  splitGrid.addEventListener('pointerover', pick);
+  splitGrid.addEventListener('focusin', pick);
+  splitGrid.addEventListener('pointerleave', function () { tx = ty = null; picked = -1; kick(); });
+  splitGrid.addEventListener('focusout', function (e) {
+    if (!splitGrid.contains(e.relatedTarget) && !splitGrid.matches(':hover')) { picked = -1; kick(); }
+  });
   var applySplit = function () { splitGrid.classList.toggle('is-split', splitMq.matches); };
   applySplit();
   if (splitMq.addEventListener) splitMq.addEventListener('change', applySplit);
