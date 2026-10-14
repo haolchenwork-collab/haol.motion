@@ -357,17 +357,9 @@ figcaption { font-size: 14px; color: var(--muted); }
   #work-list .card { transition: filter .35s ease; }
   #work-list:has(.card:hover, .card:focus-visible) .card:not(:hover):not(:focus-visible) { filter: brightness(.35) saturate(.5); }
 }
-/* 代表作大卡：兩欄時佔滿一整列；三欄以上時佔兩欄兩列，高度跟旁邊兩張小卡對齊（單欄不放大，會撐出多餘的欄） */
-@media (min-width: 760px) {
-  #work-list .card.feature { grid-column: span 2; }
-  #work-list .card.feature .card-cap { padding: 48px 22px 14px; }
-  #work-list .card.feature h3 { font-size: 34px; }
-  #work-list .card.feature .zh { font-size: 15px; }
-}
-@media (min-width: 1092px) {
-  #work-list .card.feature { grid-row: span 2; }
-  #work-list .card.feature .media { aspect-ratio: auto; height: 100%; }
-}
+/* 錯位：卡片一樣大，第二欄往下推半張（--stagger 由 main.js 依卡片高度算出，單欄時為 0） */
+#work-list.stagger { padding-bottom: var(--stagger, 0px); }
+#work-list.stagger .card[data-col="1"] { transform: translateY(var(--stagger, 0px)); }
 
 /* 篩選：黏在頁首下方的玻璃列 */
 .work-bar { position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 8; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; pointer-events: none; }

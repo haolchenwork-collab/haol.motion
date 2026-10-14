@@ -149,9 +149,25 @@ document.querySelectorAll('.filters').forEach(function (bar) {
       items.forEach(function (it) {
         it.hidden = !(f === 'all' || it.getAttribute('data-tags').split(' ').indexOf(f) !== -1);
       });
+      target.dispatchEvent(new Event('filtered'));
     });
   });
 });
+
+// 4b. Work 錯位：算出每張可見卡片在第幾欄，第二欄往下推半張卡片高（篩選、改視窗大小後重算）。
+var staggerGrid = document.querySelector('#work-list.stagger');
+if (staggerGrid) {
+  var restagger = function () {
+    var cols = getComputedStyle(staggerGrid).gridTemplateColumns.split(' ').length;
+    var shown = Array.prototype.filter.call(staggerGrid.querySelectorAll('.card'), function (c) { return !c.hidden; });
+    shown.forEach(function (c, i) { c.setAttribute('data-col', String(i % cols)); });
+    var h = shown.length ? shown[0].offsetHeight : 0;
+    staggerGrid.style.setProperty('--stagger', cols > 1 ? Math.round(h / 2) + 'px' : '0px');
+  };
+  restagger();
+  staggerGrid.addEventListener('filtered', restagger);
+  window.addEventListener('resize', restagger);
+}
 
 // 5. CREATIVE 點開放大：複製該件的畫面與文字到對話框。
 var box = document.querySelector('dialog.lightbox');
