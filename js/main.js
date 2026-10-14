@@ -199,6 +199,25 @@ function filterItems(target, items, keep) {
   });
 }
 
+// 4b. Work 卡片景深：滑過（或鍵盤移到）一張時，其他卡片依離它的距離設 --depth（0 近～1 遠），CSS 用它決定退後多少。
+var depthGrid = document.getElementById('work-list');
+if (depthGrid && matchMedia('(hover: hover)').matches) {
+  var setDepth = function (e) {
+    var on = e.target.closest && e.target.closest('.card');
+    if (!on || !depthGrid.contains(on)) return;
+    var a = on.getBoundingClientRect(), ax = a.left + a.width / 2, ay = a.top + a.height / 2;
+    // 以畫面寬度的 70% 當「最遠」，畫面內看得到的卡片就會用到完整的遠近範圍
+    var far = Math.max(window.innerWidth * 0.7, 1);
+    depthGrid.querySelectorAll('.card').forEach(function (c) {
+      var b = c.getBoundingClientRect();
+      var d = Math.hypot(b.left + b.width / 2 - ax, b.top + b.height / 2 - ay);
+      c.style.setProperty('--depth', Math.min(1, d / far).toFixed(3));
+    });
+  };
+  depthGrid.addEventListener('pointerover', setDepth);
+  depthGrid.addEventListener('focusin', setDepth);
+}
+
 // 5. CREATIVE 點開放大：複製該件的畫面與文字到對話框。
 var box = document.querySelector('dialog.lightbox');
 if (box) {
