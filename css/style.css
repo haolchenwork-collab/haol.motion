@@ -357,7 +357,7 @@ figcaption { font-size: 14px; color: var(--muted); }
   #work-list .card { transition: filter .35s ease; }
   #work-list:has(.card:hover, .card:focus-visible) .card:not(:hover):not(:focus-visible) { filter: brightness(.35) saturate(.5); }
 }
-/* 錯位：卡片一樣大，第二欄往下推半張（--stagger 由 main.js 依卡片高度算出，單欄時為 0） */
+/* 錯位：卡片一樣大，第二欄往下推三分之一張（--stagger 由 main.js 依卡片高度算出，單欄時為 0） */
 #work-list.stagger { padding-bottom: var(--stagger, 0px); }
 #work-list.stagger .card[data-col="1"] { transform: translateY(var(--stagger, 0px)); }
 

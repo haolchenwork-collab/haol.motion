@@ -154,7 +154,7 @@ document.querySelectorAll('.filters').forEach(function (bar) {
   });
 });
 
-// 4b. Work 錯位：算出每張可見卡片在第幾欄，第二欄往下推半張卡片高（篩選、改視窗大小後重算）。
+// 4b. Work 錯位：算出每張可見卡片在第幾欄，第二欄往下推三分之一張卡片高（篩選、改視窗大小後重算）。
 var staggerGrid = document.querySelector('#work-list.stagger');
 if (staggerGrid) {
   var restagger = function () {
@@ -162,7 +162,7 @@ if (staggerGrid) {
     var shown = Array.prototype.filter.call(staggerGrid.querySelectorAll('.card'), function (c) { return !c.hidden; });
     shown.forEach(function (c, i) { c.setAttribute('data-col', String(i % cols)); });
     var h = shown.length ? shown[0].offsetHeight : 0;
-    staggerGrid.style.setProperty('--stagger', cols > 1 ? Math.round(h / 2) + 'px' : '0px');
+    staggerGrid.style.setProperty('--stagger', cols > 1 ? Math.round(h / 3) + 'px' : '0px');
   };
   restagger();
   staggerGrid.addEventListener('filtered', restagger);
