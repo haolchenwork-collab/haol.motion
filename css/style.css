@@ -355,23 +355,30 @@ figcaption { font-size: 14px; color: var(--muted); }
   #work-list.tiles .card:hover .tags, #work-list.tiles .card:focus-visible .tags { max-height: 44px; opacity: 1; transform: none; }
 }
 
-/* 透視空間：整面作品牆是 3D 空間裡往後倒的一塊固定平面；滑過的卡片往前浮起（main.js 加上 .work-space） */
-.work-space { perspective: 1400px; perspective-origin: 50% var(--vy, 50%); }
-.work-space #work-list {
-  transform-style: preserve-3d; transform-origin: 50% var(--vy, 50%);
-  transform: rotateX(var(--sx, 14deg));  /* 往後倒的角度，要更斜就調大 */
+/* 時間線：左邊一條直線＋年份（捲動時黏住），右邊是那一年的作品 */
+.timeline { position: relative; display: flex; flex-direction: column; gap: 56px; }
+.timeline::before {  /* 貫穿全部年份的直線 */
+  content: ""; position: absolute; top: 14px; bottom: 0; left: 7px; width: 1px;
+  background: linear-gradient(to bottom, var(--accent), rgba(255, 255, 255, .14) 240px, rgba(255, 255, 255, .14) calc(100% - 120px), transparent);
 }
-.work-space #work-list .card.in, .work-space #work-list .card:not(.rv) {
-  transform: translateZ(var(--cz, 0px));
-  transition: transform .5s cubic-bezier(.2,.7,.2,1), opacity .8s ease;
+.tl-year { display: grid; grid-template-columns: 200px minmax(0, 1fr); align-items: start; }
+.tl-year[hidden] { display: none; }
+.tl-label {
+  position: sticky; top: calc(var(--hh, 58px) + 76px); margin: 0; padding-left: 32px;
+  font-family: var(--display); font-weight: 800; font-size: 34px; line-height: 1; color: var(--fg);
 }
-@media (hover: hover) { .work-space #work-list .card:hover { --cz: 60px; z-index: 5; } }
-.work-space #work-list .card::after {
-  content: ""; position: absolute; inset: 0; z-index: 3; border-radius: 8px; pointer-events: none;
-  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%), rgba(255, 255, 255, .16), transparent 55%);
-  opacity: 0; transition: opacity .4s;
+.tl-label::before {  /* 年份前面線上的圓點 */
+  content: ""; position: absolute; left: 2px; top: 50%; width: 11px; height: 11px; margin-top: -6px; border-radius: 50%;
+  background: var(--bg, #000); border: 2px solid var(--accent); box-shadow: 0 0 12px var(--accent);
 }
-.work-space #work-list .card:hover::after { opacity: 1; }
+.tl-year:first-child .tl-label::before { background: var(--accent); }
+.tl-cards { margin: 0; }
+@media (max-width: 760px) {
+  .timeline { gap: 36px; }
+  .tl-year { grid-template-columns: minmax(0, 1fr); row-gap: 14px; padding-left: 28px; }
+  .tl-label { position: relative; top: auto; padding-left: 0; font-size: 28px; }
+  .tl-label::before { left: -26px; }
+}
 
 /* 篩選：黏在頁首下方的玻璃列 */
 .work-bar { position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 8; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; pointer-events: none; }

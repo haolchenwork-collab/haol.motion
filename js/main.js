@@ -33,28 +33,6 @@ document.querySelectorAll('.card[data-loop], .w[data-loop]').forEach(function (c
   });
 });
 
-// 2b. Work 透視空間：整面作品牆固定往後倒，視角中心跟著捲動，眼前那段永遠是同樣的透視
-var workList = document.getElementById('work-list');
-if (workList) {
-  var space = workList.parentNode, raf = 0;
-  space.classList.add('work-space');
-  function frame() {
-    raf = 0;
-    space.style.setProperty('--vy', (innerHeight / 2 - space.getBoundingClientRect().top).toFixed(0) + 'px');
-  }
-  function queue() { if (!raf) raf = requestAnimationFrame(frame); }
-  addEventListener('scroll', queue, { passive: true });
-  addEventListener('resize', queue);
-  frame();
-  workList.querySelectorAll('.card').forEach(function (card) {
-    card.addEventListener('pointermove', function (e) {
-      var r = card.getBoundingClientRect();
-      card.style.setProperty('--gx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
-      card.style.setProperty('--gy', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
-    });
-  });
-}
-
 // 3. 影片：點了才載入 Vimeo 播放器，頁面開啟比較快。
 document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
   btn.addEventListener('click', function () {
@@ -170,6 +148,10 @@ document.querySelectorAll('.filters').forEach(function (bar) {
       buttons.forEach(function (b) { b.setAttribute('aria-pressed', String(b === btn)); });
       items.forEach(function (it) {
         it.hidden = !(f === 'all' || it.getAttribute('data-tags').split(' ').indexOf(f) !== -1);
+      });
+      // 時間線：該年份沒有符合的作品就整段藏起來
+      target.querySelectorAll('[data-group]').forEach(function (g) {
+        g.hidden = !g.querySelector('[data-tags]:not([hidden])');
       });
     });
   });
