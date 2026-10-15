@@ -1,13 +1,121 @@
 {
-"W": 980,
-"H": 2000,
-"source": "https://www.instagram.com/p/DaPu814PYH-/ (jpspacestudio, 2026-07-01)",
-"items": [
-{"t": "t", "r": [204, 100, 541, 30], "l": [{"x": "Taitung Expo 2026", "s": "255,255,255|23.9|400|display-extrabold|l"}]},
-{"t": "t", "r": [204, 130, 300, 19], "l": [{"x": "未來人孵化器 教育展 宣傳動畫", "s": "255,255,255|13|400|display-extrabold|l"}]},
-{"t": "t", "r": [204, 167, 419, 51], "l": [{"x": "Exhibition / 2026 / JP Space / Role 2D Motion", "s": "255,255,255|18|400|display|l"}]},
-{"t": "t", "r": [204, 230, 520, 150], "l": [{"x": "2026 台東博覽會《未來人孵化器》教育展的宣傳動畫。\n2050 年的未來人「東東」意外降落在 2026 年的台東，帶觀眾走進教育館。\n體內流動的光球、逐漸被點亮的色彩與不斷變化的圖形，把適應、理解、思考與共創化為能量。", "s": "255,255,255|18|400|display|l"}]},
-{"t": "t", "r": [204, 400, 520, 150], "l": [{"x": "A promo animation for the Future Human Incubator education pavilion at the 2026 Taitung Expo.\nDongdong, a visitor from the year 2050, lands in Taitung in 2026 and leads the audience into the pavilion.\nGlowing orbs flowing inside Dongdong, colours lighting up and shapes that keep changing turn adapting, understanding, thinking and co-creating into energy.", "s": "255,255,255|18|400|display|l"}]},
-{"t": "p", "r": [204, 560, 572, 322]}
-]
+ "W": 980,
+ "H": 2000,
+ "source": "https://www.instagram.com/p/DaPu814PYH-/ (jpspacestudio, 2026-07-01)",
+ "items": [
+  {
+   "t": "t",
+   "r": [
+    204,
+    100,
+    541,
+    30
+   ],
+   "l": [
+    {
+     "x": "Taitung Expo 2026",
+     "s": "255,255,255|23.9|400|display-extrabold|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    130,
+    300,
+    19
+   ],
+   "l": [
+    {
+     "x": "未來人孵化器 教育展 宣傳動畫",
+     "s": "255,255,255|13|400|display-extrabold|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    167,
+    419,
+    51
+   ],
+   "l": [
+    {
+     "x": "Exhibition / 2026 / JP Space / Role 2D Motion",
+     "s": "255,255,255|18|400|display|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    230,
+    520,
+    150
+   ],
+   "l": [
+    {
+     "x": "2026 台東博覽會《未來人孵化器》教育展的宣傳動畫。\n2050 年的未來人「東東」意外降落在 2026 年的台東，帶觀眾走進教育館。\n體內流動的光球、逐漸被點亮的色彩與不斷變化的圖形，把適應、理解、思考與共創化為能量。",
+     "s": "255,255,255|18|400|display|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    400,
+    520,
+    150
+   ],
+   "l": [
+    {
+     "x": "A promo animation for the Future Human Incubator education pavilion at the 2026 Taitung Expo.\nDongdong, a visitor from the year 2050, lands in Taitung in 2026 and leads the audience into the pavilion.\nGlowing orbs flowing inside Dongdong, colours lighting up and shapes that keep changing turn adapting, understanding, thinking and co-creating into energy.",
+     "s": "255,255,255|18|400|display|l"
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "r": [
+    204,
+    560,
+    572,
+    322
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    161,
+    1600,
+    132,
+    32
+   ],
+   "l": [
+    {
+     "x": "Credit",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    308,
+    1650,
+    378,
+    145
+   ],
+   "l": [
+    {
+     "x": "指導單位：臺東縣政府\n主辦單位：臺東縣政府教育處\n策展單位：洄洄山林地方設計\n\n多媒體統籌：JP SPACE\n創意總監：蔣承翰 Jiang Jiang\n策略總監：許軒瑜 Hsuan Yu Hsu\n商務開發經理：陳韻 Mia C\n專案經理：陳韻 Mia C\n\n分鏡繪製：戴上鈞 Peter Tai\n美術設計：戴上鈞 Peter Tai\n動態設計：廖浩辰 Haochen Liao\n配樂設計：林祺翔 GuyL\n音效設計：林祺翔 GuyL",
+     "s": "255,255,255|7.8|400|text|l"
+    }
+   ]
+  }
+ ]
 }
