@@ -174,3 +174,9 @@
   .pj-hero .pj-facts .f-role { flex-wrap: wrap; row-gap: 8px; }
   .pj-hero .pj-facts .f-role .pj-chips { margin-left: auto; max-width: 100%; }
 }
+/* 分隔線精簡：概念區下緣、中英文之間不再畫線，每個區塊只留小標題下那一條 */
+.pj-brief { border-bottom: 0; }
+.pj-en { border-top: 0; padding-top: 0; margin-top: 10px; }
+/* 分隔線放在大標上方（不在下方） */
+.pj-sec .section-head { border-bottom: 0; padding-bottom: 0; border-top: 1px solid var(--line); padding-top: 20px; margin-bottom: 20px; }
+.pj-brief { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 40px; }
