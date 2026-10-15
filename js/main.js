@@ -349,6 +349,7 @@ if (box) {
       if (el.tagName !== 'IFRAME' || el.contentWindow !== e.source) return;
       if (d.event === 'ready') {
         ['play', 'timeupdate'].forEach(function (ev) { el.contentWindow.postMessage(JSON.stringify({ method: 'addEventListener', value: ev }), e.origin); });
+        el.contentWindow.postMessage(JSON.stringify({ method: 'play' }), e.origin);  // 背景模式有時不會自己開始
       } else if (d.event === 'play' || d.event === 'timeupdate') el.classList.add('is-on');
     });
   });
