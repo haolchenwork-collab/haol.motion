@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 107
+ASSET_V = 108
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -18,6 +18,7 @@ VTHUMB = 'https://i.vimeocdn.com/video/{}-d_1280'
 
 # 檔名, Wix json, 標題, 中文, 年份, Vimeo 編號（依頁面上播放器的順序）, Vimeo 縮圖, 沒有 Vimeo 時用的 Wix 影片
 PAGES = [
+    ('taitung-expo-2026', 'taitungexpo2026', 'Taitung Expo 2026', '未來人孵化器 教育展 宣傳動畫', '2026', ['local:../videos/taitung-expo-2026/promo.mp4:../images/taitung-expo-2026-poster.jpg']),
     ('food-taipei-2026', 'foodtaipei2026', 'FOOD TAIPEI 2026', '台北國際食品展 宣傳', '2026', ['1204108119:e924efaed1']),
     ('spark-101', 'spark101', 'SPARK 101', '台北 101 雙跨年 主視覺', '2025', ['1167946988']),
     ('presidential-cup-2025', 'presidentialcup2025', 'Presidential Cup 2025', '總統盃全民運動賽事', '2025', ['1150916273']),
@@ -529,6 +530,9 @@ def render(slug, data, films, title):
 def film_html(film, title):
     if not film or film == 'dead':
         return '<div class="media ratio-16x9 wx-dead"><span class="mono muted">影片已下架</span></div>'
+    if film.startswith('local:'):             # 本站 videos/ 裡的直式短片（IG Reels）：靜音自動循環，控制列可開聲音
+        src, _, poster = film[6:].partition(':')
+        return '<div class="media ratio-9x16 pj-tall"><video src="{}" poster="{}" controls autoplay muted loop playsinline preload="auto"></video></div>'.format(src, poster)
     if film.startswith('wix:'):
         vid, _, opt = film[4:].partition(':')
         if opt == 'auto':                      # 一打開就靜音自動循環播放（控制列可開聲音）
