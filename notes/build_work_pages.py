@@ -406,6 +406,12 @@ def render(slug, data, films, title):
         else:
             sec['media'].append(it)
     # 小的裝飾 GIF（Wix 頁面上的點綴）不放進作品頁
+    # json 最上層寫 "band_to_credit": "Process"：把那個區塊的整寬橫幅移到 Credits 當背景
+    move = (data.get('band_to_credit') or '').lower()
+    for s in sections:
+        if move and s['name'].lower() == move and s['band']:
+            credit_bg = credit_bg or s['band']
+            s['band'] = None
 
     # 組 HTML
     out = []
