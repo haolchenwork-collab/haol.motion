@@ -286,6 +286,7 @@ if (box) {
   function openEntry(entry) {
     boxMedia.innerHTML = '';
     var m = entry.querySelector('.media').cloneNode(true);
+    m.querySelectorAll('.cr-play').forEach(function (n) { n.remove(); });
     if (entry.classList.contains('cr-wide')) m.classList.add('is-wide');
     if (entry.classList.contains('cr-tall')) m.classList.add('is-tall');
     var film = entry.getAttribute('data-film');
@@ -312,6 +313,59 @@ if (box) {
   document.querySelectorAll('.lab-card[data-entry]').forEach(function (entry) {
     entry.addEventListener('click', function () { openEntry(entry); });
   });
+  // 格子裡每一件都自動靜音循環播放：捲到附近才載入，mp4 離開畫面就暫停
+  var plays = [];
+  document.querySelectorAll('.lab-card[data-film]').forEach(function (entry) {
+    var film = entry.getAttribute('data-film');
+    var el;
+    if (film.indexOf('vimeo:') === 0) {
+      el = document.createElement('iframe');
+      el.setAttribute('data-src', 'https://player.vimeo.com/video/' + encodeURIComponent(film.slice(6)) + '?background=1&autoplay=1&muted=1&loop=1&dnt=1');
+      el.allow = 'autoplay';
+      el.tabIndex = -1;
+      el.title = entry.querySelector('h3').textContent;
+    } else {
+      el = document.createElement('video');
+      el.setAttribute('data-src', film);
+      el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true;
+      el.setAttribute('muted', ''); el.setAttribute('playsinline', '');
+      el.addEventListener('error', function () { el.remove(); });
+      el.addEventListener('playing', function () { el.classList.add('is-on'); });
+    }
+    el.className = 'cr-play';
+    el.setAttribute('aria-hidden', 'true');
+    if (entry.classList.contains('cr-wide')) el.style.setProperty('--ar', 16 / 9);
+    if (entry.classList.contains('cr-tall')) el.style.setProperty('--ar', 9 / 16);
+    entry.querySelector('.media').appendChild(el);
+    plays.push(el);
+  });
+  // Vimeo 讀取時是黑畫面：等它真的開始播才蓋上去，播不了就一直顯示原本的圖
+  window.addEventListener('message', function (e) {
+    if (!/^https:\/\/player\.vimeo\.com$/.test(e.origin)) return;
+    var d = e.data;
+    if (typeof d === 'string') { try { d = JSON.parse(d); } catch (err) { return; } }
+    if (!d || !d.event) return;
+    plays.forEach(function (el) {
+      if (el.tagName !== 'IFRAME' || el.contentWindow !== e.source) return;
+      if (d.event === 'ready') {
+        ['play', 'timeupdate'].forEach(function (ev) { el.contentWindow.postMessage(JSON.stringify({ method: 'addEventListener', value: ev }), e.origin); });
+      } else if (d.event === 'play' || d.event === 'timeupdate') el.classList.add('is-on');
+    });
+  });
+  function playOn(el) {
+    if (!el.src) el.src = el.getAttribute('data-src');
+    if (el.play) { var p = el.play(); if (p && p.catch) p.catch(function () {}); }
+  }
+  if (!('IntersectionObserver' in window)) plays.forEach(playOn);
+  else {
+    var playIo = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) playOn(e.target);
+        else if (e.target.pause && e.target.src) e.target.pause();
+      });
+    }, { rootMargin: '300px 0px' });
+    plays.forEach(function (el) { playIo.observe(el); });
+  }
   box.querySelector('.lightbox-close').addEventListener('click', function () { box.close(); });
   box.addEventListener('click', function (e) { if (e.target === box) box.close(); });
   box.addEventListener('close', function () { boxMedia.innerHTML = ''; });
