@@ -10,7 +10,7 @@ import html, json, os, re
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA = os.path.join(ROOT, 'notes', 'wix-pages')
 OUT = os.path.join(ROOT, 'work')
-ASSET_V = 108
+ASSET_V = 109
 
 WIXVID = 'https://video.wixstatic.com/video/f77ff6_{}/{}/mp4/file.mp4'
 WIXPOSTER = 'https://static.wixstatic.com/media/f77ff6_{}f000.jpg/v1/fill/w_960,h_540,q_80/poster.jpg'
@@ -477,16 +477,23 @@ def render(slug, data, films, title):
             continue
         c = '<figcaption class="mono">{}</figcaption>'.format(html.escape(fix(ttext(cap)))) if cap and fix(ttext(cap)).upper() != 'VIDEO' else ''
         film_parts.append('<figure class="pj-film">{}{}</figure>'.format(film_html(f, head_title), c))
-    if film_parts:
+    # 直式影片（只有一支 local: 影片）：影片和專案概念左右並排，不讓直式影片獨佔一整列
+    tall = len(film_parts) == 1 and all(f.startswith('local:') for f in films) and (brief_zh or brief_en)
+    if film_parts and not tall:
         out.append('<section class="wrap pj-films" aria-label="完整影片">{}</section>'.format(''.join(film_parts)))
 
     # 專案概念：左邊小標，右邊中文（每段一行）＋英文。負責項目已經在上面的資訊欄，這裡不重複
     if brief_zh or brief_en:
         zh_ps = [ln.strip() for z in brief_zh for ln in z.split('\n') if ln.strip()]
         en_ps = [ln.strip() for e in brief_en for ln in e.split('\n') if ln.strip()]
-        out.append('<section class="section wrap pj-brief"><h2 class="pj-brief-h">The Brief<small class="mono muted">專案概念</small></h2><div class="pj-brief-body">{}{}</div></section>'.format(
+        brief = '<h2 class="pj-brief-h">The Brief<small class="mono muted">專案概念</small></h2><div class="pj-brief-body">{}{}</div>'.format(
             ''.join('<p class="pj-zh">{}</p>'.format(html.escape(z)) for z in zh_ps),
-            '<div class="pj-en">{}</div>'.format(''.join('<p>{}</p>'.format(html.escape(e)) for e in en_ps)) if en_ps else ''))
+            '<div class="pj-en">{}</div>'.format(''.join('<p>{}</p>'.format(html.escape(e)) for e in en_ps)) if en_ps else '')
+        if tall:
+            out.append('<section class="section wrap pj-split"><div class="pj-films" aria-label="完整影片">{}</div><div class="pj-brief">{}</div></section>'.format(
+                ''.join(film_parts), brief))
+        else:
+            out.append('<section class="section wrap pj-brief">{}</section>'.format(brief))
 
     # 素材區塊
     for s in sections:
