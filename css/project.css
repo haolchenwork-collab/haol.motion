@@ -180,3 +180,8 @@
 /* 分隔線放在大標上方（不在下方） */
 .pj-sec .section-head { border-bottom: 0; padding-bottom: 0; border-top: 1px solid var(--line); padding-top: 20px; margin-bottom: 20px; }
 .pj-brief { border-top: 1px solid var(--line); padding-top: 20px; margin-top: 40px; }
+
+/* 直式影片（IG Reels）：9:16，寬度收窄置中 */
+.ratio-9x16 { aspect-ratio: 9 / 16; }
+.pj-film .media.pj-tall { width: min(100%, 420px); margin-inline: auto; }
+.pj-film .media.pj-tall video[controls] { object-fit: cover; }
