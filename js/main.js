@@ -330,6 +330,7 @@ if (box) {
       el.muted = true; el.loop = true; el.autoplay = true; el.playsInline = true;
       el.setAttribute('muted', ''); el.setAttribute('playsinline', '');
       el.addEventListener('error', function () { el.remove(); });
+      el.addEventListener('playing', function () { el.classList.add('is-on'); });
     }
     el.className = 'cr-play';
     el.setAttribute('aria-hidden', 'true');
@@ -337,6 +338,19 @@ if (box) {
     if (entry.classList.contains('cr-tall')) el.style.setProperty('--ar', 9 / 16);
     entry.querySelector('.media').appendChild(el);
     plays.push(el);
+  });
+  // Vimeo 讀取時是黑畫面：等它真的開始播才蓋上去，播不了就一直顯示原本的圖
+  window.addEventListener('message', function (e) {
+    if (!/^https:\/\/player\.vimeo\.com$/.test(e.origin)) return;
+    var d = e.data;
+    if (typeof d === 'string') { try { d = JSON.parse(d); } catch (err) { return; } }
+    if (!d || !d.event) return;
+    plays.forEach(function (el) {
+      if (el.tagName !== 'IFRAME' || el.contentWindow !== e.source) return;
+      if (d.event === 'ready') {
+        ['play', 'timeupdate'].forEach(function (ev) { el.contentWindow.postMessage(JSON.stringify({ method: 'addEventListener', value: ev }), e.origin); });
+      } else if (d.event === 'play' || d.event === 'timeupdate') el.classList.add('is-on');
+    });
   });
   function playOn(el) {
     if (!el.src) el.src = el.getAttribute('data-src');
