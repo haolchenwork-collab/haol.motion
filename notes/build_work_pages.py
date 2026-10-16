@@ -19,7 +19,7 @@ VTHUMB = 'https://i.vimeocdn.com/video/{}-d_1280'
 # 檔名, Wix json, 標題, 中文, 年份, Vimeo 編號（依頁面上播放器的順序）, Vimeo 縮圖, 沒有 Vimeo 時用的 Wix 影片
 PAGES = [
     ('taitung-expo-2026', 'taitungexpo2026', 'Taitung Expo 2026', '未來人孵化器 教育展 宣傳動畫', '2026', ['local:../videos/taitung-expo-2026/promo.mp4:../images/taitung-expo-2026-poster.jpg']),
-    ('food-taipei-2026', 'foodtaipei2026', 'FOOD TAIPEI 2026', '台北國際食品展 宣傳', '2026', ['1204108119:e924efaed1']),
+    ('food-taipei-2026', 'foodtaipei2026', 'FOOD TAIPEI EXPO 2026', '台北國際食品展 宣傳', '2026', ['1204108119:e924efaed1']),
     ('spark-101', 'spark101', 'SPARK 101', '台北 101 雙跨年 主視覺', '2025', ['1167946988']),
     ('presidential-cup-2025', 'presidentialcup2025', 'Presidential Cup 2025', '總統盃全民運動賽事', '2025', ['1150916273']),
     ('new-taipei-dome', 'newtaipeidome', 'New Taipei Dome', '新北市大巨蛋 宣傳影片', '2025', ['1160088595']),
