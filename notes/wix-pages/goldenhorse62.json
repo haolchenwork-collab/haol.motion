@@ -1,6 +1,6 @@
 {
  "W": 980,
- "H": 3100,
+ "H": 3300,
  "source": "G:\\0_WORK\\25\\2509_GHA62 package (hoal's project folder, 2026-10-16)",
  "items": [
   {
@@ -97,7 +97,7 @@
    ],
    "l": [
     {
-     "x": "Nominee Frame",
+     "x": "Background",
      "s": "255,255,255|25.1|400|display-bold|l"
     }
    ]
@@ -107,11 +107,11 @@
    "r": [
     204,
     1050,
-    280,
-    158
+    190,
+    107
    ],
-   "src": "../videos/golden-horse-62/frame-actress.mp4",
-   "poster": "../images/golden-horse-62/frame-actress.jpg",
+   "src": "../videos/golden-horse-62/bg-logo-2.mp4",
+   "poster": "../images/golden-horse-62/bg-logo-2.jpg",
    "o": [
     1280,
     720
@@ -121,13 +121,29 @@
   {
    "t": "v",
    "r": [
-    490,
+    400,
     1050,
-    280,
-    158
+    190,
+    107
    ],
-   "src": "../videos/golden-horse-62/frame-actor.mp4",
-   "poster": "../images/golden-horse-62/frame-actor.jpg",
+   "src": "../videos/golden-horse-62/bg-mosaic-1.mp4",
+   "poster": "../images/golden-horse-62/bg-mosaic-1.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    596,
+    1050,
+    190,
+    107
+   ],
+   "src": "../videos/golden-horse-62/bg-mosaic-2.mp4",
+   "poster": "../images/golden-horse-62/bg-mosaic-2.jpg",
    "o": [
     1280,
     720
@@ -144,7 +160,7 @@
    ],
    "l": [
     {
-     "x": "Lower third",
+     "x": "Nominees",
      "s": "255,255,255|25.1|400|display-bold|l"
     }
    ]
@@ -154,6 +170,69 @@
    "r": [
     204,
     1350,
+    572,
+    322
+   ],
+   "src": "../videos/golden-horse-62/nominee.mp4",
+   "poster": "../images/golden-horse-62/nominee.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    1700,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/frame-actress.mp4",
+   "poster": "../images/golden-horse-62/frame-actress.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    490,
+    1700,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/frame-actor.mp4",
+   "poster": "../images/golden-horse-62/frame-actor.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    1950,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Lower third",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    2000,
     280,
     158
    ],
@@ -169,7 +248,7 @@
    "t": "v",
    "r": [
     490,
-    1350,
+    2000,
     280,
     158
    ],
@@ -185,7 +264,7 @@
    "t": "v",
    "r": [
     204,
-    1550,
+    2200,
     280,
     158
    ],
@@ -201,7 +280,7 @@
    "t": "v",
    "r": [
     490,
-    1550,
+    2200,
     280,
     158
    ],
@@ -217,7 +296,7 @@
    "t": "t",
    "r": [
     204,
-    2300,
+    2450,
     300,
     32
    ],
@@ -232,7 +311,7 @@
    "t": "v",
    "r": [
     204,
-    2350,
+    2500,
     572,
     238
    ],
@@ -248,7 +327,7 @@
    "t": "t",
    "r": [
     204,
-    2700,
+    2850,
     300,
     32
    ],
@@ -263,7 +342,7 @@
    "t": "v",
    "r": [
     204,
-    2750,
+    2900,
     280,
     158
    ],
@@ -279,91 +358,12 @@
    "t": "v",
    "r": [
     490,
-    2750,
+    2900,
     280,
     158
    ],
    "src": "../videos/golden-horse-62/end-roll.mp4",
    "poster": "../images/golden-horse-62/end-roll.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
-  },
-  {
-   "t": "t",
-   "r": [
-    204,
-    1800,
-    300,
-    32
-   ],
-   "l": [
-    {
-     "x": "Background",
-     "s": "255,255,255|25.1|400|display-bold|l"
-    }
-   ]
-  },
-  {
-   "t": "v",
-   "r": [
-    204,
-    1850,
-    280,
-    158
-   ],
-   "src": "../videos/golden-horse-62/bg-blue.mp4",
-   "poster": "../images/golden-horse-62/bg-blue.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
-  },
-  {
-   "t": "v",
-   "r": [
-    490,
-    1850,
-    280,
-    158
-   ],
-   "src": "../videos/golden-horse-62/bg-purple.mp4",
-   "poster": "../images/golden-horse-62/bg-purple.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
-  },
-  {
-   "t": "v",
-   "r": [
-    204,
-    2050,
-    280,
-    158
-   ],
-   "src": "../videos/golden-horse-62/bg-mosaic-1.mp4",
-   "poster": "../images/golden-horse-62/bg-mosaic-1.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
-  },
-  {
-   "t": "v",
-   "r": [
-    490,
-    2050,
-    280,
-    158
-   ],
-   "src": "../videos/golden-horse-62/bg-mosaic-2.mp4",
-   "poster": "../images/golden-horse-62/bg-mosaic-2.jpg",
    "o": [
     1280,
     720
