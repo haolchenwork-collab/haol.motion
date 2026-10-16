@@ -349,7 +349,7 @@ figcaption { font-size: 14px; color: var(--muted); }
   #work-list .card { transition: filter .35s ease, transform .5s cubic-bezier(.2,.7,.2,1), box-shadow .5s cubic-bezier(.2,.7,.2,1); }
   #work-list .card:hover, #work-list .card:focus-visible { z-index: 3; transform: scale(1.07); box-shadow: 0 32px 64px -16px rgba(0, 0, 0, .95); }
   #work-list:has(.card:hover, .card:focus-visible) .card:not(:hover):not(:focus-visible) {
-    filter: brightness(max(.05, calc(.78 - var(--depth, .5) * .82))) saturate(calc(.8 - var(--depth, .5) * .5));
+    filter: brightness(max(.1, calc(.76 - var(--depth, .5) * .72))) saturate(calc(.8 - var(--depth, .5) * .5));
     transform: scale(calc(.97 - var(--depth, .5) * .08));
   }
   @media (prefers-reduced-motion: reduce) { #work-list .card, #work-list:has(.card:hover, .card:focus-visible) .card { transform: none; } }
