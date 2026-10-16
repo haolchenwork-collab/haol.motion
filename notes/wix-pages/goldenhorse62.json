@@ -1,6 +1,6 @@
 {
  "W": 980,
- "H": 2600,
+ "H": 3100,
  "source": "G:\\0_WORK\\25\\2509_GHA62 package (hoal's project folder, 2026-10-16)",
  "items": [
   {
@@ -217,7 +217,7 @@
    "t": "t",
    "r": [
     204,
-    1800,
+    2300,
     300,
     32
    ],
@@ -232,7 +232,7 @@
    "t": "v",
    "r": [
     204,
-    1850,
+    2350,
     572,
     238
    ],
@@ -248,7 +248,7 @@
    "t": "t",
    "r": [
     204,
-    2200,
+    2700,
     300,
     32
    ],
@@ -263,7 +263,7 @@
    "t": "v",
    "r": [
     204,
-    2250,
+    2750,
     280,
     158
    ],
@@ -279,12 +279,91 @@
    "t": "v",
    "r": [
     490,
-    2250,
+    2750,
     280,
     158
    ],
    "src": "../videos/golden-horse-62/end-roll.mp4",
    "poster": "../images/golden-horse-62/end-roll.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    1800,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Background",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    1850,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/bg-blue.mp4",
+   "poster": "../images/golden-horse-62/bg-blue.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    490,
+    1850,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/bg-purple.mp4",
+   "poster": "../images/golden-horse-62/bg-purple.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    2050,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/bg-mosaic-1.mp4",
+   "poster": "../images/golden-horse-62/bg-mosaic-1.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    490,
+    2050,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/bg-mosaic-2.mp4",
+   "poster": "../images/golden-horse-62/bg-mosaic-2.jpg",
    "o": [
     1280,
     720
