@@ -25,6 +25,7 @@ PAGES = [
     ('new-taipei-dome', 'newtaipeidome', 'New Taipei Dome', '新北市大巨蛋 宣傳影片', '2025', ['1160088595']),
     ('tiaf-2023', 'tiaf2023', 'TIAF 2023', '台中國際動畫影展 形象片', '2023', ['852277020']),
     ('taiwan-lantern-festival-2025', 'tlf2025', 'Taiwan Lantern Festival', '2025 台灣燈會', '2025', ['1067632531']),
+    ('golden-horse-62', 'goldenhorse62', 'Golden Horse 62nd', '第 62 屆金馬獎 典禮包裝', '2025', ['localw:../videos/golden-horse-62/bg-logo-1.mp4:../images/golden-horse-62/bg-logo-1.jpg']),
     ('golden-horse-61', 'thethriftyfamily-1', 'Golden Horse 61st', '第 61 屆金馬獎', '2024', ['1046285324', '1046277623']),
     ('lunar-new-year-2024', 'redenvelope2024', 'Lunar New Year 2024', '2024 紅包袋設計', '2024', ['wix:ef6ff46b183645bd941adaa4a8258424:auto']),
     ('thrifty-family', 'thethriftyfamily', 'The Thrifty Family', '省省吧！我家富貴發 影集片頭', '2024', ['1017416780']),
@@ -180,7 +181,8 @@ FIX = {'Lowerthirt': 'Lower third', 'Award HightLight': 'Award Highlight', 'Prid
        'Award 33st': 'Award 33rd', 'Award 31st': 'Award 31st', 'BallBreaker': 'Ballbreaker'}
 ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫面', 'logo': '標準字', 'lower third': '字卡',
       'making of': '幕後', 'title': '片名', 'original': '原始畫面', 'animation': '動畫', 'compositing': '合成',
-      'stage': '舞台', 'exhibit': '展示', 'logo animation': 'LOGO 動態', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素'}
+      'stage': '舞台', 'exhibit': '展示', 'logo animation': 'LOGO 動態', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素',
+      'nominee frame': '入圍開框', 'nominees': '入圍', 'in memoriam': '逝世影人', 'package': '節目包裝', 'background': '背景'}
 
 
 # 作品中文名以浩辰提供的為準（覆蓋 Wix 頁上的寫法）
@@ -540,6 +542,9 @@ def film_html(film, title):
     if film.startswith('local:'):             # 本站 videos/ 裡的直式短片（IG Reels）：靜音自動循環，控制列可開聲音
         src, _, poster = film[6:].partition(':')
         return '<div class="media ratio-9x16 pj-tall"><video src="{}" poster="{}" controls autoplay muted loop playsinline preload="auto"></video></div>'.format(src, poster)
+    if film.startswith('localw:'):            # 本站 videos/ 裡的橫式短片：靜音自動循環，控制列可開聲音
+        src, _, poster = film[7:].partition(':')
+        return '<div class="media ratio-16x9"><video src="{}" poster="{}" controls autoplay muted loop playsinline preload="auto"></video></div>'.format(src, poster)
     if film.startswith('wix:'):
         vid, _, opt = film[4:].partition(':')
         if opt == 'auto':                      # 一打開就靜音自動循環播放（控制列可開聲音）

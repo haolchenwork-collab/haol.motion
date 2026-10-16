@@ -1,0 +1,294 @@
+{
+ "W": 980,
+ "H": 3300,
+ "source": "G:\\0_WORK\\25\\2509_GHA62 package (hoal's project folder, 2026-10-16)",
+ "items": [
+  {
+   "t": "t",
+   "r": [
+    204,
+    100,
+    541,
+    30
+   ],
+   "l": [
+    {
+     "x": "Golden Horse Awards 62nd",
+     "s": "255,255,255|23.9|400|display-extrabold|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    130,
+    300,
+    19
+   ],
+   "l": [
+    {
+     "x": "第 62 屆金馬獎 典禮包裝",
+     "s": "255,255,255|13|400|display-extrabold|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    167,
+    419,
+    51
+   ],
+   "l": [
+    {
+     "x": "Award / 2025 / Role Motion：Nominees、Package、In Memoriam",
+     "s": "255,255,255|18|400|display|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    230,
+    520,
+    150
+   ],
+   "l": [
+    {
+     "x": "第 62 屆金馬獎頒獎典禮的直播包裝。\n從入圍影片、入圍者開框、各式字卡，到 End roll 與逝世影人的舞台畫面，讓整晚的轉播維持同一套金色與光影語彙。",
+     "s": "255,255,255|18|400|display|l"
+    }
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    400,
+    520,
+    150
+   ],
+   "l": [
+    {
+     "x": "Broadcast package for the 62nd Golden Horse Awards ceremony.\nFrom the nominee films and nominee frames to the lower thirds, end roll and the In Memoriam stage visuals, the whole night stays in one language of gold and light.",
+     "s": "255,255,255|18|400|display|l"
+    }
+   ]
+  },
+  {
+   "t": "p",
+   "r": [
+    204,
+    560,
+    572,
+    322
+   ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    1300,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Nominees",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    1350,
+    572,
+    322
+   ],
+   "src": "../videos/golden-horse-62/nominee.mp4",
+   "poster": "../images/golden-horse-62/nominee.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    1700,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/frame-actress.mp4",
+   "poster": "../images/golden-horse-62/frame-actress.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    1950,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Lower third",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    2000,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/l3-award.mp4",
+   "poster": "../images/golden-horse-62/l3-award.jpg",
+   "o": [
+    960,
+    540
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    490,
+    2000,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/l3-show.mp4",
+   "poster": "../images/golden-horse-62/l3-show.jpg",
+   "o": [
+    960,
+    540
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    2200,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/l3-red-carpet.mp4",
+   "poster": "../images/golden-horse-62/l3-red-carpet.jpg",
+   "o": [
+    960,
+    540
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    490,
+    2200,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/l3-next.mp4",
+   "poster": "../images/golden-horse-62/l3-next.jpg",
+   "o": [
+    960,
+    540
+   ],
+   "wide": true
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    2450,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "In Memoriam",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    2500,
+    572,
+    238
+   ],
+   "src": "../videos/golden-horse-62/in-memoriam-stage.mp4",
+   "poster": "../images/golden-horse-62/in-memoriam-stage.jpg",
+   "o": [
+    1280,
+    534
+   ],
+   "wide": true
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    2850,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Package",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    490,
+    2900,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/end-roll.mp4",
+   "poster": "../images/golden-horse-62/end-roll.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    520,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Background",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  }
+ ]
+}
