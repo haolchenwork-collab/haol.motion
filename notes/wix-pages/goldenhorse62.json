@@ -58,7 +58,7 @@
    ],
    "l": [
     {
-     "x": "第 62 屆金馬獎頒獎典禮的直播包裝。\n從入圍影片、入圍者開框、各式字卡，到贊助、End roll 與逝世影人的舞台畫面，讓整晚的轉播維持同一套金色與光影語彙。",
+     "x": "第 62 屆金馬獎頒獎典禮的直播包裝。\n從入圍影片、入圍者開框、各式字卡，到 End roll 與逝世影人的舞台畫面，讓整晚的轉播維持同一套金色與光影語彙。",
      "s": "255,255,255|18|400|display|l"
     }
    ]
@@ -73,7 +73,7 @@
    ],
    "l": [
     {
-     "x": "Broadcast package for the 62nd Golden Horse Awards ceremony.\nFrom the nominee films and nominee frames to the lower thirds, sponsor cards, end roll and the In Memoriam stage visuals, the whole night stays in one language of gold and light.",
+     "x": "Broadcast package for the 62nd Golden Horse Awards ceremony.\nFrom the nominee films and nominee frames to the lower thirds, end roll and the In Memoriam stage visuals, the whole night stays in one language of gold and light.",
      "s": "255,255,255|18|400|display|l"
     }
    ]
@@ -86,69 +86,6 @@
     572,
     322
    ]
-  },
-  {
-   "t": "t",
-   "r": [
-    204,
-    1000,
-    300,
-    32
-   ],
-   "l": [
-    {
-     "x": "Background",
-     "s": "255,255,255|25.1|400|display-bold|l"
-    }
-   ]
-  },
-  {
-   "t": "v",
-   "r": [
-    204,
-    1050,
-    190,
-    107
-   ],
-   "src": "../videos/golden-horse-62/bg-logo-2.mp4",
-   "poster": "../images/golden-horse-62/bg-logo-2.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
-  },
-  {
-   "t": "v",
-   "r": [
-    400,
-    1050,
-    190,
-    107
-   ],
-   "src": "../videos/golden-horse-62/bg-mosaic-1.mp4",
-   "poster": "../images/golden-horse-62/bg-mosaic-1.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
-  },
-  {
-   "t": "v",
-   "r": [
-    596,
-    1050,
-    190,
-    107
-   ],
-   "src": "../videos/golden-horse-62/bg-mosaic-2.mp4",
-   "poster": "../images/golden-horse-62/bg-mosaic-2.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
   },
   {
    "t": "t",
@@ -191,22 +128,6 @@
    ],
    "src": "../videos/golden-horse-62/frame-actress.mp4",
    "poster": "../images/golden-horse-62/frame-actress.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
-  },
-  {
-   "t": "v",
-   "r": [
-    490,
-    1700,
-    280,
-    158
-   ],
-   "src": "../videos/golden-horse-62/frame-actor.mp4",
-   "poster": "../images/golden-horse-62/frame-actor.jpg",
    "o": [
     1280,
     720
@@ -341,22 +262,6 @@
   {
    "t": "v",
    "r": [
-    204,
-    2900,
-    280,
-    158
-   ],
-   "src": "../videos/golden-horse-62/sponsor.mp4",
-   "poster": "../images/golden-horse-62/sponsor.jpg",
-   "o": [
-    1280,
-    720
-   ],
-   "wide": true
-  },
-  {
-   "t": "v",
-   "r": [
     490,
     2900,
     280,
@@ -369,6 +274,21 @@
     720
    ],
    "wide": true
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    520,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Background",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
   }
  ]
 }
