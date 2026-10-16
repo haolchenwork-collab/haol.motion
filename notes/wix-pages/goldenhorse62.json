@@ -1,6 +1,6 @@
 {
  "W": 980,
- "H": 2600,
+ "H": 3000,
  "source": "G:\\0_WORK\\25\\2509_GHA62 package (hoal's project folder, 2026-10-16)",
  "items": [
   {
@@ -58,7 +58,7 @@
    ],
    "l": [
     {
-     "x": "第 62 屆金馬獎頒獎典禮的直播包裝。\n從入圍影片、入圍者開框、各式字卡，到贊助、End roll 與逝世影人的舞台畫面，讓整晚的轉播維持同一套金色與光影語彙。",
+     "x": "第 62 屆金馬獎頒獎典禮的直播包裝。\n從入圍影片、入圍者開框、各式字卡，到贊助、End roll 與逝世影人的舞台畫面，讓整晚的轉播維持同一套金色與光影語彙。\n另外也製作了 2025 台北金馬影展的主視覺公告動態。",
      "s": "255,255,255|18|400|display|l"
     }
    ]
@@ -73,7 +73,7 @@
    ],
    "l": [
     {
-     "x": "Broadcast package for the 62nd Golden Horse Awards ceremony.\nFrom the nominee films and nominee frames to the lower thirds, sponsor cards, end roll and the In Memoriam stage visuals, the whole night stays in one language of gold and light.",
+     "x": "Broadcast package for the 62nd Golden Horse Awards ceremony.\nFrom the nominee films and nominee frames to the lower thirds, sponsor cards, end roll and the In Memoriam stage visuals, the whole night stays in one language of gold and light.\nAlso the key visual announcement motion for the 2025 Taipei Golden Horse Film Festival.",
      "s": "255,255,255|18|400|display|l"
     }
    ]
@@ -290,6 +290,37 @@
     720
    ],
    "wide": true
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    2500,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "Festival Post",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    2550,
+    240,
+    300
+   ],
+   "src": "../videos/golden-horse-62/festival-post.mp4",
+   "poster": "../images/golden-horse-62/festival-post.jpg",
+   "o": [
+    720,
+    900
+   ],
+   "maxw": 440
   }
  ]
 }
