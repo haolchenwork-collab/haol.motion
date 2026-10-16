@@ -182,7 +182,7 @@ FIX = {'Lowerthirt': 'Lower third', 'Award HightLight': 'Award Highlight', 'Prid
 ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫面', 'logo': '標準字', 'lower third': '字卡',
       'making of': '幕後', 'title': '片名', 'original': '原始畫面', 'animation': '動畫', 'compositing': '合成',
       'stage': '舞台', 'exhibit': '展示', 'logo animation': 'LOGO 動態', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素',
-      'nominee frame': '入圍開框', 'in memoriam': '逝世影人', 'package': '節目包裝', 'festival post': '影展主視覺'}
+      'nominee frame': '入圍開框', 'in memoriam': '逝世影人', 'package': '節目包裝'}
 
 
 # 作品中文名以浩辰提供的為準（覆蓋 Wix 頁上的寫法）
@@ -264,8 +264,6 @@ def rows_html(media, row_h=260):
         mw = ' style="max-width:{:.0f}px"'.format(cap)
         if any(m.get('wide') for m in row):        # json 標 "wide": true 的素材，整列撐滿內容寬度（重要的主素材）
             mw = ''
-        if any(m.get('maxw') for m in row):        # json 標 "maxw": 寬度：直式素材限制這一列的寬度，不要撐太高
-            mw = ' style="max-width:{}px"'.format(max(m.get('maxw', 0) for m in row))
         out.append('<div class="pj-row n{}"{}>{}</div>'.format(min(len(row), 4), mw, ''.join(cells)))
     return '\n'.join(out)
 
