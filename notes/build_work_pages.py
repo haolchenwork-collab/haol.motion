@@ -182,7 +182,7 @@ FIX = {'Lowerthirt': 'Lower third', 'Award HightLight': 'Award Highlight', 'Prid
 ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫面', 'logo': '標準字', 'lower third': '字卡',
       'making of': '幕後', 'title': '片名', 'original': '原始畫面', 'animation': '動畫', 'compositing': '合成',
       'stage': '舞台', 'exhibit': '展示', 'logo animation': 'LOGO 動態', 'previz': '前期預覽', 'banner': '橫幅', 'elements': '元素',
-      'nominee frame': '入圍開框', 'nominees': '入圍', 'in memoriam': '逝世影人', 'package': '節目包裝', 'background': '背景'}
+      'nominee frame': '入圍開框', 'nominees': '入圍', 'in memoriam': '逝世影人', 'package': '節目包裝', 'background': '背景', 'on air': '直播現場'}
 
 
 # 作品中文名以浩辰提供的為準（覆蓋 Wix 頁上的寫法）
