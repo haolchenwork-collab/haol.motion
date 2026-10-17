@@ -1,6 +1,6 @@
 {
  "W": 980,
- "H": 3300,
+ "H": 3700,
  "source": "G:\\0_WORK\\25\\2509_GHA62 package (hoal's project folder, 2026-10-16)",
  "items": [
   {
@@ -289,6 +289,85 @@
      "s": "255,255,255|25.1|400|display-bold|l"
     }
    ]
+  },
+  {
+   "t": "t",
+   "r": [
+    204,
+    3150,
+    300,
+    32
+   ],
+   "l": [
+    {
+     "x": "On Air",
+     "s": "255,255,255|25.1|400|display-bold|l"
+    }
+   ]
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    3200,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/live-frame.mp4",
+   "poster": "../images/golden-horse-62/live-frame.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    490,
+    3200,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/live-l3.mp4",
+   "poster": "../images/golden-horse-62/live-l3.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    204,
+    3400,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/live-memoriam.mp4",
+   "poster": "../images/golden-horse-62/live-memoriam.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
+  },
+  {
+   "t": "v",
+   "r": [
+    490,
+    3400,
+    280,
+    158
+   ],
+   "src": "../videos/golden-horse-62/live-endroll.mp4",
+   "poster": "../images/golden-horse-62/live-endroll.jpg",
+   "o": [
+    1280,
+    720
+   ],
+   "wide": true
   }
  ]
 }
