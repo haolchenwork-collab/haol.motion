@@ -252,10 +252,16 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   stage.appendChild(meta);
   // 正中間那張後面的光暈：用它自己的封面模糊放大，兩層交替淡入淡出
   var glows = [0, 1].map(function () { var g = document.createElement('div'); g.className = 'stack-glow'; g.setAttribute('aria-hidden', 'true'); stage.insertBefore(g, stage.firstChild); return g; });
-  var glowOn = 0;
+  var glowOn = 0, glowShown = null, glowTimer = 0;
+  // 連續翻好幾張時先不換光暈，停下來才換：不然半透明的那層會被直接換圖，顏色一下跳掉
   function setGlow(c) {
+    clearTimeout(glowTimer);
+    glowTimer = setTimeout(function () { showGlow(c); }, glowShown ? 180 : 0);
+  }
+  function showGlow(c) {
     var img = c.querySelector('.media img');
-    if (!img) return;
+    if (!img || c === glowShown) return;
+    glowShown = c;
     glowOn = 1 - glowOn;
     glows[glowOn].style.backgroundImage = 'url("' + (img.currentSrc || img.src) + '")';
     glows[glowOn].classList.add('on'); glows[1 - glowOn].classList.remove('on');
@@ -483,6 +489,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       stage.hidden = true;
       stackList.style.height = stackList.style.marginTop = '';
       hero.style.transform = wb.style.transform = '';
+      clearTimeout(glowTimer); glowShown = null;
+      glows.forEach(function (g) { g.classList.remove('on'); });
       if (focus) focus.scrollIntoView({ block: 'center', behavior: 'instant' });
     }
     if (!animate || !Element.prototype.animate) return;
@@ -509,7 +517,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
         { transform: end }
       ], { duration: DUR, easing: EASE });
     });
-    if (on) [meta].concat(glows).forEach(function (el) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, delay: 300, easing: 'ease', fill: 'backwards' }); });
+    // 光暈不在這裡補間：它本身有 1.4s 的 CSS 淡入；以前一起淡到 1，動畫一結束會一下暗掉，舊的那層也會跟著亮起來
+    if (on) meta.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, delay: 300, easing: 'ease', fill: 'backwards' });
   }
   var toggle = document.createElement('div');
   toggle.className = 'view-toggle';
