@@ -307,7 +307,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 
 /* ---------- Work 列表：玻璃標題，格狀圖塊 ---------- */
 #work-list .card { position: relative; display: block; border-radius: 8px; isolation: isolate; }
-#work-list .card .media { border-radius: 8px; outline: 0; aspect-ratio: 2.1 / 1; }
+#work-list .card .media { border-radius: 8px; outline: 0; aspect-ratio: 2.1 / 1; --mr: 8px; clip-path: inset(0 round var(--mr)); }  /* clip-path：卡片有 3D transform 時，影片／iframe 只靠 overflow 圓角會被吃掉 */
 #work-list .card .media img { transition: transform .6s cubic-bezier(.2,.7,.2,1); }
 #work-list .card:hover .media img { transform: scale(1.04); }
 #work-list .card-cap {
@@ -448,7 +448,7 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .cs-bar, .cs-vf, .cs-label, .cs-go, .cs-sheen, .stack-glow { display: none; }
 /* 光澤＋光暈（gloss）：表面一道斜光隨捲動滑過；正中間那張後面打它自己顏色的光暈（hoal 不要邊框亮邊） */
 #work-list[data-card="gloss"] .card { border-radius: 10px; }
-#work-list[data-card="gloss"] .card .media { border-radius: 10px; }
+#work-list[data-card="gloss"] .card .media { border-radius: 10px; --mr: 10px; }
 #work-list.is-stack[data-card="gloss"] .cs-sheen {
   display: block; position: absolute; inset: 0; z-index: 2; overflow: hidden; border-radius: inherit; pointer-events: none;
 }
@@ -478,7 +478,7 @@ html:has(body.has-stack) { overflow-anchor: none; }
   -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 0 0 1px rgba(255, 255, 255, .04), 0 30px 60px -20px rgba(0, 0, 0, .9);
 }
-#work-list[data-card="glass"] .card .media { border-radius: 10px; }
+#work-list[data-card="glass"] .card .media { border-radius: 10px; --mr: 10px; }
 #work-list[data-card="glass"] .stack-shade { border-radius: 18px; }
 #work-list[data-card="glass"] .cs-go {
   display: block; position: absolute; right: 14px; bottom: 14px; z-index: 2; padding: 9px 16px; border-radius: 999px;
@@ -492,13 +492,13 @@ html:has(body.has-stack) { overflow-anchor: none; }
 /* 瀏覽器視窗框：上方一條標題列，三個點和網址 */
 #work-list[data-card="browser"] .stack-stage { --cs-extra: 30px; }
 #work-list[data-card="browser"] .card { border-radius: 10px; overflow: hidden; background: #141416; border: 1px solid rgba(255, 255, 255, .14); }
-#work-list[data-card="browser"] .card .media { border-radius: 0; }
+#work-list[data-card="browser"] .card .media { border-radius: 0; --mr: 0px; }
 #work-list[data-card="browser"] .cs-bar { display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; background: #1c1c1f; border-bottom: 1px solid rgba(255, 255, 255, .08); }
 #work-list[data-card="browser"] .cs-bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, .22); }
 #work-list[data-card="browser"] .card.is-front .cs-bar i:first-child { background: var(--accent); }
 #work-list[data-card="browser"] .cs-bar em { flex: 1; margin-right: 39px; text-align: center; font: 400 11px/1 var(--mono); font-style: normal; letter-spacing: .04em; color: rgba(255, 255, 255, .5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 /* 觀景窗：四角對位框、REC、時間碼，像攝影機螢幕 */
-#work-list[data-card="viewfinder"] .card, #work-list[data-card="viewfinder"] .card .media { border-radius: 2px; }
+#work-list[data-card="viewfinder"] .card, #work-list[data-card="viewfinder"] .card .media { border-radius: 2px; --mr: 2px; }
 #work-list[data-card="viewfinder"] .cs-vf {
   display: block; position: absolute; inset: 14px; z-index: 2; pointer-events: none;
   font: 500 11px/1 var(--mono); letter-spacing: .08em; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, .7);
