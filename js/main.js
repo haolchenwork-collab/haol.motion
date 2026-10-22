@@ -162,7 +162,7 @@ function filterItems(target, items, keep) {
     it.getAnimations().forEach(function (a) { a.cancel(); });
     if (it._leave) it._leave();
   });
-  if (reduce) { items.forEach(function (it) { it.hidden = !keep(it); }); return; }
+  if (reduce || target._stack) { items.forEach(function (it) { it.hidden = !keep(it); }); if (target._stack) target._stack(); return; }
 
   var EASE = 'cubic-bezier(.2,.7,.2,1)', DUR = 480;
   var box = target.getBoundingClientRect();
@@ -199,8 +199,110 @@ function filterItems(target, items, keep) {
   });
 }
 
+// 4a. Work 堆疊瀏覽：卡片在 3D 透視裡上下疊成一疊，捲動時一張張往前翻；正中間那張最大、平放，
+//     上下的越遠越小、越斜、越暗。旁邊顯示目前這張的分類、名稱和專案數。
+//     捲動距離決定翻到第幾張（每張 STEP px），停下來會吸到最近的一張。減少動態時維持原本的格狀。
+var stackList = document.getElementById('work-list');
+if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (function () {
+  var cards = Array.prototype.slice.call(stackList.querySelectorAll('.card'));
+  var stage = document.createElement('div');
+  stage.className = 'stack-stage';
+  cards.forEach(function (c) { stage.appendChild(c); });
+  var meta = document.createElement('div');
+  meta.className = 'stack-meta';
+  meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"></span><b class="sm-title"></b></div>' +
+    '<div class="sm-r"><b class="sm-count"></b><span class="mono muted">projects</span></div>' +
+    '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar"><i></i></span><span>SCROLL ↓</span></div>';
+  stage.appendChild(meta);
+  stackList.appendChild(stage);
+  stackList.classList.add('is-stack');
+  stackList.classList.remove('tiles');
+
+  var STEP = 260;
+  var list = [], cur = 0, target = 0, front = -1, raf = 0, snapT = 0, top0 = 0, H = 300;
+  var $ = function (q) { return meta.querySelector(q); };
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+
+  function measure() {
+    list = cards.filter(function (c) { return !c.hidden; });
+    STEP = Math.max(180, Math.round(innerHeight * 0.32));
+    stackList.style.height = (Math.max(list.length - 1, 0) * STEP + stage.offsetHeight) + 'px';
+    top0 = stackList.getBoundingClientRect().top + scrollY;
+    // 疊的間距以卡片高度為準；手機卡片矮，至少用舞台高度的 30%，整疊才撐得開
+    H = Math.max(list.length ? list[0].offsetHeight : 300, stage.offsetHeight * 0.3);
+    $('.sm-count').textContent = list.length;
+    onScroll();
+  }
+  function onScroll() {
+    target = Math.min(Math.max((scrollY - top0) / STEP, 0), Math.max(list.length - 1, 0));
+    kick();
+    clearTimeout(snapT);
+    snapT = setTimeout(function () {
+      var i = Math.round(target);
+      if (Math.abs(i - target) > 0.01 && scrollY > top0 - 2 && scrollY < top0 + (list.length - 1) * STEP + 2) scrollTo({ top: top0 + i * STEP, behavior: 'smooth' });
+    }, 160);
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+  function tick() {
+    raf = 0;
+    cur += (target - cur) * 0.14;
+    if (Math.abs(target - cur) < 0.001) cur = target; else kick();
+    list.forEach(function (c, i) {
+      var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
+      if (a > 7.5) { c.style.visibility = 'hidden'; return; }
+      // 中間那張和下一張之間拉開，再往外就越疊越密
+      var y = s * (near * H * 0.74 + Math.min(far, 6) * H * 0.2);
+      var rot = -s * (near * 52 + Math.min(far, 6) * 3);
+      var sc = 1 - near * 0.16 - Math.min(far, 6) * 0.045;
+      c.style.visibility = '';
+      c.style.zIndex = 100 - Math.round(a * 10);
+      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) rotateX(' + rot.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
+      c.style.filter = a < 0.02 ? '' : 'brightness(' + Math.max(0.18, 1 - a * 0.2).toFixed(3) + ')';
+      c.style.opacity = a > 6.5 ? (7.5 - a).toFixed(2) : '';
+    });
+    var f = Math.round(cur);
+    if (f !== front && list[f]) {
+      if (list[front]) list[front].classList.remove('is-front');
+      front = f;
+      var c = list[f];
+      c.classList.add('is-front');
+      var tag = c.querySelector('.tags span');
+      $('.sm-cat').textContent = tag ? tag.textContent : '';
+      $('.sm-title').textContent = c.querySelector('h3').textContent;
+      $('.sm-idx').textContent = pad(f + 1) + ' / ' + pad(list.length);
+    }
+    $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? cur / (list.length - 1) : 1).toFixed(3) + ')';
+  }
+  // 點到後面的卡片：先翻到那張；點正中間那張才打開
+  stage.addEventListener('click', function (e) {
+    var c = e.target.closest('.card');
+    if (!c || c.classList.contains('is-front')) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    scrollTo({ top: top0 + list.indexOf(c) * STEP, behavior: 'smooth' });
+  }, true);
+  stage.addEventListener('focusin', function (e) {
+    var c = e.target.closest('.card');
+    if (c && list.indexOf(c) !== -1) scrollTo({ top: top0 + list.indexOf(c) * STEP });
+  });
+  stackList._stack = function () {
+    front = -1;
+    cards.forEach(function (c) { c.classList.remove('is-front'); });
+    measure();
+    if (scrollY > top0) scrollTo({ top: top0 });
+    target = cur = 0;
+    tick();
+    stage.animate && stage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'ease' });
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', measure);
+  addEventListener('load', measure);
+  measure();
+  cur = target;
+  tick();
+})();
+
 // 4b. Work 卡片景深：滑過（或鍵盤移到）一張時，其他卡片依離它的距離設 --depth（0 近～1 遠），CSS 用它決定退後多少。
-var depthGrid = document.getElementById('work-list');
+var depthGrid = document.querySelector('#work-list:not(.is-stack)');
 if (depthGrid && matchMedia('(hover: hover)').matches) {
   var setDepth = function (e) {
     var on = e.target.closest && e.target.closest('.card');
@@ -424,7 +526,7 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
 
 
   // 內容依序滑入（同一層的兄弟元素錯開時間）
-  var sel = '.tile:not(.t-reel), .ab-tile, #work-list .card, .lab-card, .lab-tile, .pj-hero > *, .pj-sec, .pj-row, .site-footer .wrap > *, .page-head > *, .work-bar';
+  var sel = '.tile:not(.t-reel), .ab-tile, #work-list:not(.is-stack) .card, .lab-card, .lab-tile, .pj-hero > *, .pj-sec, .pj-row, .site-footer .wrap > *, .page-head > *, .work-bar';
   var items = document.querySelectorAll(sel);
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {
