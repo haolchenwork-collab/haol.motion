@@ -33,6 +33,41 @@ document.querySelectorAll('.card[data-loop], .w[data-loop]').forEach(function (c
   });
 });
 
+// 2b. 沒有短循環檔的卡片：直接播作品內頁那支 Vimeo（背景模式：靜音、無控制列），從 data-t 那秒開始（自己負責的段落）。
+// 第一次滑上去才載入；離開時用 Vimeo 的 postMessage 暫停，再滑上去接著播。真的開始播了才淡入，載入中先看封面。
+document.querySelectorAll('.card[data-vimeo-loop]').forEach(function (card) {
+  if (!canHover || reduceMotion) return;
+  var media = card.querySelector('.media'), frame, playing = false;
+  function send(method, value) {
+    if (frame && frame.contentWindow) frame.contentWindow.postMessage(JSON.stringify(value === undefined ? { method: method } : { method: method, value: value }), 'https://player.vimeo.com');
+  }
+  window.addEventListener('message', function (e) {
+    if (!frame || e.source !== frame.contentWindow) return;
+    var d; try { d = typeof e.data === 'string' ? JSON.parse(e.data) : e.data; } catch (err) { return; }
+    if (d.event === 'ready') { send('addEventListener', 'playing'); if (!card.matches(':hover')) send('pause'); }
+    if (d.event === 'playing') { playing = true; if (card.matches(':hover')) card.classList.add('is-playing'); }
+  });
+  card.addEventListener('mouseenter', function () {
+    if (!frame) {
+      var h = card.getAttribute('data-vimeo-h'), t = parseInt(card.getAttribute('data-t'), 10);
+      frame = document.createElement('iframe');
+      frame.className = 'card-vimeo';
+      frame.src = 'https://player.vimeo.com/video/' + encodeURIComponent(card.getAttribute('data-vimeo-loop')) + '?background=1&muted=1&loop=1&dnt=1' + (h ? '&h=' + encodeURIComponent(h) : '') + (t ? '#t=' + t + 's' : '');
+      frame.allow = 'autoplay; fullscreen';
+      frame.tabIndex = -1;
+      frame.setAttribute('aria-hidden', 'true');
+      media.appendChild(frame);
+      return;
+    }
+    send('play');
+    if (playing) card.classList.add('is-playing');
+  });
+  card.addEventListener('mouseleave', function () {
+    send('pause');
+    card.classList.remove('is-playing');
+  });
+});
+
 // 3. 影片：點了才載入 Vimeo 播放器，頁面開啟比較快。
 document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
   btn.addEventListener('click', function () {
@@ -343,6 +378,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
         list[front].classList.remove('is-front', 'is-playing'); list[front].tabIndex = -1;
         // 換張時停掉上一張的預覽影片（滑鼠沒移動的話 mouseleave 不會觸發）
         var pv = list[front].querySelector('video'); if (pv) pv.pause();
+        if (list[front].querySelector('.card-vimeo')) list[front].dispatchEvent(new Event('mouseleave'));
       }
       front = f;
       var c = list[f];

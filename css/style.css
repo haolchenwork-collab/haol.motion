@@ -104,6 +104,9 @@ h1, h2, h3 { text-wrap: balance; }
 .card .media { transition: outline-color .2s; outline: 2px solid transparent; }
 .card:hover .media, .card:focus-visible .media { outline-color: var(--accent); }
 .card video { opacity: 0; transition: opacity .3s; }
+/* Vimeo 預覽：16:9 鋪滿卡片（上下裁掉一點），不吃滑鼠，點下去還是進作品頁 */
+.card .media > .card-vimeo { position: absolute; left: 0; top: 50%; width: 100%; height: auto; aspect-ratio: 16 / 9; transform: translateY(-50%); border: 0; pointer-events: none; opacity: 0; transition: opacity .4s; }
+.card.is-playing .card-vimeo { opacity: 1; }
 .card.is-playing video { opacity: 1; }
 .card-title { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; }
 .card h3 { margin: 0; font-family: var(--display); font-weight: 600; font-size: 24px; line-height: 1.2; }
