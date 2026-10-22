@@ -200,7 +200,7 @@ function filterItems(target, items, keep) {
 }
 
 // 4a. Work 堆疊瀏覽：卡片在 3D 透視裡上下疊成一疊，捲動時一張張往前翻；正中間那張最大、平放，
-//     上下的越遠越小、越斜、越暗。旁邊顯示目前這張的分類、名稱和專案數。
+//     上下的越遠越小、越暗（全部維持正面，不傾斜）。旁邊顯示目前這張的分類、名稱和專案數。
 //     捲動距離決定翻到第幾張（每張 STEP px），停下來會吸到最近的一張。減少動態時維持原本的格狀。
 var stackList = document.getElementById('work-list');
 if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (function () {
@@ -251,13 +251,12 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     list.forEach(function (c, i) {
       var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
       if (a > 7.5) { c.style.visibility = 'hidden'; return; }
-      // 中間那張和下一張之間拉開，再往外就越疊越密
-      var y = s * (near * H * 0.74 + Math.min(far, 6) * U * 0.2);
-      var rot = -s * (near * 52 + Math.min(far, 6) * 3);
-      var sc = 1 - near * 0.16 - Math.min(far, 6) * 0.045;
+      // 全部正面不傾斜：往外每張縮小一點、往上（下）錯開，露出一條邊，越外圈越密
+      var y = s * (near * H * 0.36 + Math.min(far, 6) * U * 0.12);
+      var sc = 1 - near * 0.12 - Math.min(far, 6) * 0.06;
       c.style.visibility = '';
       c.style.zIndex = 100 - Math.round(a * 10);
-      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) rotateX(' + rot.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
+      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
       c.style.filter = a < 0.02 ? '' : 'brightness(' + Math.max(0.18, 1 - a * 0.2).toFixed(3) + ')';
       c.style.opacity = a > 6.5 ? (7.5 - a).toFixed(2) : '';
     });

@@ -378,7 +378,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 #work-list.is-stack { display: block; position: relative; }
 .stack-stage {
   position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
-  perspective: 1600px; perspective-origin: 50% 46%;
+  perspective: 1600px; perspective-origin: 50% calc(50% + 28px);
   --sw: min(54vw, 84vh, 980px);
 }
 #work-list.is-stack .card {
@@ -391,6 +391,9 @@ figcaption { font-size: 14px; color: var(--muted); }
 /* 只有正中間那張顯示標題，後面那疊保持乾淨 */
 #work-list.is-stack .card-cap { opacity: 0; transition: opacity .35s ease; }
 #work-list.is-stack .card.is-front .card-cap { opacity: 1; }
+/* 後面那疊露出的是卡片下緣：拿掉底部的壓暗與模糊，露出來的才是畫面 */
+#work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { transition: opacity .35s ease; }
+#work-list.is-stack .card:not(.is-front) .media::after, #work-list.is-stack .card:not(.is-front) .media-blur { opacity: 0; }
 #work-list.is-stack .card.is-front .zh, #work-list.is-stack .card.is-front .tags { max-height: 44px; opacity: 1; transform: none; }
 #work-list.is-stack .card:not(.is-front) { cursor: n-resize; }
 .stack-meta { position: absolute; inset: 0; pointer-events: none; z-index: 200; }
