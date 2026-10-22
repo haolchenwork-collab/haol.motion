@@ -208,7 +208,12 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   // 遠近的明暗用一層黑色疊上去調 opacity，不用 filter（filter 每格都要重畫整張圖，會卡）
   cards.forEach(function (c) { var sh = document.createElement('i'); sh.className = 'stack-shade'; c.appendChild(sh); c._shade = sh; });
-  // 卡片樣式（style.css 的 [data-card]）：browser 瀏覽器視窗框、viewfinder 觀景窗、print 相紙、glass 毛玻璃框。網址加 ?card=… 可以預覽別的樣式
+  // 光澤（gloss 樣式）：卡片表面一道斜光，跟著卡片離中間的距離左右滑；只動 transform，不會每格重畫
+  cards.forEach(function (c) {
+    var g = document.createElement('span'); g.className = 'cs-sheen'; g.setAttribute('aria-hidden', 'true');
+    g.innerHTML = '<i></i>'; c.querySelector('.media').appendChild(g); c._sheen = g.firstChild;
+  });
+  // 卡片樣式（style.css 的 [data-card]）：browser 瀏覽器視窗框、viewfinder 觀景窗、print 相紙、glass 毛玻璃框、gloss 反光亮邊＋光暈（目前用這個，在 work/index.html 設定）。網址加 ?card=… 可以預覽別的樣式
   var cardStyle = (location.search.match(/[?&]card=(\w+)/) || [])[1] || stackList.getAttribute('data-card') || '';
   if (cardStyle) stackList.setAttribute('data-card', cardStyle);
   cards.forEach(function (c, i) {
@@ -242,6 +247,16 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     '<span class="mono muted sm-n"><span class="sm-count"></span> projects</span></div>' +
     '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar"><i></i></span><span>SCROLL ↓</span></div>';
   stage.appendChild(meta);
+  // 正中間那張後面的光暈：用它自己的封面模糊放大，兩層交替淡入淡出
+  var glows = [0, 1].map(function () { var g = document.createElement('div'); g.className = 'stack-glow'; g.setAttribute('aria-hidden', 'true'); stage.insertBefore(g, stage.firstChild); return g; });
+  var glowOn = 0;
+  function setGlow(c) {
+    var img = c.querySelector('.media img');
+    if (!img) return;
+    glowOn = 1 - glowOn;
+    glows[glowOn].style.backgroundImage = 'url("' + (img.currentSrc || img.src) + '")';
+    glows[glowOn].classList.add('on'); glows[1 - glowOn].classList.remove('on');
+  }
   stackList.appendChild(stage);
   stackList.classList.add('is-stack');
   document.body.classList.add('has-stack');
@@ -294,6 +309,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       c.style.zIndex = 100 - Math.round(a * 10);
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
       c._shade.style.opacity = Math.min(0.82, a * 0.2).toFixed(3);
+      c._sheen.style.transform = 'translate3d(' + (Math.max(-3, Math.min(3, d)) * -14).toFixed(2) + '%,0,0)';
       c.style.opacity = a > 4 ? (5 - a).toFixed(2) : '';
     });
     var f = Math.round(cur);
@@ -302,6 +318,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       front = f;
       var c = list[f];
       c.classList.add('is-front');
+      setGlow(c);
       var tags = c.querySelectorAll('.tags span'), zh = c.querySelector('.zh'), yr = c.querySelector('.card-title .mono');
       $('.sm-tag').textContent = tags[0] ? tags[0].textContent : '';
       $('.sm-title').textContent = c.querySelector('h3').textContent;
