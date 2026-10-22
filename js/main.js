@@ -270,6 +270,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   var $ = function (q) { return meta.querySelector(q); };
 
   var on = true;
+  var hero = document.querySelector('.page-hero'), wb = document.querySelector('.work-bar'), wbTop = 0, wbStick = 0;
+  wb.style.transition = 'opacity .8s ease';  // 篩選列的滑入動畫原本也補間 transform，會拖慢跟隨
   function measure() {
     if (!on) return;
     list = cards.filter(function (c) { return !c.hidden; });
@@ -284,6 +286,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     H = list.length ? list[0].offsetHeight : 300;
     // 外圈的疊距：手機卡片矮，至少用舞台高度的 25%，整疊才撐得開
     U = Math.max(H, stage.offsetHeight * 0.25);
+    wbTop = wb.parentNode.getBoundingClientRect().top + scrollY;
+    wbStick = parseFloat(getComputedStyle(wb).top) || 0;
     $('.sm-count').textContent = list.length;
     onScroll();
   }
@@ -349,6 +353,13 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       $('.sm-idx').textContent = pad(f + 1) + ' / ' + pad(list.length);
     }
     $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? cur / (list.length - 1) : 1).toFixed(3) + ')';
+    // 標題和篩選列：捲動位置是一下跳到下一張的，它們如果跟著捲就會一格一格跳。
+    // 改成跟卡片同一條緩動：看起來的捲動量 = 實際捲動 − (目標 − 目前) × 每張距離
+    var lag = (Math.min(Math.max(scrollY - top0, 0), (list.length - 1) * STEP) - cur * STEP);
+    var seen = scrollY - lag;
+    hero.style.transform = Math.abs(lag) < 0.5 ? '' : 'translate3d(0,' + lag.toFixed(1) + 'px,0)';
+    var dBar = Math.max(wbStick, wbTop - seen) - Math.max(wbStick, wbTop - scrollY);
+    wb.style.transform = Math.abs(dBar) < 0.5 ? '' : 'translate3d(0,' + dBar.toFixed(1) + 'px,0)';
   }
   // 只有正前方那張能點、能滑過（其他張 CSS 設 pointer-events: none、tabIndex -1）。
 
@@ -471,6 +482,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       });
       stage.hidden = true;
       stackList.style.height = stackList.style.marginTop = '';
+      hero.style.transform = wb.style.transform = '';
       if (focus) focus.scrollIntoView({ block: 'center', behavior: 'instant' });
     }
     if (!animate || !Element.prototype.animate) return;
