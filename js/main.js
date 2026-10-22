@@ -205,8 +205,28 @@ function filterItems(target, items, keep) {
 var stackList = document.getElementById('work-list');
 if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (function () {
   var cards = Array.prototype.slice.call(stackList.querySelectorAll('.card'));
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   // 遠近的明暗用一層黑色疊上去調 opacity，不用 filter（filter 每格都要重畫整張圖，會卡）
   cards.forEach(function (c) { var sh = document.createElement('i'); sh.className = 'stack-shade'; c.appendChild(sh); c._shade = sh; });
+  // 卡片樣式（style.css 的 [data-card]）：browser 瀏覽器視窗框、viewfinder 觀景窗、print 相紙。網址加 ?card=… 可以預覽別的樣式
+  var cardStyle = (location.search.match(/[?&]card=(\w+)/) || [])[1] || stackList.getAttribute('data-card') || '';
+  if (cardStyle) stackList.setAttribute('data-card', cardStyle);
+  cards.forEach(function (c, i) {
+    var name = c.querySelector('h3').textContent, yr = c.querySelector('.card-title .mono');
+    var slug = (c.getAttribute('href') || '').replace(/\.html$/, '').replace(/^#$/, '');
+    var bar = document.createElement('span');
+    bar.className = 'cs-bar'; bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = '<i></i><i></i><i></i><em>haol.motion/work/' + slug + '</em>';
+    c.insertBefore(bar, c.firstChild);
+    var vf = document.createElement('span');
+    vf.className = 'cs-vf'; vf.setAttribute('aria-hidden', 'true');
+    vf.innerHTML = '<b>● REC</b><b>' + (yr ? yr.textContent : '') + ' · 16:9</b><b>00:00:' + pad(i + 1) + ':00</b><b>' + name + '</b>';
+    c.querySelector('.media').appendChild(vf);
+    var lab = document.createElement('span');
+    lab.className = 'cs-label'; lab.setAttribute('aria-hidden', 'true');
+    lab.innerHTML = '<b>' + pad(i + 1) + '</b><em>' + name + '</em><b>' + (yr ? yr.textContent : '') + '</b>';
+    c.appendChild(lab);
+  });
   var stage = document.createElement('div');
   stage.className = 'stack-stage';
   cards.forEach(function (c) { stage.appendChild(c); });
@@ -226,7 +246,6 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   var STEP = 260;
   var list = [], cur = 0, target = 0, front = -1, raf = 0, snapT = 0, top0 = 0, H = 300, U = 300;
   var $ = function (q) { return meta.querySelector(q); };
-  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
 
   function measure() {
     list = cards.filter(function (c) { return !c.hidden; });

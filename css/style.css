@@ -386,7 +386,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 }
 #work-list.is-stack .card {
   position: absolute; left: var(--cx); top: var(--cy); width: var(--sw);
-  margin: calc(var(--sw) / -4.2) 0 0 calc(var(--sw) / -2);
+  margin: calc(var(--sw) / -4.2 - var(--cs-extra, 0px) / 2) 0 0 calc(var(--sw) / -2);
   transform-origin: 50% 50%; transition: none; will-change: transform;
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .9);
 }
@@ -421,6 +421,41 @@ figcaption { font-size: 14px; color: var(--muted); }
   .stack-meta .sm-n { margin-top: 0; }
   .stack-meta::before { content: ""; position: absolute; left: -24px; right: -24px; bottom: 0; height: 170px; background: linear-gradient(to top, #000 62%, transparent); }
 }
+
+/* 卡片樣式：預設只有畫面；data-card 換成視窗框、觀景窗或相紙（三種的零件 main.js 都會放，這裡決定顯示哪一種） */
+.cs-bar, .cs-vf, .cs-label { display: none; }
+/* 瀏覽器視窗框：上方一條標題列，三個點和網址 */
+#work-list[data-card="browser"] .stack-stage { --cs-extra: 30px; }
+#work-list[data-card="browser"] .card { border-radius: 10px; overflow: hidden; background: #141416; border: 1px solid rgba(255, 255, 255, .14); }
+#work-list[data-card="browser"] .card .media { border-radius: 0; }
+#work-list[data-card="browser"] .cs-bar { display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; background: #1c1c1f; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+#work-list[data-card="browser"] .cs-bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, .22); }
+#work-list[data-card="browser"] .card.is-front .cs-bar i:first-child { background: var(--accent); }
+#work-list[data-card="browser"] .cs-bar em { flex: 1; margin-right: 39px; text-align: center; font: 400 11px/1 var(--mono); font-style: normal; letter-spacing: .04em; color: rgba(255, 255, 255, .5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 觀景窗：四角對位框、REC、時間碼，像攝影機螢幕 */
+#work-list[data-card="viewfinder"] .card, #work-list[data-card="viewfinder"] .card .media { border-radius: 2px; }
+#work-list[data-card="viewfinder"] .cs-vf {
+  display: block; position: absolute; inset: 14px; z-index: 2; pointer-events: none;
+  font: 500 11px/1 var(--mono); letter-spacing: .08em; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, .7);
+  background:
+    linear-gradient(#fff, #fff) 0 0 / 22px 1.5px, linear-gradient(#fff, #fff) 0 0 / 1.5px 22px,
+    linear-gradient(#fff, #fff) 100% 0 / 22px 1.5px, linear-gradient(#fff, #fff) 100% 0 / 1.5px 22px,
+    linear-gradient(#fff, #fff) 0 100% / 22px 1.5px, linear-gradient(#fff, #fff) 0 100% / 1.5px 22px,
+    linear-gradient(#fff, #fff) 100% 100% / 22px 1.5px, linear-gradient(#fff, #fff) 100% 100% / 1.5px 22px;
+  background-repeat: no-repeat; opacity: .9;
+}
+#work-list[data-card="viewfinder"] .cs-vf b { position: absolute; font-weight: 500; }
+#work-list[data-card="viewfinder"] .cs-vf b:nth-child(1) { left: 32px; top: 10px; color: #ff4d3d; }
+#work-list[data-card="viewfinder"] .cs-vf b:nth-child(2) { right: 32px; top: 10px; }
+#work-list[data-card="viewfinder"] .cs-vf b:nth-child(3) { left: 32px; bottom: 10px; }
+#work-list[data-card="viewfinder"] .cs-vf b:nth-child(4) { right: 32px; bottom: 10px; text-transform: uppercase; }
+#work-list[data-card="viewfinder"] .card:not(.is-front) .cs-vf { opacity: 0; }
+/* 相紙：米白外框，下緣寫編號、名稱、年份 */
+#work-list[data-card="print"] .stack-stage { --cs-extra: 52px; }
+#work-list[data-card="print"] .card { padding: 10px 10px 0; border-radius: 3px; background: var(--fg); }
+#work-list[data-card="print"] .card .media { border-radius: 1px; }
+#work-list[data-card="print"] .cs-label { display: flex; align-items: center; gap: 14px; height: 42px; padding: 0 4px; font: 500 11px/1 var(--mono); letter-spacing: .08em; color: #111; }
+#work-list[data-card="print"] .cs-label em { flex: 1; font-style: normal; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---------- About：拼貼格狀（跟首頁同一套語彙） ---------- */
 .about-bento { padding-block: 16px 72px; }
