@@ -626,3 +626,6 @@ html:has(body.has-stack) { overflow-anchor: none; }
 /* 預覽圖裁切對齊下方（卡片、作品頁封面） */
 .media > img, .media > video, .pj-film .media img { object-position: center bottom; }
 .media-blur { background-position: center bottom; }
+/* 堆疊模式的封面對準圖的正中間 */
+#work-list.is-stack .card .media > img, #work-list.is-stack .card .media > video { object-position: center; }
+#work-list.is-stack .card .media-blur { background-position: center; }
