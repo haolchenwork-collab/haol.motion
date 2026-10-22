@@ -285,7 +285,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   meta.className = 'stack-meta';
   // 資訊全部放左側：分類・年份／名稱／中文副標／客戶
   meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"><span class="sm-tag"></span> · <span class="sm-year"></span></span>' +
-    '<b class="sm-title"></b><span class="muted sm-zh"></span><span class="mono muted sm-client"></span></div>' +
+    '<b class="sm-title"></b><span class="muted sm-zh"></span><span class="mono muted sm-client"></span><span class="sm-role"></span></div>' +
     '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar" title="拖曳或點一下跳到那張"><i></i></span>' +
     '<button type="button" class="sm-skip mono">SKIP ↓</button></div>';
   stage.appendChild(meta);
@@ -413,6 +413,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       $('.sm-zh').textContent = zh ? zh.textContent : '';
       $('.sm-year').textContent = yr ? yr.textContent : '';
       $('.sm-client').textContent = tags[1] ? tags[1].textContent : '';
+      // MY ROLE：跟作品內頁一樣的綠色標籤（卡片 data-role，用 | 分隔）
+      $('.sm-role').innerHTML = '';
+      (c.getAttribute('data-role') || '').split('|').forEach(function (r) { if (!r) return; var t = document.createElement('span'); t.textContent = r; $('.sm-role').appendChild(t); });
       // 換張時左側文字一行一行錯開淡入上移（分類 → 標題 → 中文 → 客戶，每行晚 60ms）
       if (meta.animate) [].forEach.call($('.sm-l').children, function (el, i) {
         el.animate([{ opacity: 0, translate: '0 14px' }, { opacity: 1, translate: '0 0' }], { duration: 520, delay: i * 60, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
