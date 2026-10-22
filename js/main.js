@@ -339,12 +339,18 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     });
     var f = Math.round(cur);
     if (f !== front && list[f]) {
-      if (list[front]) { list[front].classList.remove('is-front'); list[front].tabIndex = -1; }
+      if (list[front]) {
+        list[front].classList.remove('is-front', 'is-playing'); list[front].tabIndex = -1;
+        // 換張時停掉上一張的預覽影片（滑鼠沒移動的話 mouseleave 不會觸發）
+        var pv = list[front].querySelector('video'); if (pv) pv.pause();
+      }
       front = f;
       var c = list[f];
       c.classList.add('is-front');
       c.tabIndex = 0;
       setGlow(c);
+      // 滑鼠停在原地、卡片換到它底下時不會有 mouseenter，補一下讓預覽影片接著播
+      setTimeout(function () { if (c.classList.contains('is-front') && !c.classList.contains('is-playing') && c.matches(':hover')) c.dispatchEvent(new Event('mouseenter')); }, 150);
       var tags = c.querySelectorAll('.tags span'), zh = c.querySelector('.zh'), yr = c.querySelector('.card-title .mono');
       $('.sm-tag').textContent = tags[0] ? tags[0].textContent : '';
       $('.sm-title').textContent = c.querySelector('h3').textContent;
