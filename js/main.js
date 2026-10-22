@@ -329,10 +329,11 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     });
     var f = Math.round(cur);
     if (f !== front && list[f]) {
-      if (list[front]) list[front].classList.remove('is-front');
+      if (list[front]) { list[front].classList.remove('is-front'); list[front].tabIndex = -1; }
       front = f;
       var c = list[f];
       c.classList.add('is-front');
+      c.tabIndex = 0;
       setGlow(c);
       var tags = c.querySelectorAll('.tags span'), zh = c.querySelector('.zh'), yr = c.querySelector('.card-title .mono');
       $('.sm-tag').textContent = tags[0] ? tags[0].textContent : '';
@@ -348,20 +349,50 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     }
     $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? cur / (list.length - 1) : 1).toFixed(3) + ')';
   }
-  // 點到後面的卡片：先翻到那張；點正中間那張才打開
-  stage.addEventListener('click', function (e) {
-    var c = e.target.closest('.card');
-    if (!c || c.classList.contains('is-front')) return;
-    e.preventDefault(); e.stopImmediatePropagation();
-    scrollTo({ top: top0 + list.indexOf(c) * STEP, behavior: 'instant' });
-  }, true);
-  stage.addEventListener('focusin', function (e) {
-    var c = e.target.closest('.card');
-    if (c && list.indexOf(c) !== -1) scrollTo({ top: top0 + list.indexOf(c) * STEP });
+  // 只有正前方那張能點、能滑過（其他張 CSS 設 pointer-events: none、tabIndex -1）。
+
+  // 一次只翻一張：滾輪或觸控板一個手勢、一次滑動、一次方向鍵都只翻一張。
+  // 在第一張往上、最後一張往下時不攔，交給頁面正常捲到標題或頁尾。
+  function inStack() { return on && scrollY >= top0 - 2 && scrollY <= top0 + (list.length - 1) * STEP + 2; }
+  function next(dir) { var i = Math.round(target) + dir; return i >= 0 && i < list.length ? i : -1; }
+  function go(i) { scrollTo({ top: top0 + i * STEP, behavior: 'instant' }); }
+  var lockT = 0, acc = 0;
+  addEventListener('wheel', function (e) {
+    if (!inStack() || e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+    var i = next(e.deltaY > 0 ? 1 : -1);
+    if (i < 0) return;
+    e.preventDefault();
+    var now = performance.now();
+    // 觸控板的慣性會連續送很多事件：翻過一張後，事件停 200ms 以上才算下一個手勢
+    if (now < lockT) { lockT = Math.max(lockT, now + 200); return; }
+    acc += e.deltaY;
+    if (Math.abs(acc) < 24) return;
+    acc = 0; lockT = now + 520;
+    go(i);
+  }, { passive: false });
+  var tx = null, ty = null, swiped = false;
+  addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; swiped = false; }, { passive: true });
+  addEventListener('touchmove', function (e) {
+    if (ty === null || !inStack()) return;
+    var dx = tx - e.touches[0].clientX, dy = ty - e.touches[0].clientY;
+    if (Math.abs(dx) > Math.abs(dy)) return;
+    var i = next(dy > 0 ? 1 : -1);
+    if (i < 0) return;
+    e.preventDefault();
+    if (!swiped && Math.abs(dy) > 36) { swiped = true; go(i); }
+  }, { passive: false });
+  addEventListener('touchend', function () { ty = null; });
+  addEventListener('keydown', function (e) {
+    if (!inStack() || e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName)) return;
+    var k = e.key, dir = k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !e.shiftKey) ? 1 : k === 'ArrowUp' || k === 'PageUp' || (k === ' ' && e.shiftKey) ? -1 : 0;
+    var i = dir ? next(dir) : -1;
+    if (i < 0) return;
+    e.preventDefault();
+    go(i);
   });
   stackList._stack = function () {
     front = -1;
-    cards.forEach(function (c) { c.classList.remove('is-front'); });
+    cards.forEach(function (c) { c.classList.remove('is-front'); c.tabIndex = -1; });
     measure();
     if (scrollY > top0) scrollTo({ top: top0 });
     target = cur = 0;
@@ -409,7 +440,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     stackList.classList.toggle('tiles', !on);
     document.body.classList.toggle('has-stack', on);
     if (on) {
-      cards.forEach(function (c) { stage.insertBefore(c, meta); });
+      cards.forEach(function (c) { stage.insertBefore(c, meta); c.tabIndex = -1; });
       stage.hidden = false;
       front = -1;
       measure();
@@ -421,6 +452,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       cards.forEach(function (c) {
         stackList.insertBefore(c, stage);
         c.classList.remove('is-front');
+        c.removeAttribute('tabindex');
         ['transform', 'zIndex', 'opacity', 'visibility'].forEach(function (k) { c.style[k] = ''; });
         c._shade.style.opacity = '';
       });
