@@ -374,44 +374,53 @@ figcaption { font-size: 14px; color: var(--muted); }
   #work-list .tags span { padding: 2px 8px; }
 }
 
-/* Work 堆疊瀏覽（main.js 4a 加上 .is-stack）：舞台黏在畫面上，卡片疊在 3D 透視裡，transform 由 main.js 每格算 */
+/* Work 堆疊瀏覽（main.js 4a 加上 .is-stack）：舞台黏在畫面上，卡片疊在 3D 透視裡，transform 由 main.js 每格算。
+   卡片只放畫面，名稱、年份、客戶都放在兩側（--cy 是卡片中心：篩選列和底部進度條之間的正中間） */
 #work-list.is-stack { display: block; position: relative; }
 .has-stack .page-hero { position: relative; z-index: 9; pointer-events: none; }
 .stack-stage {
   position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
-  perspective: 1600px; perspective-origin: 50% calc(50% + 28px);
-  --sw: min(54vw, 84vh, 980px);
+  --sw: min(52vw, 80vh, 960px); --cy: calc(50% + var(--hh, 58px) / 2 + 12px);
+  perspective: 1600px; perspective-origin: 50% var(--cy);
 }
 #work-list.is-stack .card {
-  position: absolute; left: 50%; top: calc(50% + 28px); width: var(--sw);
+  position: absolute; left: 50%; top: var(--cy); width: var(--sw);
   margin: calc(var(--sw) / -4.2) 0 0 calc(var(--sw) / -2);
   transform-origin: 50% 50%; transition: none; will-change: transform;
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .9);
 }
-#work-list.is-stack .card .media img, #work-list.is-stack .card .media-blur { transform: none; }
-/* 只有正中間那張顯示標題，後面那疊保持乾淨 */
+#work-list.is-stack .card .media img { transform: none; }
+#work-list.is-stack .card-cap, #work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { display: none; }
 .stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
-#work-list.is-stack .card-cap { opacity: 0; transition: opacity .35s ease; }
-#work-list.is-stack .card.is-front .card-cap { opacity: 1; }
-/* 後面那疊露出的是卡片下緣：拿掉底部的壓暗與模糊，露出來的才是畫面 */
-#work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { transition: opacity .35s ease; }
-#work-list.is-stack .card:not(.is-front) .media::after, #work-list.is-stack .card:not(.is-front) .media-blur { opacity: 0; }
-#work-list.is-stack .card.is-front .zh, #work-list.is-stack .card.is-front .tags { max-height: 44px; opacity: 1; transform: none; }
+#work-list.is-stack .card.is-front { outline: 1px solid transparent; outline-offset: 6px; transition: outline-color .3s; }
+#work-list.is-stack .card.is-front:hover, #work-list.is-stack .card.is-front:focus-visible { outline-color: var(--accent); }
 #work-list.is-stack .card:not(.is-front) { cursor: n-resize; }
 .stack-meta { position: absolute; inset: 0; pointer-events: none; z-index: 200; }
-.stack-meta .sm-l, .stack-meta .sm-r { position: absolute; top: calc(50% + 28px); transform: translateY(-50%); display: flex; flex-direction: column; gap: 6px; max-width: calc((100% - var(--sw)) / 2 - 24px); }
+.stack-meta .sm-l, .stack-meta .sm-r {
+  position: absolute; top: var(--cy); transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+  width: calc((100% - var(--sw)) / 2 - 40px);
+}
 .stack-meta .sm-l { left: 0; }
 .stack-meta .sm-r { right: 0; align-items: flex-end; text-align: right; }
-.stack-meta b { font-family: var(--display); font-weight: 600; font-size: clamp(18px, 1.7vw, 26px); line-height: 1.1; }
+.stack-meta b { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2vw, 30px); line-height: 1.08; text-wrap: balance; }
+.stack-meta .sm-cat, .stack-meta .sm-client, .stack-meta .sm-n { font-size: 11px; letter-spacing: .08em; }
+.stack-meta .sm-zh { font-size: 14px; text-wrap: balance; }
+.stack-meta .sm-n { margin-top: 14px; }
+.stack-meta .sm-count { color: var(--fg); }
 .stack-meta .sm-b { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; align-items: center; gap: 16px; font-size: 11px; }
 .stack-meta .sm-bar { flex: 1; height: 1px; background: var(--glass-edge); overflow: hidden; }
 .stack-meta .sm-bar i { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; }
 @media (max-width: 760px) {
-  .stack-stage { --sw: min(88vw, 84vh); perspective: 900px; }
-  /* 手機：名稱和數量移到下方進度條上面，卡片兩側沒位置 */
-  .stack-meta .sm-l, .stack-meta .sm-r { top: auto; bottom: 48px; transform: none; max-width: 64%; padding: 8px 0; }
-  .stack-meta::before { content: ""; position: absolute; left: -24px; right: -24px; bottom: 0; height: 150px; background: linear-gradient(to top, #000 60%, transparent); }
-  .stack-meta .sm-r { flex-direction: row; align-items: baseline; gap: 6px; }
+  /* 手機：卡片兩側沒位置，資訊放到下方進度條上面，卡片中心往上挪 */
+  .stack-stage { --sw: min(88vw, 80vh); --cy: calc(50% + 24px); perspective: 900px; }
+  .stack-meta .sm-l, .stack-meta .sm-r { top: auto; bottom: 50px; transform: none; gap: 4px; }
+  .stack-meta .sm-l { width: 68%; }
+  .stack-meta .sm-r { width: 30%; }
+  .stack-meta b { font-size: 20px; }
+  .stack-meta .sm-zh { font-size: 13px; }
+  .stack-meta .sm-n { margin-top: 0; }
+  .stack-meta::before { content: ""; position: absolute; left: -24px; right: -24px; bottom: 0; height: 170px; background: linear-gradient(to top, #000 62%, transparent); }
 }
 
 /* ---------- About：拼貼格狀（跟首頁同一套語彙） ---------- */

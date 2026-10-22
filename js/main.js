@@ -212,8 +212,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   cards.forEach(function (c) { stage.appendChild(c); });
   var meta = document.createElement('div');
   meta.className = 'stack-meta';
-  meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"></span><b class="sm-title"></b></div>' +
-    '<div class="sm-r"><b class="sm-count"></b><span class="mono muted">projects</span></div>' +
+  meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"></span><b class="sm-title"></b><span class="muted sm-zh"></span></div>' +
+    '<div class="sm-r"><b class="sm-year"></b><span class="mono muted sm-client"></span><span class="mono muted sm-n"><span class="sm-count"></span> projects</span></div>' +
     '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar"><i></i></span><span>SCROLL ↓</span></div>';
   stage.appendChild(meta);
   stackList.appendChild(stage);
@@ -261,7 +261,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     if (Math.abs(target - cur) < 0.0005) { cur = target; last = 0; } else kick();
     list.forEach(function (c, i) {
       var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
-      if (a > 7.5) { c.style.visibility = 'hidden'; return; }
+      if (a > 5) { c.style.visibility = 'hidden'; return; }
       // 全部正面不傾斜：往外每張縮小一點、往上（下）錯開，露出一條邊，越外圈越密
       var y = s * (near * H * 0.36 + Math.min(far, 6) * U * 0.12);
       var sc = 1 - near * 0.12 - Math.min(far, 6) * 0.06;
@@ -269,7 +269,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       c.style.zIndex = 100 - Math.round(a * 10);
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
       c._shade.style.opacity = Math.min(0.82, a * 0.2).toFixed(3);
-      c.style.opacity = a > 6.5 ? (7.5 - a).toFixed(2) : '';
+      c.style.opacity = a > 4 ? (5 - a).toFixed(2) : '';
     });
     var f = Math.round(cur);
     if (f !== front && list[f]) {
@@ -277,9 +277,16 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       front = f;
       var c = list[f];
       c.classList.add('is-front');
-      var tag = c.querySelector('.tags span');
-      $('.sm-cat').textContent = tag ? tag.textContent : '';
+      var tags = c.querySelectorAll('.tags span'), zh = c.querySelector('.zh'), yr = c.querySelector('.card-title .mono');
+      $('.sm-cat').textContent = tags[0] ? tags[0].textContent : '';
       $('.sm-title').textContent = c.querySelector('h3').textContent;
+      $('.sm-zh').textContent = zh ? zh.textContent : '';
+      $('.sm-year').textContent = yr ? yr.textContent : '';
+      $('.sm-client').textContent = tags[1] ? tags[1].textContent : '';
+      // 換張時兩側文字輕輕淡入上移
+      if (meta.animate) ['.sm-l', '.sm-r'].forEach(function (q) {
+        $(q).animate([{ opacity: 0, translate: '0 10px' }, { opacity: 1, translate: '0 0' }], { duration: 380, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      });
       $('.sm-idx').textContent = pad(f + 1) + ' / ' + pad(list.length);
     }
     $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? cur / (list.length - 1) : 1).toFixed(3) + ')';
