@@ -208,7 +208,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
   // 遠近的明暗用一層黑色疊上去調 opacity，不用 filter（filter 每格都要重畫整張圖，會卡）
   cards.forEach(function (c) { var sh = document.createElement('i'); sh.className = 'stack-shade'; c.appendChild(sh); c._shade = sh; });
-  // 卡片樣式（style.css 的 [data-card]）：browser 瀏覽器視窗框、viewfinder 觀景窗、print 相紙。網址加 ?card=… 可以預覽別的樣式
+  // 卡片樣式（style.css 的 [data-card]）：browser 瀏覽器視窗框、viewfinder 觀景窗、print 相紙、glass 毛玻璃框。網址加 ?card=… 可以預覽別的樣式
   var cardStyle = (location.search.match(/[?&]card=(\w+)/) || [])[1] || stackList.getAttribute('data-card') || '';
   if (cardStyle) stackList.setAttribute('data-card', cardStyle);
   cards.forEach(function (c, i) {
@@ -226,6 +226,10 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     lab.className = 'cs-label'; lab.setAttribute('aria-hidden', 'true');
     lab.innerHTML = '<b>' + pad(i + 1) + '</b><em>' + name + '</em><b>' + (yr ? yr.textContent : '') + '</b>';
     c.appendChild(lab);
+    var go = document.createElement('span');
+    go.className = 'cs-go'; go.setAttribute('aria-hidden', 'true');
+    go.textContent = c.hasAttribute('data-film') ? 'PLAY ▶' : 'VIEW PROJECT ↗';
+    c.querySelector('.media').appendChild(go);
   });
   var stage = document.createElement('div');
   stage.className = 'stack-stage';

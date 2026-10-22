@@ -423,7 +423,27 @@ figcaption { font-size: 14px; color: var(--muted); }
 }
 
 /* 卡片樣式：預設只有畫面；data-card 換成視窗框、觀景窗或相紙（三種的零件 main.js 都會放，這裡決定顯示哪一種） */
-.cs-bar, .cs-vf, .cs-label { display: none; }
+.cs-bar, .cs-vf, .cs-label, .cs-go { display: none; }
+/* 毛玻璃框：跟選單、篩選列同一套玻璃（半透明＋背景模糊＋上緣亮線），透出後面那疊；正中間那張多一顆玻璃按鈕 */
+#work-list[data-card="glass"] .stack-stage { --cs-extra: 20px; }
+#work-list[data-card="glass"] .card {
+  padding: 10px; border-radius: 18px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .05) 45%, rgba(255, 255, 255, .12));
+  border: 1px solid rgba(255, 255, 255, .22);
+  -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 0 0 1px rgba(255, 255, 255, .04), 0 30px 60px -20px rgba(0, 0, 0, .9);
+}
+#work-list[data-card="glass"] .card .media { border-radius: 10px; }
+#work-list[data-card="glass"] .stack-shade { border-radius: 18px; }
+#work-list[data-card="glass"] .cs-go {
+  display: block; position: absolute; right: 14px; bottom: 14px; z-index: 2; padding: 9px 16px; border-radius: 999px;
+  font: 500 11px/1 var(--mono); letter-spacing: .08em; color: #fff;
+  background: rgba(10, 10, 12, .55); border: 1px solid rgba(255, 255, 255, .25);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-hi);
+  opacity: 0; transform: translateY(6px); transition: opacity .35s ease, transform .35s cubic-bezier(.2,.7,.2,1), background .25s, color .25s;
+}
+#work-list[data-card="glass"] .card.is-front .cs-go { opacity: 1; transform: none; }
+#work-list[data-card="glass"] .card.is-front:hover .cs-go { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
 /* 瀏覽器視窗框：上方一條標題列，三個點和網址 */
 #work-list[data-card="browser"] .stack-stage { --cs-extra: 30px; }
 #work-list[data-card="browser"] .card { border-radius: 10px; overflow: hidden; background: #141416; border: 1px solid rgba(255, 255, 255, .14); }
