@@ -395,14 +395,14 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       // 滑鼠停在原地、卡片換到它底下時不會有 mouseenter，補一下讓預覽影片接著播
       setTimeout(function () { if (c.classList.contains('is-front') && !c.classList.contains('is-playing') && c.matches(':hover')) c.dispatchEvent(new Event('mouseenter')); }, 150);
       var tags = c.querySelectorAll('.tags span'), zh = c.querySelector('.zh'), yr = c.querySelector('.card-title .mono');
-      // 換張時只動有變的：分類、年份、客戶跟上一張一樣就定住，變了的才錯開淡入上移（第幾行就晚幾個 60ms）
-      [['.sm-tag', tags[0] ? tags[0].textContent : '', 0], ['.sm-year', yr ? yr.textContent : '', 0],
-       ['.sm-title', c.querySelector('h3').textContent, 1], ['.sm-zh', zh ? zh.textContent : '', 2],
-       ['.sm-client', tags[1] ? tags[1].textContent : '', 3]].forEach(function (x) {
-        var el = $(x[0]);
-        if (el.textContent === x[1]) return;
-        el.textContent = x[1];
-        if (el.animate) el.animate([{ opacity: 0, translate: '0 14px' }, { opacity: 1, translate: '0 0' }], { duration: 520, delay: x[2] * 60, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
+      $('.sm-tag').textContent = tags[0] ? tags[0].textContent : '';
+      $('.sm-title').textContent = c.querySelector('h3').textContent;
+      $('.sm-zh').textContent = zh ? zh.textContent : '';
+      $('.sm-year').textContent = yr ? yr.textContent : '';
+      $('.sm-client').textContent = tags[1] ? tags[1].textContent : '';
+      // 換張時左側文字一行一行錯開淡入上移（分類 → 標題 → 中文 → 客戶，每行晚 60ms）
+      if (meta.animate) [].forEach.call($('.sm-l').children, function (el, i) {
+        el.animate([{ opacity: 0, translate: '0 14px' }, { opacity: 1, translate: '0 0' }], { duration: 520, delay: i * 60, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
       });
       $('.sm-idx').textContent = pad(f + 1) + ' / ' + pad(list.length);
     }
