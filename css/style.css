@@ -403,8 +403,9 @@ figcaption { font-size: 14px; color: var(--muted); }
 .stack-meta .sm-bar i { display: block; height: 100%; background: var(--accent); transform-origin: 0 50%; }
 @media (max-width: 760px) {
   .stack-stage { --sw: min(88vw, 84vh); perspective: 900px; }
-  /* 手機：名稱和數量移到上方，卡片兩側沒位置 */
-  .stack-meta .sm-l, .stack-meta .sm-r { top: calc(var(--hh, 58px) + 72px); transform: none; max-width: 60%; }
+  /* 手機：名稱和數量移到下方進度條上面，卡片兩側沒位置 */
+  .stack-meta .sm-l, .stack-meta .sm-r { top: auto; bottom: 48px; transform: none; max-width: 64%; padding: 8px 0; }
+  .stack-meta::before { content: ""; position: absolute; left: -24px; right: -24px; bottom: 0; height: 150px; background: linear-gradient(to top, #000 60%, transparent); }
   .stack-meta .sm-r { flex-direction: row; align-items: baseline; gap: 6px; }
 }
 

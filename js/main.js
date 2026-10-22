@@ -219,7 +219,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   stackList.classList.remove('tiles');
 
   var STEP = 260;
-  var list = [], cur = 0, target = 0, front = -1, raf = 0, snapT = 0, top0 = 0, H = 300;
+  var list = [], cur = 0, target = 0, front = -1, raf = 0, snapT = 0, top0 = 0, H = 300, U = 300;
   var $ = function (q) { return meta.querySelector(q); };
   var pad = function (n) { return (n < 10 ? '0' : '') + n; };
 
@@ -228,8 +228,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     STEP = Math.max(180, Math.round(innerHeight * 0.32));
     stackList.style.height = (Math.max(list.length - 1, 0) * STEP + stage.offsetHeight) + 'px';
     top0 = stackList.getBoundingClientRect().top + scrollY;
-    // 疊的間距以卡片高度為準；手機卡片矮，至少用舞台高度的 30%，整疊才撐得開
-    H = Math.max(list.length ? list[0].offsetHeight : 300, stage.offsetHeight * 0.3);
+    H = list.length ? list[0].offsetHeight : 300;
+    // 外圈的疊距：手機卡片矮，至少用舞台高度的 25%，整疊才撐得開
+    U = Math.max(H, stage.offsetHeight * 0.25);
     $('.sm-count').textContent = list.length;
     onScroll();
   }
@@ -251,7 +252,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
       if (a > 7.5) { c.style.visibility = 'hidden'; return; }
       // 中間那張和下一張之間拉開，再往外就越疊越密
-      var y = s * (near * H * 0.74 + Math.min(far, 6) * H * 0.2);
+      var y = s * (near * H * 0.74 + Math.min(far, 6) * U * 0.2);
       var rot = -s * (near * 52 + Math.min(far, 6) * 3);
       var sc = 1 - near * 0.16 - Math.min(far, 6) * 0.045;
       c.style.visibility = '';
