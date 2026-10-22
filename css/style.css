@@ -384,11 +384,12 @@ figcaption { font-size: 14px; color: var(--muted); }
 #work-list.is-stack .card {
   position: absolute; left: 50%; top: calc(50% + 28px); width: var(--sw);
   margin: calc(var(--sw) / -4.2) 0 0 calc(var(--sw) / -2);
-  transform-origin: 50% 50%; transition: none; will-change: transform, filter;
+  transform-origin: 50% 50%; transition: none; will-change: transform;
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .9);
 }
 #work-list.is-stack .card .media img, #work-list.is-stack .card .media-blur { transform: none; }
 /* 只有正中間那張顯示標題，後面那疊保持乾淨 */
+.stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
 #work-list.is-stack .card-cap { opacity: 0; transition: opacity .35s ease; }
 #work-list.is-stack .card.is-front .card-cap { opacity: 1; }
 /* 後面那疊露出的是卡片下緣：拿掉底部的壓暗與模糊，露出來的才是畫面 */

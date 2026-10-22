@@ -205,6 +205,8 @@ function filterItems(target, items, keep) {
 var stackList = document.getElementById('work-list');
 if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (function () {
   var cards = Array.prototype.slice.call(stackList.querySelectorAll('.card'));
+  // 遠近的明暗用一層黑色疊上去調 opacity，不用 filter（filter 每格都要重畫整張圖，會卡）
+  cards.forEach(function (c) { var sh = document.createElement('i'); sh.className = 'stack-shade'; c.appendChild(sh); c._shade = sh; });
   var stage = document.createElement('div');
   stage.className = 'stack-stage';
   cards.forEach(function (c) { stage.appendChild(c); });
@@ -240,14 +242,19 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     clearTimeout(snapT);
     snapT = setTimeout(function () {
       var i = Math.round(target);
-      if (Math.abs(i - target) > 0.01 && scrollY > top0 - 2 && scrollY < top0 + (list.length - 1) * STEP + 2) scrollTo({ top: top0 + i * STEP, behavior: 'smooth' });
-    }, 160);
+      // 直接把捲動位置對齊；畫面本來就是緩動追上去的，所以看起來是順順滑到那張
+      if (Math.abs(i - target) > 0.01 && scrollY > top0 - 2 && scrollY < top0 + (list.length - 1) * STEP + 2) scrollTo({ top: top0 + i * STEP, behavior: 'instant' });
+    }, 200);
   }
   function kick() { if (!raf) raf = requestAnimationFrame(tick); }
-  function tick() {
+  var last = 0;
+  function tick(t) {
     raf = 0;
-    cur += (target - cur) * 0.14;
-    if (Math.abs(target - cur) < 0.001) cur = target; else kick();
+    // 跟幀率無關的緩動：每 16.7ms 追上剩下距離的 9%
+    var dt = last && t ? Math.min(t - last, 64) : 16.7;
+    last = t || 0;
+    cur += (target - cur) * (1 - Math.pow(0.91, dt / 16.7));
+    if (Math.abs(target - cur) < 0.0005) { cur = target; last = 0; } else kick();
     list.forEach(function (c, i) {
       var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
       if (a > 7.5) { c.style.visibility = 'hidden'; return; }
@@ -257,7 +264,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       c.style.visibility = '';
       c.style.zIndex = 100 - Math.round(a * 10);
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
-      c.style.filter = a < 0.02 ? '' : 'brightness(' + Math.max(0.18, 1 - a * 0.2).toFixed(3) + ')';
+      c._shade.style.opacity = Math.min(0.82, a * 0.2).toFixed(3);
       c.style.opacity = a > 6.5 ? (7.5 - a).toFixed(2) : '';
     });
     var f = Math.round(cur);
@@ -278,7 +285,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     var c = e.target.closest('.card');
     if (!c || c.classList.contains('is-front')) return;
     e.preventDefault(); e.stopImmediatePropagation();
-    scrollTo({ top: top0 + list.indexOf(c) * STEP, behavior: 'smooth' });
+    scrollTo({ top: top0 + list.indexOf(c) * STEP, behavior: 'instant' });
   }, true);
   stage.addEventListener('focusin', function (e) {
     var c = e.target.closest('.card');
