@@ -463,10 +463,10 @@ html:has(body.has-stack) { overflow-anchor: none; }
 }
 #work-list[data-card="gloss"] .stack-glow {
   display: block; position: absolute; left: var(--cx); top: var(--cy); width: var(--sw); aspect-ratio: 2.1 / 1;
-  transform: translate(-50%, -50%) scale(1.75, 2); background: center / cover no-repeat;
-  filter: blur(110px) saturate(1.7);
+  transform: translate(-50%, -50%) scale(3.3, 4); background: center / cover no-repeat;
+  filter: blur(150px) saturate(1.7);
   /* 邊緣淡出，不會在舞台上下被切出一條硬邊 */
-  -webkit-mask-image: radial-gradient(closest-side, #000 15%, transparent); mask-image: radial-gradient(closest-side, #000 15%, transparent); opacity: 0; transition: opacity 2.2s cubic-bezier(.45,0,.25,1); pointer-events: none;
+  -webkit-mask-image: radial-gradient(closest-side, #000 20%, transparent); mask-image: radial-gradient(closest-side, #000 20%, transparent); opacity: 0; transition: opacity 2.2s cubic-bezier(.45,0,.25,1); pointer-events: none;
 }
 #work-list[data-card="gloss"] .stack-glow.on { opacity: .6; }
 /* 播預覽影片時：光暈換成影片的即時畫面（main.js 每幀畫進 canvas），封面那層退掉 */
