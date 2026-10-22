@@ -424,6 +424,7 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .stack-meta .sm-cat, .stack-meta .sm-client { font-size: 11px; letter-spacing: .08em; }
 .stack-meta .sm-zh { font-size: clamp(17px, 1.5vw, 22px); line-height: 1.4; color: rgba(238, 236, 231, .78); text-wrap: balance; }
 .stack-meta .sm-client { margin-top: 4px; }
+.stack-meta .sm-tag, .stack-meta .sm-year { display: inline-block; }  /* 才能單獨位移 */
 /* 小字比大標題的字面看起來偏左，往右推一點對齊 */
 .stack-meta .sm-cat { padding-left: 3px; }
 .stack-meta .sm-b { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; align-items: center; gap: 16px; font-size: 11px; }
