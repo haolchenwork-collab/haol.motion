@@ -381,7 +381,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 .stack-stage {
   position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
   --sw: min(52vw, 80vh, 960px); --cy: calc(50% + var(--hh, 58px) / 2 + 12px);
-  --cx: calc(50% + 8vw);  /* 整疊往右，左邊留給資訊欄 */
+  --cx: calc(50% + 14vw);  /* 整疊往右，左邊留給資訊欄 */
   perspective: 1600px; perspective-origin: var(--cx) var(--cy);
 }
 #work-list.is-stack .card {
@@ -400,11 +400,11 @@ figcaption { font-size: 14px; color: var(--muted); }
 .stack-meta .sm-l {
   position: absolute; left: 0; top: var(--cy); transform: translateY(-50%);
   display: flex; flex-direction: column; gap: 8px;
-  width: calc((100% - var(--sw)) / 2 + 8vw - 48px);
+  width: calc((100% - var(--sw)) / 2 + 14vw - 48px);
 }
 .stack-meta b { font-family: var(--display); font-weight: 600; font-size: clamp(28px, 3vw, 48px); line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance; }
 .stack-meta .sm-cat, .stack-meta .sm-client, .stack-meta .sm-n { font-size: 11px; letter-spacing: .08em; }
-.stack-meta .sm-zh { font-size: 14px; text-wrap: balance; }
+.stack-meta .sm-zh { font-size: clamp(17px, 1.5vw, 22px); line-height: 1.4; color: rgba(238, 236, 231, .78); text-wrap: balance; }
 .stack-meta .sm-client { margin-top: 4px; }
 .stack-meta .sm-n { margin-top: 18px; }
 .stack-meta .sm-count { color: var(--fg); }
@@ -417,7 +417,7 @@ figcaption { font-size: 14px; color: var(--muted); }
   .stack-meta .sm-l { top: auto; bottom: 50px; transform: none; gap: 4px; width: 100%; }
   .stack-meta .sm-client, .stack-meta .sm-n { display: none; }
   .stack-meta b { font-size: 26px; }
-  .stack-meta .sm-zh { font-size: 13px; }
+  .stack-meta .sm-zh { font-size: 16px; }
   .stack-meta .sm-n { margin-top: 0; }
   .stack-meta::before { content: ""; position: absolute; left: -24px; right: -24px; bottom: 0; height: 170px; background: linear-gradient(to top, #000 62%, transparent); }
 }
