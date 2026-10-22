@@ -245,7 +245,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"><span class="sm-tag"></span> · <span class="sm-year"></span></span>' +
     '<b class="sm-title"></b><span class="muted sm-zh"></span><span class="mono muted sm-client"></span>' +
     '<span class="mono muted sm-n"><span class="sm-count"></span> projects</span></div>' +
-    '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar"><i></i></span><span>SCROLL ↓</span></div>';
+    '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar" title="拖曳或點一下跳到那張"><i></i></span>' +
+    '<button type="button" class="sm-skip mono">SKIP ↓</button></div>';
   stage.appendChild(meta);
   // 正中間那張後面的光暈：用它自己的封面模糊放大，兩層交替淡入淡出
   var glows = [0, 1].map(function () { var g = document.createElement('div'); g.className = 'stack-glow'; g.setAttribute('aria-hidden', 'true'); stage.insertBefore(g, stage.firstChild); return g; });
@@ -268,7 +269,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
 
   function measure() {
     list = cards.filter(function (c) { return !c.hidden; });
-    STEP = Math.max(180, Math.round(innerHeight * 0.32));
+    // 每張捲多少：短一點，滑到底不用捲太久（另外有進度條可以跳、SKIP 直接到頁尾）
+    STEP = Math.max(140, Math.round(innerHeight * 0.2));
     // 舞台往上拉到頁面最頂：一打開第一張就在畫面正中間，標題和篩選列疊在它上面
     stackList.style.marginTop = '';
     stackList.style.marginTop = -(stackList.getBoundingClientRect().top + scrollY) + 'px';
@@ -356,6 +358,21 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     tick();
     stage.animate && stage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'ease' });
   };
+  // 進度條：點或拖曳直接跳到那張
+  var bar = $('.sm-bar');
+  function scrub(e) {
+    var r = bar.getBoundingClientRect();
+    var i = Math.round(Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * Math.max(list.length - 1, 0));
+    scrollTo({ top: top0 + i * STEP, behavior: 'instant' });
+  }
+  bar.addEventListener('pointerdown', function (e) { bar.setPointerCapture(e.pointerId); bar.classList.add('is-drag'); scrub(e); });
+  bar.addEventListener('pointermove', function (e) { if (bar.hasPointerCapture(e.pointerId)) scrub(e); });
+  bar.addEventListener('pointerup', function () { bar.classList.remove('is-drag'); });
+  // SKIP：跳過整疊，直接到頁尾
+  $('.sm-skip').addEventListener('click', function () {
+    scrollTo({ top: top0 + stackList.offsetHeight - stage.offsetHeight + 1, behavior: 'instant' });
+    document.querySelector('.site-footer').scrollIntoView({ behavior: 'smooth' });
+  });
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', measure);
   addEventListener('load', measure);
