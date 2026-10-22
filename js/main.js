@@ -299,6 +299,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     last = t || 0;
     cur += (target - cur) * (1 - Math.pow(0.91, dt / 16.7));
     if (Math.abs(target - cur) < 0.0005) { cur = target; last = 0; } else kick();
+    // 反射光的強度跟著翻動速度：動得越快越亮，停下來只剩一點點
+    var glint = Math.min(1, 0.12 + Math.abs(target - cur) * 2.2);
     list.forEach(function (c, i) {
       var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
       if (a > 5) { c.style.visibility = 'hidden'; return; }
@@ -309,7 +311,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       c.style.zIndex = 100 - Math.round(a * 10);
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
       c._shade.style.opacity = Math.min(0.82, a * 0.2).toFixed(3);
-      c._sheen.style.transform = 'translate3d(' + (Math.max(-3, Math.min(3, d)) * -14).toFixed(2) + '%,0,0)';
+      c._sheen.style.transform = 'translate3d(' + (Math.max(-3, Math.min(3, d)) * -24).toFixed(2) + '%,0,0)';
+      c._sheen.style.opacity = glint.toFixed(3);
       c.style.opacity = a > 4 ? (5 - a).toFixed(2) : '';
     });
     var f = Math.round(cur);

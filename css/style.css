@@ -395,8 +395,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 #work-list.is-stack .card .media img { transform: none; }
 #work-list.is-stack .card-cap, #work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { display: none; }
 .stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
-#work-list.is-stack .card.is-front { outline: 1px solid transparent; outline-offset: 6px; transition: outline-color .3s; }
-#work-list.is-stack .card.is-front:hover, #work-list.is-stack .card.is-front:focus-visible { outline-color: var(--accent); }
+#work-list.is-stack .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
 #work-list.is-stack .card:not(.is-front) { cursor: n-resize; }
 .stack-meta { position: absolute; inset: 0; pointer-events: none; z-index: 200; }
 .stack-meta .sm-l {
@@ -434,8 +433,12 @@ figcaption { font-size: 14px; color: var(--muted); }
 }
 #work-list[data-card="gloss"] .cs-sheen i {
   position: absolute; top: 0; bottom: 0; left: -100%; width: 300%; will-change: transform;
-  background: linear-gradient(112deg, transparent 38%, rgba(255, 255, 255, .16) 46%, rgba(255, 255, 255, .05) 50%, transparent 54%, rgba(255, 255, 255, .07) 58%, transparent 62%);
-  mix-blend-mode: screen;
+  /* 一道白色反射光，後面跟一條很淡的彩虹折射；整層的 opacity 由 main.js 依翻動速度調 */
+  background:
+    linear-gradient(112deg, transparent 40%, rgba(255, 255, 255, .5) 46.5%, rgba(255, 255, 255, .12) 49%, transparent 52%),
+    linear-gradient(112deg, transparent 51%, rgba(255, 70, 70, .22) 52.5%, rgba(255, 200, 60, .22) 53.5%, rgba(80, 255, 160, .22) 54.5%, rgba(70, 150, 255, .24) 55.5%, rgba(190, 90, 255, .2) 56.5%, transparent 58%),
+    linear-gradient(112deg, transparent 58%, rgba(255, 255, 255, .14) 59.5%, transparent 61%);
+  mix-blend-mode: screen; opacity: .12;
 }
 #work-list[data-card="gloss"] .stack-glow {
   display: block; position: absolute; left: var(--cx); top: var(--cy); width: var(--sw); aspect-ratio: 2.1 / 1;
