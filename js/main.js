@@ -243,10 +243,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   cards.forEach(function (c) { stage.appendChild(c); });
   var meta = document.createElement('div');
   meta.className = 'stack-meta';
-  // 資訊全部放左側：分類・年份／名稱／中文副標／客戶，最下面是專案數
+  // 資訊全部放左側：分類・年份／名稱／中文副標／客戶
   meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"><span class="sm-tag"></span> · <span class="sm-year"></span></span>' +
-    '<b class="sm-title"></b><span class="muted sm-zh"></span><span class="mono muted sm-client"></span>' +
-    '<span class="mono muted sm-n"><span class="sm-count"></span> projects</span></div>' +
+    '<b class="sm-title"></b><span class="muted sm-zh"></span><span class="mono muted sm-client"></span></div>' +
     '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar" title="拖曳或點一下跳到那張"><i></i></span>' +
     '<button type="button" class="sm-skip mono">SKIP ↓</button></div>';
   stage.appendChild(meta);
@@ -294,7 +293,6 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     U = Math.max(H, stage.offsetHeight * 0.25);
     wbTop = wb.parentNode.getBoundingClientRect().top + scrollY;
     wbStick = parseFloat(getComputedStyle(wb).top) || 0;
-    $('.sm-count').textContent = list.length;
     onScroll();
   }
   function onScroll() {

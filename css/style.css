@@ -412,11 +412,9 @@ html:has(body.has-stack) { overflow-anchor: none; }
   width: calc((100% - var(--sw)) / 2 + 14vw - 48px);
 }
 .stack-meta b { font-family: var(--display); font-weight: 600; font-size: clamp(28px, 3vw, 48px); line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance; }
-.stack-meta .sm-cat, .stack-meta .sm-client, .stack-meta .sm-n { font-size: 11px; letter-spacing: .08em; }
+.stack-meta .sm-cat, .stack-meta .sm-client { font-size: 11px; letter-spacing: .08em; }
 .stack-meta .sm-zh { font-size: clamp(17px, 1.5vw, 22px); line-height: 1.4; color: rgba(238, 236, 231, .78); text-wrap: balance; }
 .stack-meta .sm-client { margin-top: 4px; }
-.stack-meta .sm-n { margin-top: 18px; }
-.stack-meta .sm-count { color: var(--fg); }
 .stack-meta .sm-b { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; align-items: center; gap: 16px; font-size: 11px; }
 .stack-meta .sm-bar { flex: 1; position: relative; height: 24px; cursor: pointer; pointer-events: auto; touch-action: none; }
 .stack-meta .sm-bar::before, .stack-meta .sm-bar i { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px; transition: height .2s, margin-top .2s; }
@@ -429,10 +427,9 @@ html:has(body.has-stack) { overflow-anchor: none; }
   /* 手機：卡片兩側沒位置，資訊放到下方進度條上面，卡片中心往上挪 */
   .stack-stage { --sw: min(88vw, 80vh); --cy: calc(50% + 24px); --cx: 50%; perspective: 900px; }
   .stack-meta .sm-l { top: auto; bottom: 50px; transform: none; gap: 4px; width: 100%; }
-  .stack-meta .sm-client, .stack-meta .sm-n { display: none; }
+  .stack-meta .sm-client { display: none; }
   .stack-meta b { font-size: 26px; }
   .stack-meta .sm-zh { font-size: 16px; }
-  .stack-meta .sm-n { margin-top: 0; }
   .stack-meta::before { content: ""; position: absolute; left: -24px; right: -24px; bottom: 0; height: 170px; background: linear-gradient(to top, #000 62%, transparent); }
 }
 
