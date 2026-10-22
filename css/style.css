@@ -408,7 +408,7 @@ html:has(body.has-stack) { overflow-anchor: none; }
 @media (hover: hover) {
   #work-list.is-stack .card { transition: scale .5s cubic-bezier(.2,.7,.2,1); }
   #work-list.is-stack .card.is-front:hover { scale: 1.03; }
-  #work-list[data-card="gloss"] .stack-stage:not(.is-live):has(.card.is-front:hover) .stack-glow.on { opacity: .36; transition-duration: .6s; }
+  #work-list[data-card="gloss"] .stack-stage:not(.is-live):has(.card.is-front:hover) .stack-glow.on { opacity: .31; transition-duration: .6s; }
 }
 #work-list.is-stack .card-cap, #work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { display: none; }
 .stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
@@ -482,10 +482,10 @@ html:has(body.has-stack) { overflow-anchor: none; }
   100% { background-position: 30% 100%; background-size: 155% 140%; }
 }
 @media (prefers-reduced-motion: reduce) { #work-list[data-card="gloss"] .stack-glow { animation: none; } }
-#work-list[data-card="gloss"] .stack-glow.on { opacity: .22; }
+#work-list[data-card="gloss"] .stack-glow.on { opacity: .19; }
 /* 播預覽影片時：光暈換成影片的即時畫面（main.js 每幀畫進 canvas），封面那層退掉 */
 #work-list[data-card="gloss"] .stack-glow.live { opacity: 0; transition-duration: 1s; }
-#work-list[data-card="gloss"] .stack-stage.is-live .stack-glow.live { opacity: .36; }
+#work-list[data-card="gloss"] .stack-stage.is-live .stack-glow.live { opacity: .31; }
 #work-list[data-card="gloss"] .stack-stage.is-live .stack-glow.on { opacity: 0; transition-duration: 1s; }
 /* 毛玻璃框：跟選單、篩選列同一套玻璃（半透明＋背景模糊＋上緣亮線），透出後面那疊；正中間那張多一顆玻璃按鈕 */
 #work-list[data-card="glass"] .stack-stage { --cs-extra: 20px; }
