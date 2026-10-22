@@ -265,7 +265,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
       if (a > 5) { c.style.visibility = 'hidden'; return; }
       // 全部正面不傾斜：往外每張縮小一點、往上（下）錯開，露出一條邊，越外圈越密
-      var y = s * (near * H * 0.36 + Math.min(far, 6) * U * 0.12);
+      var y = s * (near * H * 0.46 + Math.min(far, 6) * U * 0.15);
       var sc = 1 - near * 0.12 - Math.min(far, 6) * 0.06;
       c.style.visibility = '';
       c.style.zIndex = 100 - Math.round(a * 10);
