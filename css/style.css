@@ -425,6 +425,9 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .stack-meta .sm-cat, .stack-meta .sm-client { font-size: 11px; letter-spacing: .08em; }
 .stack-meta .sm-zh { font-size: clamp(17px, 1.5vw, 22px); line-height: 1.4; color: rgba(238, 236, 231, .78); text-wrap: balance; }
 .stack-meta .sm-client { margin-top: 4px; }
+.stack-meta .sm-role { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; text-shadow: none; }
+.stack-meta .sm-role:empty { display: none; }
+.stack-meta .sm-role span { font: 400 12px/1 var(--mono); letter-spacing: .04em; padding: 6px 12px; border: 1px solid rgba(198, 255, 61, .45); border-radius: 999px; color: var(--accent); background: rgba(198, 255, 61, .06); white-space: nowrap; }
 /* 小字比大標題的字面看起來偏左，往右推一點對齊 */
 .stack-meta .sm-cat { padding-left: 3px; }
 .stack-meta .sm-b { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; align-items: center; gap: 16px; font-size: 11px; }
