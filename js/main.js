@@ -400,9 +400,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       $('.sm-zh').textContent = zh ? zh.textContent : '';
       $('.sm-year').textContent = yr ? yr.textContent : '';
       $('.sm-client').textContent = tags[1] ? tags[1].textContent : '';
-      // 換張時兩側文字輕輕淡入上移
-      if (meta.animate) ['.sm-l'].forEach(function (q) {
-        $(q).animate([{ opacity: 0, translate: '0 10px' }, { opacity: 1, translate: '0 0' }], { duration: 380, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      // 換張時左側文字一行一行錯開淡入上移（分類 → 標題 → 中文 → 客戶，每行晚 60ms）
+      if (meta.animate) [].forEach.call($('.sm-l').children, function (el, i) {
+        el.animate([{ opacity: 0, translate: '0 14px' }, { opacity: 1, translate: '0 0' }], { duration: 520, delay: i * 60, easing: 'cubic-bezier(.2,.7,.2,1)', fill: 'backwards' });
       });
       $('.sm-idx').textContent = pad(f + 1) + ' / ' + pad(list.length);
     }
