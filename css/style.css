@@ -403,7 +403,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 .stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
 #work-list.is-stack .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
 #work-list.is-stack .card:not(.is-front) { cursor: n-resize; }
-.stack-meta { position: absolute; inset: 0; pointer-events: none; z-index: 200; }
+.stack-meta { position: absolute; inset: 0; pointer-events: none; z-index: 2000; }
 .stack-meta .sm-l {
   position: absolute; left: 0; top: var(--cy); transform: translateY(-50%);
   display: flex; flex-direction: column; gap: 8px;
@@ -456,7 +456,7 @@ figcaption { font-size: 14px; color: var(--muted); }
   transform: translate(-50%, -50%) scale(1.5, 1.7); background: center / cover no-repeat;
   filter: blur(70px) saturate(1.7);
   /* 邊緣淡出，不會在舞台上下被切出一條硬邊 */
-  -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent); mask-image: radial-gradient(closest-side, #000 35%, transparent); opacity: 0; transition: opacity .9s ease; pointer-events: none;
+  -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent); mask-image: radial-gradient(closest-side, #000 35%, transparent); opacity: 0; transition: opacity 1.4s cubic-bezier(.4,0,.2,1); pointer-events: none;
 }
 #work-list[data-card="gloss"] .stack-glow.on { opacity: .6; }
 /* 毛玻璃框：跟選單、篩選列同一套玻璃（半透明＋背景模糊＋上緣亮線），透出後面那疊；正中間那張多一顆玻璃按鈕 */
