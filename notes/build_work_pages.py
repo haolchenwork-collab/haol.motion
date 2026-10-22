@@ -25,8 +25,8 @@ PAGES = [
     ('new-taipei-dome', 'newtaipeidome', 'New Taipei Dome', '新北市大巨蛋 宣傳影片', '2025', ['1160088595']),
     ('tiaf-2023', 'tiaf2023', 'TIAF 2023', '台中國際動畫影展 形象片', '2023', ['852277020']),
     ('taiwan-lantern-festival-2025', 'tlf2025', 'Taiwan Lantern Festival', '2025 台灣燈會', '2025', ['1067632531']),
-    ('golden-horse-62', 'goldenhorse62', 'Golden Horse 62nd', '第 62 屆金馬獎 典禮包裝', '2025', ['localw:../videos/golden-horse-62/bg-logo-1.mp4:../images/golden-horse-62/bg-logo-1.jpg']),
-    ('golden-horse-61', 'thethriftyfamily-1', 'Golden Horse 61st', '第 61 屆金馬獎', '2024', ['1046285324', '1046277623']),
+    ('golden-horse-62', 'goldenhorse62', 'Golden Horse 62nd', '第 62 屆 金馬獎典禮動態設計', '2025', ['localw:../videos/golden-horse-62/bg-logo-1.mp4:../images/golden-horse-62/bg-logo-1.jpg']),
+    ('golden-horse-61', 'thethriftyfamily-1', 'Golden Horse 61st', '第 61 屆 金馬獎典禮動態設計', '2024', ['1046285324', '1046277623']),
     ('lunar-new-year-2024', 'redenvelope2024', 'Lunar New Year 2024', '2024 紅包袋設計', '2024', ['wix:ef6ff46b183645bd941adaa4a8258424:auto']),
     ('thrifty-family', 'thethriftyfamily', 'The Thrifty Family', '省省吧！我家富貴發 影集片頭', '2024', ['1017416780']),
     ('ballbreaker', 'breakball', 'Ballbreaker', '破蛋者', '2023', ['843768853']),
@@ -186,7 +186,7 @@ ZH = {'process': '製作過程', 'element': '元素', 'styleframe': '風格畫�
 
 
 # 作品中文名以浩辰提供的為準（覆蓋 Wix 頁上的寫法）
-SUB_FIX = {'food-taipei-2026': '台北國際食品展 宣傳'}
+SUB_FIX = {'food-taipei-2026': '台北國際食品展 宣傳', 'golden-horse-61': '第 61 屆 金馬獎典禮動態設計', 'golden-horse-62': '第 62 屆 金馬獎典禮動態設計'}
 
 
 def fix(t):
