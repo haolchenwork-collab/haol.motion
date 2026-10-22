@@ -511,6 +511,28 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     });
     if (animate && on) focus = list[Math.round(cur)] || null;
 
+    // 切到九宮格：左側資訊和底部進度列不要瞬間消失。複製一份蓋在原位（要在版面變成格狀前量），
+    // 文字一行一行往左滑出畫面、進度列往下滑出，光暈跟著收掉
+    if (animate && on && mode !== 'stack' && Element.prototype.animate) {
+      var sr0 = stage.getBoundingClientRect(), cs = getComputedStyle(stage);
+      var ghost = document.createElement('div');
+      ghost.className = 'stack-stage';
+      ghost.setAttribute('aria-hidden', 'true');
+      ghost.style.cssText = 'position:fixed;left:' + sr0.left + 'px;top:' + sr0.top + 'px;width:' + sr0.width + 'px;height:' + sr0.height + 'px;pointer-events:none;z-index:50;' +
+        ['--sw', '--cy', '--cx'].map(function (k) { return k + ':' + cs.getPropertyValue(k); }).join(';');
+      var gm = meta.cloneNode(true);
+      ghost.appendChild(gm);
+      glows.forEach(function (g) { if (g.classList.contains('on')) ghost.insertBefore(g.cloneNode(true), ghost.firstChild); });
+      stackList.appendChild(ghost);
+      var OUT = 'cubic-bezier(.55,0,.8,.2)';
+      [].forEach.call(gm.querySelector('.sm-l').children, function (el, i) {
+        el.animate([{ translate: '0 0' }, { translate: '-75vw 0' }], { duration: 620, delay: i * 50, easing: OUT, fill: 'forwards' });
+      });
+      gm.querySelector('.sm-b').animate([{ translate: '0 0' }, { translate: '0 90px' }], { duration: 520, easing: OUT, fill: 'forwards' });
+      [].forEach.call(ghost.querySelectorAll('.stack-glow'), function (g) { g.animate([{ opacity: getComputedStyle(g).opacity }, { opacity: 0 }], { duration: 500, fill: 'forwards' }); });
+      setTimeout(function () { ghost.remove(); }, 900);
+    }
+
     on = mode === 'stack';
     toggle.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-mode') === mode)); });
     try { localStorage.setItem('work-view', mode); } catch (err) {}
@@ -566,7 +588,14 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       ], { duration: DUR, easing: EASE });
     });
     // 光暈不在這裡補間：它本身有 1.4s 的 CSS 淡入；以前一起淡到 1，動畫一結束會一下暗掉，舊的那層也會跟著亮起來
-    if (on) meta.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, delay: 300, easing: 'ease', fill: 'backwards' });
+    // 切回堆疊：左側文字從畫面左邊一行一行滑進來，進度列從下面滑上來
+    if (on) {
+      var IN = 'cubic-bezier(.2,.8,.2,1)';
+      [].forEach.call(meta.querySelector('.sm-l').children, function (el, i) {
+        el.animate([{ translate: '-75vw 0' }, { translate: '0 0' }], { duration: 760, delay: 180 + i * 60, easing: IN, fill: 'backwards' });
+      });
+      meta.querySelector('.sm-b').animate([{ translate: '0 90px' }, { translate: '0 0' }], { duration: 700, delay: 240, easing: IN, fill: 'backwards' });
+    }
   }
   var toggle = document.createElement('div');
   toggle.className = 'view-toggle';
