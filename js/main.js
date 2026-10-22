@@ -284,7 +284,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   var meta = document.createElement('div');
   meta.className = 'stack-meta';
   // 資訊全部放左側：分類・年份／名稱／中文副標／客戶
-  meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"><span class="sm-tag"></span> · <span class="sm-year"></span></span>' +
+  meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"><span class="sm-year"></span> · <span class="sm-tag"></span></span>' +
     '<b class="sm-title"></b><span class="muted sm-zh"></span><span class="mono muted sm-client"></span><span class="sm-role"></span></div>' +
     '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar" title="拖曳或點一下跳到那張"><i></i></span>' +
     '<button type="button" class="sm-skip mono">SKIP ↓</button></div>';
