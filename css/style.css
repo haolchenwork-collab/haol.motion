@@ -356,6 +356,12 @@ figcaption { font-size: 14px; color: var(--muted); }
 }
 
 /* 篩選：黏在頁首下方的玻璃列 */
+/* 堆疊／九宮格切換（main.js 4a 加的），跟篩選列同一套玻璃膠囊 */
+.view-toggle { display: flex; gap: 2px; padding: 5px; border-radius: 999px; background: rgba(0, 0, 0, .45); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+.view-toggle button { display: grid; place-items: center; width: 36px; height: 32px; border: 0; border-radius: 999px; background: none; color: var(--muted); cursor: pointer; transition: color .2s, background .2s; }
+.view-toggle button:hover { color: var(--fg); }
+.view-toggle button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.view-toggle svg { width: 16px; height: 16px; fill: currentColor; }
 .work-bar { position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 8; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; pointer-events: none; }
 .work-bar > * { pointer-events: auto; }
 .work-bar .filters {
@@ -433,10 +439,10 @@ figcaption { font-size: 14px; color: var(--muted); }
 /* 光澤＋光暈（gloss）：表面一道斜光隨捲動滑過；正中間那張後面打它自己顏色的光暈（hoal 不要邊框亮邊） */
 #work-list[data-card="gloss"] .card { border-radius: 10px; }
 #work-list[data-card="gloss"] .card .media { border-radius: 10px; }
-#work-list[data-card="gloss"] .cs-sheen {
+#work-list.is-stack[data-card="gloss"] .cs-sheen {
   display: block; position: absolute; inset: 0; z-index: 2; overflow: hidden; border-radius: inherit; pointer-events: none;
 }
-#work-list[data-card="gloss"] .cs-sheen i {
+#work-list.is-stack[data-card="gloss"] .cs-sheen i {
   position: absolute; top: 0; bottom: 0; left: -100%; width: 300%; will-change: transform;
   /* 一道白色反射光，後面跟一條很淡的彩虹折射；整層的 opacity 由 main.js 依翻動速度調 */
   background:

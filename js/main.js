@@ -162,7 +162,8 @@ function filterItems(target, items, keep) {
     it.getAnimations().forEach(function (a) { a.cancel(); });
     if (it._leave) it._leave();
   });
-  if (reduce || target._stack) { items.forEach(function (it) { it.hidden = !keep(it); }); if (target._stack) target._stack(); return; }
+  var stacked = target._stack && target.classList.contains('is-stack');
+  if (reduce || stacked) { items.forEach(function (it) { it.hidden = !keep(it); }); if (stacked) target._stack(); return; }
 
   var EASE = 'cubic-bezier(.2,.7,.2,1)', DUR = 480;
   var box = target.getBoundingClientRect();
@@ -202,6 +203,7 @@ function filterItems(target, items, keep) {
 // 4a. Work 堆疊瀏覽：卡片在 3D 透視裡上下疊成一疊，捲動時一張張往前翻；正中間那張最大、平放，
 //     上下的越遠越小、越暗（全部維持正面，不傾斜）。旁邊顯示目前這張的分類、名稱和專案數。
 //     捲動距離決定翻到第幾張（每張 STEP px），停下來會吸到最近的一張。減少動態時維持原本的格狀。
+//     篩選列右邊的切換鈕可以換回九宮格（setMode），選擇記在 localStorage。
 var stackList = document.getElementById('work-list');
 if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (function () {
   var cards = Array.prototype.slice.call(stackList.querySelectorAll('.card'));
@@ -267,7 +269,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   var list = [], cur = 0, target = 0, front = -1, raf = 0, snapT = 0, top0 = 0, H = 300, U = 300;
   var $ = function (q) { return meta.querySelector(q); };
 
+  var on = true;
   function measure() {
+    if (!on) return;
     list = cards.filter(function (c) { return !c.hidden; });
     // 每張捲多少：短一點，滑到底不用捲太久（另外有進度條可以跳、SKIP 直接到頁尾）
     STEP = Math.max(140, Math.round(innerHeight * 0.2));
@@ -283,10 +287,12 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     onScroll();
   }
   function onScroll() {
+    if (!on) return;
     target = Math.min(Math.max((scrollY - top0) / STEP, 0), Math.max(list.length - 1, 0));
     kick();
     clearTimeout(snapT);
     snapT = setTimeout(function () {
+      if (!on) return;
       var i = Math.round(target);
       // 直接把捲動位置對齊；畫面本來就是緩動追上去的，所以看起來是順順滑到那張
       if (Math.abs(i - target) > 0.01 && scrollY > top0 - 2 && scrollY < top0 + (list.length - 1) * STEP + 2) scrollTo({ top: top0 + i * STEP, behavior: 'instant' });
@@ -296,6 +302,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   var last = 0;
   function tick(t) {
     raf = 0;
+    if (!on) return;
     // 跟幀率無關的緩動：每 16.7ms 追上剩下距離的 9%
     var dt = last && t ? Math.min(t - last, 64) : 16.7;
     last = t || 0;
@@ -376,17 +383,98 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', measure);
   addEventListener('load', measure);
+
+  // 堆疊／九宮格切換：九宮格就是原本的格狀列表，卡片搬回 #work-list、清掉堆疊加的樣式。
+  // 切換時用 FLIP：先記下每張在畫面上的位置，換好版面再從舊位置補間到新位置，看起來是卡片自己飛過去。
+  // 正中間那張（或九宮格裡最靠近畫面中間那張）會對齊到另一種模式的同一張，捲動位置才接得上。
+  function setMode(mode, animate) {
+    var first = new Map(), focus = null, best = Infinity;
+    if (animate) cards.forEach(function (c) {
+      if (c.hidden) return;
+      var r = c.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      first.set(c, r);
+      var dc = Math.abs(r.top + r.height / 2 - innerHeight / 2);
+      if (!on && dc < best) { best = dc; focus = c; }
+    });
+    if (animate && on) focus = list[Math.round(cur)] || null;
+
+    on = mode === 'stack';
+    toggle.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-mode') === mode)); });
+    try { localStorage.setItem('work-view', mode); } catch (err) {}
+    stackList.classList.toggle('is-stack', on);
+    stackList.classList.toggle('tiles', !on);
+    document.body.classList.toggle('has-stack', on);
+    if (on) {
+      cards.forEach(function (c) { stage.insertBefore(c, meta); });
+      stage.hidden = false;
+      front = -1;
+      measure();
+      var fi = focus ? list.indexOf(focus) : -1;
+      if (fi > -1) scrollTo({ top: top0 + fi * STEP, behavior: 'instant' });
+      target = cur = fi > -1 ? fi : target;
+      tick();
+    } else {
+      cards.forEach(function (c) {
+        stackList.insertBefore(c, stage);
+        c.classList.remove('is-front');
+        ['transform', 'zIndex', 'opacity', 'visibility'].forEach(function (k) { c.style[k] = ''; });
+        c._shade.style.opacity = '';
+      });
+      stage.hidden = true;
+      stackList.style.height = stackList.style.marginTop = '';
+      if (focus) focus.scrollIntoView({ block: 'center', behavior: 'instant' });
+    }
+    if (!animate || !Element.prototype.animate) return;
+
+    var EASE = 'cubic-bezier(.65,0,.2,1)', DUR = 720;
+    var sr = stage.getBoundingClientRect();
+    cards.forEach(function (c, k) {
+      if (c.hidden || c.style.visibility === 'hidden') return;
+      var r = c.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      var end = c.style.transform || 'none', f = first.get(c);
+      if (!f) {
+        c.animate([{ opacity: 0, transform: (end === 'none' ? '' : end + ' ') + 'scale(.92)' }, { opacity: c.style.opacity || 1, transform: end }], { duration: DUR, delay: 120 + k * 12, easing: EASE, fill: 'backwards' });
+        return;
+      }
+      // 版面上的中心（transform 的原點）跟畫面上看到的中心不一樣（堆疊裡有 3D 位移），兩個都要算進去
+      var ox = on ? sr.left + c.offsetLeft + c.offsetWidth / 2 : r.left + r.width / 2;
+      var oy = on ? sr.top + c.offsetTop + c.offsetHeight / 2 : r.top + r.height / 2;
+      var sx = f.width / r.width, sy = f.height / r.height;
+      var tx = f.left + f.width / 2 - ox - sx * (r.left + r.width / 2 - ox);
+      var ty = f.top + f.height / 2 - oy - sy * (r.top + r.height / 2 - oy);
+      c.animate([
+        { transform: 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px) scale(' + sx.toFixed(4) + ',' + sy.toFixed(4) + ')' + (end === 'none' ? '' : ' ' + end) },
+        { transform: end }
+      ], { duration: DUR, easing: EASE });
+    });
+    if (on) [meta].concat(glows).forEach(function (el) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, delay: 300, easing: 'ease', fill: 'backwards' }); });
+  }
+  var toggle = document.createElement('div');
+  toggle.className = 'view-toggle';
+  toggle.setAttribute('role', 'group'); toggle.setAttribute('aria-label', '瀏覽方式');
+  toggle.innerHTML = '<button type="button" data-mode="stack" title="堆疊" aria-label="堆疊"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="1.5" width="8" height="2.5" rx=".6"/><rect x="1.5" y="6" width="13" height="4.5" rx=".8"/><rect x="4" y="12.5" width="8" height="2.5" rx=".6"/></svg></button>' +
+    '<button type="button" data-mode="grid" title="九宮格" aria-label="九宮格"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="4" height="4" rx=".6"/><rect x="6" y="1" width="4" height="4" rx=".6"/><rect x="11" y="1" width="4" height="4" rx=".6"/><rect x="1" y="6" width="4" height="4" rx=".6"/><rect x="6" y="6" width="4" height="4" rx=".6"/><rect x="11" y="6" width="4" height="4" rx=".6"/><rect x="1" y="11" width="4" height="4" rx=".6"/><rect x="6" y="11" width="4" height="4" rx=".6"/><rect x="11" y="11" width="4" height="4" rx=".6"/></svg></button>';
+  document.querySelector('.work-bar').appendChild(toggle);
+  toggle.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b && (b.getAttribute('data-mode') === 'stack') !== on) setMode(b.getAttribute('data-mode'), true);
+  });
+  var saved = 'stack';
+  try { saved = localStorage.getItem('work-view') || 'stack'; } catch (err) {}
   measure();
   cur = target;
   tick();
+  setMode(saved === 'grid' ? 'grid' : 'stack');
 })();
 
 // 4b. Work 卡片景深：滑過（或鍵盤移到）一張時，其他卡片依離它的距離設 --depth（0 近～1 遠），CSS 用它決定退後多少。
-var depthGrid = document.querySelector('#work-list:not(.is-stack)');
+var depthGrid = document.getElementById('work-list');
 if (depthGrid && matchMedia('(hover: hover)').matches) {
   var setDepth = function (e) {
     var on = e.target.closest && e.target.closest('.card');
-    if (!on || !depthGrid.contains(on)) return;
+    if (!on || !depthGrid.contains(on) || depthGrid.classList.contains('is-stack')) return;
     var a = on.getBoundingClientRect(), ax = a.left + a.width / 2, ay = a.top + a.height / 2;
     // 以畫面寬度的 70% 當「最遠」，畫面內看得到的卡片就會用到完整的遠近範圍
     var far = Math.max(window.innerWidth * 0.7, 1);
