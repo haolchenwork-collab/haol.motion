@@ -415,6 +415,8 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .stack-meta .sm-cat, .stack-meta .sm-client { font-size: 11px; letter-spacing: .08em; }
 .stack-meta .sm-zh { font-size: clamp(17px, 1.5vw, 22px); line-height: 1.4; color: rgba(238, 236, 231, .78); text-wrap: balance; }
 .stack-meta .sm-client { margin-top: 4px; }
+/* 小字比大標題的字面看起來偏左，往右推一點對齊 */
+.stack-meta .sm-cat { padding-left: 3px; }
 .stack-meta .sm-b { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; align-items: center; gap: 16px; font-size: 11px; }
 .stack-meta .sm-bar { flex: 1; position: relative; height: 24px; cursor: pointer; pointer-events: auto; touch-action: none; }
 .stack-meta .sm-bar::before, .stack-meta .sm-bar i { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px; transition: height .2s, margin-top .2s; }
