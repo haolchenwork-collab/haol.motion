@@ -385,6 +385,8 @@ figcaption { font-size: 14px; color: var(--muted); }
 #work-list.is-stack { display: block; position: relative; }
 .has-stack .page-hero { position: relative; z-index: 9; pointer-events: none; }
 .has-stack main { overflow-x: clip; }
+/* 堆疊會自己算捲動位置，關掉瀏覽器的捲動錨點，免得版面一變就被拉走 */
+html:has(body.has-stack) { overflow-anchor: none; }
 .stack-stage {
   position: sticky; top: 0; height: 100vh; height: 100svh;
   clip-path: inset(0 -100vw);  /* 只裁上下；左右讓光暈延伸到畫面邊緣（main 用 overflow-x: clip 防橫向捲動） */

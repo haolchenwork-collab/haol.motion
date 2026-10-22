@@ -273,11 +273,12 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   function measure() {
     if (!on) return;
     list = cards.filter(function (c) { return !c.hidden; });
-    // 每張捲多少：短一點，滑到底不用捲太久（另外有進度條可以跳、SKIP 直接到頁尾）
-    STEP = Math.max(140, Math.round(innerHeight * 0.2));
-    // 舞台往上拉到頁面最頂：一打開第一張就在畫面正中間，標題和篩選列疊在它上面
-    stackList.style.marginTop = '';
-    stackList.style.marginTop = -(stackList.getBoundingClientRect().top + scrollY) + 'px';
+    // 每張捲多少：固定值，不跟視窗高度走（手機網址列伸縮會觸發 resize，跟著變的話會跳到別張）
+    STEP = 160;
+    // 舞台往上拉到頁面最頂：一打開第一張就在畫面正中間，標題和篩選列疊在它上面。
+    // 用目前的 margin 反推原本的位置，不先清掉再量（清掉那一下版面會動，捲動位置會被瀏覽器拉走）
+    var mt = parseFloat(stackList.style.marginTop) || 0;
+    stackList.style.marginTop = -(stackList.getBoundingClientRect().top + scrollY - mt) + 'px';
     stackList.style.height = (Math.max(list.length - 1, 0) * STEP + stage.offsetHeight) + 'px';
     top0 = stackList.getBoundingClientRect().top + scrollY;
     H = list.length ? list[0].offsetHeight : 300;
