@@ -292,6 +292,19 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   // 正中間那張後面的光暈：用它自己的封面模糊放大，兩層交替淡入淡出
   var glows = [0, 1].map(function () { var g = document.createElement('div'); g.className = 'stack-glow'; g.setAttribute('aria-hidden', 'true'); stage.insertBefore(g, stage.firstChild); return g; });
   var glowOn = 0, glowShown = null, glowTimer = 0;
+  // 預覽影片播放時，光暈跟著影片畫面變：把影片縮成很小的圖每幀畫進 canvas，再交給同一套模糊
+  // （只有網站裡的 mp4 做得到；Vimeo 是別的網域，讀不到畫面，光暈維持封面）
+  var live = document.createElement('canvas'), lctx = live.getContext('2d'), liveOn = false, liveT = 0;
+  live.className = 'stack-glow live'; live.width = 64; live.height = 30; live.setAttribute('aria-hidden', 'true');
+  stage.insertBefore(live, glows[0].nextSibling);
+  (function liveLoop(t) {
+    requestAnimationFrame(liveLoop);
+    if (!on || !list) return;
+    var c = list[front], v = c && c.classList.contains('is-playing') && c.querySelector('video');
+    var ok = !!(v && v.readyState >= 2 && !v.paused);
+    if (ok && t - liveT > 40) { liveT = t; try { lctx.drawImage(v, 0, 0, live.width, live.height); } catch (err) { ok = false; } }
+    if (ok !== liveOn) { liveOn = ok; stage.classList.toggle('is-live', ok); }
+  })(0);
   // 連續翻好幾張時先不換光暈，停下來才換：不然半透明的那層會被直接換圖，顏色一下跳掉
   function setGlow(c) {
     clearTimeout(glowTimer);
