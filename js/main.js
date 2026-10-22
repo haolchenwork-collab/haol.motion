@@ -213,7 +213,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     var g = document.createElement('span'); g.className = 'cs-sheen'; g.setAttribute('aria-hidden', 'true');
     g.innerHTML = '<i></i>'; c.querySelector('.media').appendChild(g); c._sheen = g.firstChild;
   });
-  // 卡片樣式（style.css 的 [data-card]）：browser 瀏覽器視窗框、viewfinder 觀景窗、print 相紙、glass 毛玻璃框、gloss 反光亮邊＋光暈（目前用這個，在 work/index.html 設定）。網址加 ?card=… 可以預覽別的樣式
+  // 卡片樣式（style.css 的 [data-card]）：browser 瀏覽器視窗框、viewfinder 觀景窗、print 相紙、glass 毛玻璃框、gloss 光澤＋光暈（目前用這個，在 work/index.html 設定）。網址加 ?card=… 可以預覽別的樣式
   var cardStyle = (location.search.match(/[?&]card=(\w+)/) || [])[1] || stackList.getAttribute('data-card') || '';
   if (cardStyle) stackList.setAttribute('data-card', cardStyle);
   cards.forEach(function (c, i) {
