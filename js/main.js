@@ -329,9 +329,10 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       c.style.visibility = '';
       c.style.zIndex = 1000 - Math.round(a * 100);
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
-      // 變暗用 smoothstep 曲線：離開中間時慢慢暗下去，沒有一離開就掉一階的感覺
-      var k = Math.min(a / 4, 1);
-      c._shade.style.opacity = (0.8 * k * k * (3 - 2 * k)).toFixed(3);
+      // 變暗用 smoothstep 曲線：離開中間時慢慢暗下去，沒有一離開就掉一階的感覺。
+      // 兩段疊起來：離開正中間一張的距離內先暗到約 4 成亮（後面的卡片一直都這麼暗），再往外圈越來越暗
+      var k = Math.min(a / 4, 1), sk = k * k * (3 - 2 * k), sn = near * near * (3 - 2 * near);
+      c._shade.style.opacity = (1 - (1 - 0.8 * sk) * (1 - 0.6 * sn)).toFixed(3);
       c._sheen.style.transform = 'translate3d(' + (Math.max(-3, Math.min(3, d)) * -24).toFixed(2) + '%,0,0)';
       c._sheen.style.opacity = glint.toFixed(3);
       c.style.opacity = a > 4 ? (5 - a).toFixed(2) : '';
