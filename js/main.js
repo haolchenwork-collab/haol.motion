@@ -212,8 +212,10 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   cards.forEach(function (c) { stage.appendChild(c); });
   var meta = document.createElement('div');
   meta.className = 'stack-meta';
-  meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"></span><b class="sm-title"></b><span class="muted sm-zh"></span></div>' +
-    '<div class="sm-r"><b class="sm-year"></b><span class="mono muted sm-client"></span><span class="mono muted sm-n"><span class="sm-count"></span> projects</span></div>' +
+  // 資訊全部放左側：分類・年份／名稱／中文副標／客戶，最下面是專案數
+  meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"><span class="sm-tag"></span> · <span class="sm-year"></span></span>' +
+    '<b class="sm-title"></b><span class="muted sm-zh"></span><span class="mono muted sm-client"></span>' +
+    '<span class="mono muted sm-n"><span class="sm-count"></span> projects</span></div>' +
     '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar"><i></i></span><span>SCROLL ↓</span></div>';
   stage.appendChild(meta);
   stackList.appendChild(stage);
@@ -278,13 +280,13 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var c = list[f];
       c.classList.add('is-front');
       var tags = c.querySelectorAll('.tags span'), zh = c.querySelector('.zh'), yr = c.querySelector('.card-title .mono');
-      $('.sm-cat').textContent = tags[0] ? tags[0].textContent : '';
+      $('.sm-tag').textContent = tags[0] ? tags[0].textContent : '';
       $('.sm-title').textContent = c.querySelector('h3').textContent;
       $('.sm-zh').textContent = zh ? zh.textContent : '';
       $('.sm-year').textContent = yr ? yr.textContent : '';
       $('.sm-client').textContent = tags[1] ? tags[1].textContent : '';
       // 換張時兩側文字輕輕淡入上移
-      if (meta.animate) ['.sm-l', '.sm-r'].forEach(function (q) {
+      if (meta.animate) ['.sm-l'].forEach(function (q) {
         $(q).animate([{ opacity: 0, translate: '0 10px' }, { opacity: 1, translate: '0 0' }], { duration: 380, easing: 'cubic-bezier(.2,.7,.2,1)' });
       });
       $('.sm-idx').textContent = pad(f + 1) + ' / ' + pad(list.length);
