@@ -402,7 +402,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 #work-list.is-stack .card-cap, #work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { display: none; }
 .stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
 #work-list.is-stack .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
-#work-list.is-stack .card:not(.is-front) { cursor: n-resize; }
+#work-list.is-stack .card:not(.is-front) { pointer-events: none; }
 .stack-meta { position: absolute; inset: 0; pointer-events: none; z-index: 2000; }
 .stack-meta .sm-l {
   position: absolute; left: 0; top: var(--cy); transform: translateY(-50%);
