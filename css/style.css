@@ -425,9 +425,10 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .stack-meta .sm-cat, .stack-meta .sm-client { font-size: 11px; letter-spacing: .08em; }
 .stack-meta .sm-zh { font-size: clamp(17px, 1.5vw, 22px); line-height: 1.4; color: rgba(238, 236, 231, .78); text-wrap: balance; }
 .stack-meta .sm-client { margin-top: 4px; }
-.stack-meta .sm-role { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; text-shadow: none; }
+.stack-meta .sm-role { display: flex; flex-wrap: nowrap; white-space: nowrap; margin-top: 16px; padding-top: 12px; border-top: 1px solid rgba(255, 255, 255, .12); max-width: 480px; text-shadow: none; }
 .stack-meta .sm-role:empty { display: none; }
-.stack-meta .sm-role span { font: 400 11px/1 var(--mono); letter-spacing: .04em; padding: 5px 10px; border: 1px solid rgba(255, 255, 255, .14); border-radius: 999px; color: rgba(255, 255, 255, .6); background: transparent; white-space: nowrap; }
+.stack-meta .sm-role span { font: 300 13px/1.6 var(--body); color: rgba(255, 255, 255, .78); white-space: nowrap; }
+.stack-meta .sm-role span + span::before { content: "/"; margin: 0 .55em; color: rgba(255, 255, 255, .3); }
 /* 小字比大標題的字面看起來偏左，往右推一點對齊 */
 .stack-meta .sm-cat { padding-left: 3px; }
 .stack-meta .sm-b { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; align-items: center; gap: 16px; font-size: 11px; }

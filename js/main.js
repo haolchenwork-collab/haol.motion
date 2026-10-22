@@ -413,7 +413,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       $('.sm-zh').textContent = zh ? zh.textContent : '';
       $('.sm-year').textContent = yr ? yr.textContent : '';
       $('.sm-client').textContent = tags[1] ? tags[1].textContent : '';
-      // MY ROLE：跟作品內頁一樣的綠色標籤（卡片 data-role，用 | 分隔）
+      // MY ROLE：細線下一行，用 / 隔開（卡片 data-role，用 | 分隔）
       $('.sm-role').innerHTML = '';
       (c.getAttribute('data-role') || '').split('|').forEach(function (r) { if (!r) return; var t = document.createElement('span'); t.textContent = r; $('.sm-role').appendChild(t); });
       // 換張時左側文字一行一行錯開淡入上移（分類 → 標題 → 中文 → 客戶，每行晚 60ms）
