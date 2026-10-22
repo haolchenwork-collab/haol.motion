@@ -351,49 +351,60 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   }
   // 只有正前方那張能點、能滑過（其他張 CSS 設 pointer-events: none、tabIndex -1）。
 
-  // 一次只翻一張：滾輪或觸控板一個手勢、一次滑動、一次方向鍵都只翻一張。
+  // 翻幾張由滾動量決定：滾輪一格（約 100）翻一張，連續滾就照總量一路翻；觸控板的小幅事件打六折，免得輕輕一推就飛很遠。
+  // 一個手勢的第一下只要有感覺的量就先翻一張，回應才不會鈍。手機上手指每滑 80px 翻一張。
   // 在第一張往上、最後一張往下時不攔，交給頁面正常捲到標題或頁尾。
   function inStack() { return on && scrollY >= top0 - 2 && scrollY <= top0 + (list.length - 1) * STEP + 2; }
-  function next(dir) { var i = Math.round(target) + dir; return i >= 0 && i < list.length ? i : -1; }
-  function go(i) { scrollTo({ top: top0 + i * STEP, behavior: 'instant' }); }
-  var lockT = 0, acc = 0;
+  var idx = 0, lastMove = 0;
+  function step(dir) {
+    // 停一下之後重新以目前的位置為準；連續滾的時候用自己記的 idx，不等捲動事件回來
+    if (performance.now() - lastMove > 400) idx = Math.round(target);
+    var i = idx + dir;
+    if (i < 0 || i >= list.length) return false;
+    idx = i; lastMove = performance.now();
+    scrollTo({ top: top0 + i * STEP, behavior: 'instant' });
+    return true;
+  }
+  function canStep(dir) { var base = performance.now() - lastMove > 400 ? Math.round(target) : idx; return base + dir >= 0 && base + dir < list.length; }
+  var acc = 0, lastWheel = 0, moved = false;
   addEventListener('wheel', function (e) {
     if (!inStack() || e.ctrlKey || Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
-    var i = next(e.deltaY > 0 ? 1 : -1);
-    if (i < 0) return;
+    var dy = e.deltaY * (e.deltaMode === 1 ? 40 : e.deltaMode === 2 ? innerHeight : 1);
+    var dir = dy > 0 ? 1 : -1;
+    if (!canStep(dir)) return;
     e.preventDefault();
     var now = performance.now();
-    // 觸控板的慣性會連續送很多事件：翻過一張後，事件停 200ms 以上才算下一個手勢
-    if (now < lockT) { lockT = Math.max(lockT, now + 200); return; }
-    acc += e.deltaY;
-    if (Math.abs(acc) < 24) return;
-    acc = 0; lockT = now + 520;
-    go(i);
+    if (now - lastWheel > 220 || (acc && (acc > 0) !== (dy > 0))) { acc = 0; moved = false; }
+    lastWheel = now;
+    acc += Math.abs(dy) >= 50 ? dy : dy * 0.6;
+    if (!moved && Math.abs(acc) >= 24) { moved = true; acc = 0; step(dir); return; }
+    while (Math.abs(acc) >= 100) { acc -= dir * 100; if (!step(dir)) { acc = 0; break; } }
   }, { passive: false });
-  var tx = null, ty = null, swiped = false;
-  addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; swiped = false; }, { passive: true });
+  var tx = null, ty = null, used = 0;
+  addEventListener('touchstart', function (e) { tx = e.touches[0].clientX; ty = e.touches[0].clientY; used = 0; }, { passive: true });
   addEventListener('touchmove', function (e) {
     if (ty === null || !inStack()) return;
     var dx = tx - e.touches[0].clientX, dy = ty - e.touches[0].clientY;
     if (Math.abs(dx) > Math.abs(dy)) return;
-    var i = next(dy > 0 ? 1 : -1);
-    if (i < 0) return;
+    var dir = dy > 0 ? 1 : -1;
+    if (!canStep(dir)) return;
     e.preventDefault();
-    if (!swiped && Math.abs(dy) > 36) { swiped = true; go(i); }
+    var want = Math.abs(dy) < 36 ? 0 : 1 + Math.floor((Math.abs(dy) - 36) / 80);
+    while (used < want) { used++; if (!step(dir)) break; }
   }, { passive: false });
   addEventListener('touchend', function () { ty = null; });
   addEventListener('keydown', function (e) {
     if (!inStack() || e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|SELECT|BUTTON)$/.test(e.target.tagName)) return;
     var k = e.key, dir = k === 'ArrowDown' || k === 'PageDown' || (k === ' ' && !e.shiftKey) ? 1 : k === 'ArrowUp' || k === 'PageUp' || (k === ' ' && e.shiftKey) ? -1 : 0;
-    var i = dir ? next(dir) : -1;
-    if (i < 0) return;
+    if (!dir || !canStep(dir)) return;
     e.preventDefault();
-    go(i);
+    step(dir);
   });
   stackList._stack = function () {
     front = -1;
     cards.forEach(function (c) { c.classList.remove('is-front'); c.tabIndex = -1; });
     measure();
+    lastMove = 0;
     if (scrollY > top0) scrollTo({ top: top0 });
     target = cur = 0;
     tick();
@@ -404,6 +415,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   function scrub(e) {
     var r = bar.getBoundingClientRect();
     var i = Math.round(Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * Math.max(list.length - 1, 0));
+    lastMove = 0;
     scrollTo({ top: top0 + i * STEP, behavior: 'instant' });
   }
   bar.addEventListener('pointerdown', function (e) { bar.setPointerCapture(e.pointerId); bar.classList.add('is-drag'); scrub(e); });
