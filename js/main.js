@@ -565,7 +565,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     }
     if (!animate || !Element.prototype.animate) return;
 
-    var EASE = 'cubic-bezier(.65,0,.2,1)', DUR = 720;
+    var EASE = 'cubic-bezier(.6,0,.2,1)', DUR = 1100;
     var sr = stage.getBoundingClientRect();
     cards.forEach(function (c, k) {
       if (c.hidden || c.style.visibility === 'hidden') return;
