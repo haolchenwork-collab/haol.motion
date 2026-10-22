@@ -401,6 +401,12 @@ html:has(body.has-stack) { overflow-anchor: none; }
   box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .9);
 }
 #work-list.is-stack .card .media img { transform: none; }
+/* 滑過正中間那張：微微浮起、背後光暈亮一點（影片預覽沿用 main.js 第 2 段的 data-loop） */
+@media (hover: hover) {
+  #work-list.is-stack .card { transition: scale .5s cubic-bezier(.2,.7,.2,1); }
+  #work-list.is-stack .card.is-front:hover { scale: 1.03; }
+  #work-list[data-card="gloss"] .stack-stage:has(.card.is-front:hover) .stack-glow.on { opacity: .85; transition-duration: .6s; }
+}
 #work-list.is-stack .card-cap, #work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { display: none; }
 .stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
 #work-list.is-stack .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
