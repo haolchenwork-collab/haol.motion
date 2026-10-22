@@ -500,9 +500,10 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   // 切換時用 FLIP：先記下每張在畫面上的位置，換好版面再從舊位置補間到新位置，看起來是卡片自己飛過去。
   // 正中間那張（或九宮格裡最靠近畫面中間那張）會對齊到另一種模式的同一張，捲動位置才接得上。
   function setMode(mode, animate) {
-    var first = new Map(), focus = null, best = Infinity;
+    var first = new Map(), shade0 = new Map(), focus = null, best = Infinity;
     if (animate) cards.forEach(function (c) {
       if (c.hidden) return;
+      shade0.set(c, parseFloat(c._shade.style.opacity) || 0);
       var r = c.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight) return;
       first.set(c, r);
@@ -572,6 +573,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var r = c.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight) return;
       var end = c.style.transform || 'none', f = first.get(c);
+      // 變暗也跟著飛：從原本的暗度補間到新的，不會一出發就一下暗掉（或一下亮起來）
+      var s0 = shade0.get(c) || 0, s1 = parseFloat(c._shade.style.opacity) || 0;
+      if (Math.abs(s1 - s0) > 0.01) c._shade.animate([{ opacity: s0 }, { opacity: s1 }], { duration: DUR, easing: EASE });
       if (!f) {
         c.animate([{ opacity: 0, transform: (end === 'none' ? '' : end + ' ') + 'scale(.92)' }, { opacity: c.style.opacity || 1, transform: end }], { duration: DUR, delay: 120 + k * 12, easing: EASE, fill: 'backwards' });
         return;
