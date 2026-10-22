@@ -408,7 +408,7 @@ html:has(body.has-stack) { overflow-anchor: none; }
 @media (hover: hover) {
   #work-list.is-stack .card { transition: scale .5s cubic-bezier(.2,.7,.2,1); }
   #work-list.is-stack .card.is-front:hover { scale: 1.03; }
-  #work-list[data-card="gloss"] .stack-stage:has(.card.is-front:hover) .stack-glow.on { opacity: .85; transition-duration: .6s; }
+  #work-list[data-card="gloss"] .stack-stage:not(.is-live):has(.card.is-front:hover) .stack-glow.on { opacity: .85; transition-duration: .6s; }
 }
 #work-list.is-stack .card-cap, #work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { display: none; }
 .stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
@@ -463,12 +463,16 @@ html:has(body.has-stack) { overflow-anchor: none; }
 }
 #work-list[data-card="gloss"] .stack-glow {
   display: block; position: absolute; left: var(--cx); top: var(--cy); width: var(--sw); aspect-ratio: 2.1 / 1;
-  transform: translate(-50%, -50%) scale(1.5, 1.7); background: center / cover no-repeat;
-  filter: blur(70px) saturate(1.7);
+  transform: translate(-50%, -50%) scale(1.75, 2); background: center / cover no-repeat;
+  filter: blur(110px) saturate(1.7);
   /* 邊緣淡出，不會在舞台上下被切出一條硬邊 */
-  -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent); mask-image: radial-gradient(closest-side, #000 35%, transparent); opacity: 0; transition: opacity 1.4s cubic-bezier(.4,0,.2,1); pointer-events: none;
+  -webkit-mask-image: radial-gradient(closest-side, #000 15%, transparent); mask-image: radial-gradient(closest-side, #000 15%, transparent); opacity: 0; transition: opacity 2.2s cubic-bezier(.45,0,.25,1); pointer-events: none;
 }
 #work-list[data-card="gloss"] .stack-glow.on { opacity: .6; }
+/* 播預覽影片時：光暈換成影片的即時畫面（main.js 每幀畫進 canvas），封面那層退掉 */
+#work-list[data-card="gloss"] .stack-glow.live { opacity: 0; transition-duration: 1s; }
+#work-list[data-card="gloss"] .stack-stage.is-live .stack-glow.live { opacity: .85; }
+#work-list[data-card="gloss"] .stack-stage.is-live .stack-glow.on { opacity: 0; transition-duration: 1s; }
 /* 毛玻璃框：跟選單、篩選列同一套玻璃（半透明＋背景模糊＋上緣亮線），透出後面那疊；正中間那張多一顆玻璃按鈕 */
 #work-list[data-card="glass"] .stack-stage { --cs-extra: 20px; }
 #work-list[data-card="glass"] .card {
