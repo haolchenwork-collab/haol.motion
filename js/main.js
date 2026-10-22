@@ -162,7 +162,8 @@ function filterItems(target, items, keep) {
     it.getAnimations().forEach(function (a) { a.cancel(); });
     if (it._leave) it._leave();
   });
-  if (reduce) { items.forEach(function (it) { it.hidden = !keep(it); }); return; }
+  var stacked = target._stack && target.classList.contains('is-stack');
+  if (reduce || stacked) { items.forEach(function (it) { it.hidden = !keep(it); }); if (stacked) target._stack(); return; }
 
   var EASE = 'cubic-bezier(.2,.7,.2,1)', DUR = 480;
   var box = target.getBoundingClientRect();
@@ -199,12 +200,284 @@ function filterItems(target, items, keep) {
   });
 }
 
+// 4a. Work 堆疊瀏覽：卡片在 3D 透視裡上下疊成一疊，捲動時一張張往前翻；正中間那張最大、平放，
+//     上下的越遠越小、越暗（全部維持正面，不傾斜）。旁邊顯示目前這張的分類、名稱和專案數。
+//     捲動距離決定翻到第幾張（每張 STEP px），停下來會吸到最近的一張。減少動態時維持原本的格狀。
+//     篩選列右邊的切換鈕可以換回九宮格（setMode），選擇記在 localStorage。
+var stackList = document.getElementById('work-list');
+if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (function () {
+  var cards = Array.prototype.slice.call(stackList.querySelectorAll('.card'));
+  var pad = function (n) { return (n < 10 ? '0' : '') + n; };
+  // 遠近的明暗用一層黑色疊上去調 opacity，不用 filter（filter 每格都要重畫整張圖，會卡）
+  cards.forEach(function (c) { var sh = document.createElement('i'); sh.className = 'stack-shade'; c.appendChild(sh); c._shade = sh; });
+  // 光澤（gloss 樣式）：卡片表面一道斜光，跟著卡片離中間的距離左右滑；只動 transform，不會每格重畫
+  cards.forEach(function (c) {
+    var g = document.createElement('span'); g.className = 'cs-sheen'; g.setAttribute('aria-hidden', 'true');
+    g.innerHTML = '<i></i>'; c.querySelector('.media').appendChild(g); c._sheen = g.firstChild;
+  });
+  // 卡片樣式（style.css 的 [data-card]）：browser 瀏覽器視窗框、viewfinder 觀景窗、print 相紙、glass 毛玻璃框、gloss 光澤＋光暈（目前用這個，在 work/index.html 設定）。網址加 ?card=… 可以預覽別的樣式
+  var cardStyle = (location.search.match(/[?&]card=(\w+)/) || [])[1] || stackList.getAttribute('data-card') || '';
+  if (cardStyle) stackList.setAttribute('data-card', cardStyle);
+  cards.forEach(function (c, i) {
+    var name = c.querySelector('h3').textContent, yr = c.querySelector('.card-title .mono');
+    var slug = (c.getAttribute('href') || '').replace(/\.html$/, '').replace(/^#$/, '');
+    var bar = document.createElement('span');
+    bar.className = 'cs-bar'; bar.setAttribute('aria-hidden', 'true');
+    bar.innerHTML = '<i></i><i></i><i></i><em>haol.motion/work/' + slug + '</em>';
+    c.insertBefore(bar, c.firstChild);
+    var vf = document.createElement('span');
+    vf.className = 'cs-vf'; vf.setAttribute('aria-hidden', 'true');
+    vf.innerHTML = '<b>● REC</b><b>' + (yr ? yr.textContent : '') + ' · 16:9</b><b>00:00:' + pad(i + 1) + ':00</b><b>' + name + '</b>';
+    c.querySelector('.media').appendChild(vf);
+    var lab = document.createElement('span');
+    lab.className = 'cs-label'; lab.setAttribute('aria-hidden', 'true');
+    lab.innerHTML = '<b>' + pad(i + 1) + '</b><em>' + name + '</em><b>' + (yr ? yr.textContent : '') + '</b>';
+    c.appendChild(lab);
+    var go = document.createElement('span');
+    go.className = 'cs-go'; go.setAttribute('aria-hidden', 'true');
+    go.textContent = c.hasAttribute('data-film') ? 'PLAY ▶' : 'VIEW PROJECT ↗';
+    c.querySelector('.media').appendChild(go);
+  });
+  var stage = document.createElement('div');
+  stage.className = 'stack-stage';
+  cards.forEach(function (c) { stage.appendChild(c); });
+  var meta = document.createElement('div');
+  meta.className = 'stack-meta';
+  // 資訊全部放左側：分類・年份／名稱／中文副標／客戶，最下面是專案數
+  meta.innerHTML = '<div class="sm-l"><span class="mono muted sm-cat"><span class="sm-tag"></span> · <span class="sm-year"></span></span>' +
+    '<b class="sm-title"></b><span class="muted sm-zh"></span><span class="mono muted sm-client"></span>' +
+    '<span class="mono muted sm-n"><span class="sm-count"></span> projects</span></div>' +
+    '<div class="sm-b mono muted"><span class="sm-idx"></span><span class="sm-bar" title="拖曳或點一下跳到那張"><i></i></span>' +
+    '<button type="button" class="sm-skip mono">SKIP ↓</button></div>';
+  stage.appendChild(meta);
+  // 正中間那張後面的光暈：用它自己的封面模糊放大，兩層交替淡入淡出
+  var glows = [0, 1].map(function () { var g = document.createElement('div'); g.className = 'stack-glow'; g.setAttribute('aria-hidden', 'true'); stage.insertBefore(g, stage.firstChild); return g; });
+  var glowOn = 0;
+  function setGlow(c) {
+    var img = c.querySelector('.media img');
+    if (!img) return;
+    glowOn = 1 - glowOn;
+    glows[glowOn].style.backgroundImage = 'url("' + (img.currentSrc || img.src) + '")';
+    glows[glowOn].classList.add('on'); glows[1 - glowOn].classList.remove('on');
+  }
+  stackList.appendChild(stage);
+  stackList.classList.add('is-stack');
+  document.body.classList.add('has-stack');
+  stackList.classList.remove('tiles');
+
+  var STEP = 260;
+  var list = [], cur = 0, target = 0, front = -1, raf = 0, snapT = 0, top0 = 0, H = 300, U = 300;
+  var $ = function (q) { return meta.querySelector(q); };
+
+  var on = true;
+  function measure() {
+    if (!on) return;
+    list = cards.filter(function (c) { return !c.hidden; });
+    // 每張捲多少：短一點，滑到底不用捲太久（另外有進度條可以跳、SKIP 直接到頁尾）
+    STEP = Math.max(140, Math.round(innerHeight * 0.2));
+    // 舞台往上拉到頁面最頂：一打開第一張就在畫面正中間，標題和篩選列疊在它上面
+    stackList.style.marginTop = '';
+    stackList.style.marginTop = -(stackList.getBoundingClientRect().top + scrollY) + 'px';
+    stackList.style.height = (Math.max(list.length - 1, 0) * STEP + stage.offsetHeight) + 'px';
+    top0 = stackList.getBoundingClientRect().top + scrollY;
+    H = list.length ? list[0].offsetHeight : 300;
+    // 外圈的疊距：手機卡片矮，至少用舞台高度的 25%，整疊才撐得開
+    U = Math.max(H, stage.offsetHeight * 0.25);
+    $('.sm-count').textContent = list.length;
+    onScroll();
+  }
+  function onScroll() {
+    if (!on) return;
+    target = Math.min(Math.max((scrollY - top0) / STEP, 0), Math.max(list.length - 1, 0));
+    kick();
+    clearTimeout(snapT);
+    snapT = setTimeout(function () {
+      if (!on) return;
+      var i = Math.round(target);
+      // 直接把捲動位置對齊；畫面本來就是緩動追上去的，所以看起來是順順滑到那張
+      if (Math.abs(i - target) > 0.01 && scrollY > top0 - 2 && scrollY < top0 + (list.length - 1) * STEP + 2) scrollTo({ top: top0 + i * STEP, behavior: 'instant' });
+    }, 200);
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(tick); }
+  var last = 0, glint = 0.1;
+  function tick(t) {
+    raf = 0;
+    if (!on) return;
+    // 跟幀率無關的緩動：每 16.7ms 追上剩下距離的 9%
+    var dt = last && t ? Math.min(t - last, 64) : 16.7;
+    last = t || 0;
+    cur += (target - cur) * (1 - Math.pow(0.91, dt / 16.7));
+    // 反射光的強度跟著翻動速度：動得越快越亮，停下來只剩一點點。強度本身也緩動（亮起來慢、退得更慢），不會一閃一閃
+    var want = Math.min(0.6, 0.1 + Math.abs(target - cur) * 1.4);
+    glint += (want - glint) * (1 - Math.pow(want > glint ? 0.88 : 0.94, dt / 16.7));
+    if (Math.abs(target - cur) < 0.0005 && Math.abs(want - glint) < 0.005) { cur = target; last = 0; } else kick();
+    list.forEach(function (c, i) {
+      var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
+      if (a > 5) { c.style.visibility = 'hidden'; return; }
+      // 全部正面不傾斜：往外每張縮小一點、往上（下）錯開，露出一條邊，越外圈越密
+      var y = s * (near * H * 0.46 + Math.min(far, 6) * U * 0.15);
+      var sc = 1 - near * 0.12 - Math.min(far, 6) * 0.06;
+      c.style.visibility = '';
+      c.style.zIndex = 1000 - Math.round(a * 100);
+      c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
+      // 變暗用 smoothstep 曲線：離開中間時慢慢暗下去，沒有一離開就掉一階的感覺
+      var k = Math.min(a / 4, 1);
+      c._shade.style.opacity = (0.8 * k * k * (3 - 2 * k)).toFixed(3);
+      c._sheen.style.transform = 'translate3d(' + (Math.max(-3, Math.min(3, d)) * -24).toFixed(2) + '%,0,0)';
+      c._sheen.style.opacity = glint.toFixed(3);
+      c.style.opacity = a > 4 ? (5 - a).toFixed(2) : '';
+    });
+    var f = Math.round(cur);
+    if (f !== front && list[f]) {
+      if (list[front]) list[front].classList.remove('is-front');
+      front = f;
+      var c = list[f];
+      c.classList.add('is-front');
+      setGlow(c);
+      var tags = c.querySelectorAll('.tags span'), zh = c.querySelector('.zh'), yr = c.querySelector('.card-title .mono');
+      $('.sm-tag').textContent = tags[0] ? tags[0].textContent : '';
+      $('.sm-title').textContent = c.querySelector('h3').textContent;
+      $('.sm-zh').textContent = zh ? zh.textContent : '';
+      $('.sm-year').textContent = yr ? yr.textContent : '';
+      $('.sm-client').textContent = tags[1] ? tags[1].textContent : '';
+      // 換張時兩側文字輕輕淡入上移
+      if (meta.animate) ['.sm-l'].forEach(function (q) {
+        $(q).animate([{ opacity: 0, translate: '0 10px' }, { opacity: 1, translate: '0 0' }], { duration: 380, easing: 'cubic-bezier(.2,.7,.2,1)' });
+      });
+      $('.sm-idx').textContent = pad(f + 1) + ' / ' + pad(list.length);
+    }
+    $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? cur / (list.length - 1) : 1).toFixed(3) + ')';
+  }
+  // 點到後面的卡片：先翻到那張；點正中間那張才打開
+  stage.addEventListener('click', function (e) {
+    var c = e.target.closest('.card');
+    if (!c || c.classList.contains('is-front')) return;
+    e.preventDefault(); e.stopImmediatePropagation();
+    scrollTo({ top: top0 + list.indexOf(c) * STEP, behavior: 'instant' });
+  }, true);
+  stage.addEventListener('focusin', function (e) {
+    var c = e.target.closest('.card');
+    if (c && list.indexOf(c) !== -1) scrollTo({ top: top0 + list.indexOf(c) * STEP });
+  });
+  stackList._stack = function () {
+    front = -1;
+    cards.forEach(function (c) { c.classList.remove('is-front'); });
+    measure();
+    if (scrollY > top0) scrollTo({ top: top0 });
+    target = cur = 0;
+    tick();
+    stage.animate && stage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'ease' });
+  };
+  // 進度條：點或拖曳直接跳到那張
+  var bar = $('.sm-bar');
+  function scrub(e) {
+    var r = bar.getBoundingClientRect();
+    var i = Math.round(Math.min(Math.max((e.clientX - r.left) / r.width, 0), 1) * Math.max(list.length - 1, 0));
+    scrollTo({ top: top0 + i * STEP, behavior: 'instant' });
+  }
+  bar.addEventListener('pointerdown', function (e) { bar.setPointerCapture(e.pointerId); bar.classList.add('is-drag'); scrub(e); });
+  bar.addEventListener('pointermove', function (e) { if (bar.hasPointerCapture(e.pointerId)) scrub(e); });
+  bar.addEventListener('pointerup', function () { bar.classList.remove('is-drag'); });
+  // SKIP：跳過整疊，直接到頁尾
+  $('.sm-skip').addEventListener('click', function () {
+    scrollTo({ top: top0 + stackList.offsetHeight - stage.offsetHeight + 1, behavior: 'instant' });
+    document.querySelector('.site-footer').scrollIntoView({ behavior: 'smooth' });
+  });
+  addEventListener('scroll', onScroll, { passive: true });
+  addEventListener('resize', measure);
+  addEventListener('load', measure);
+
+  // 堆疊／九宮格切換：九宮格就是原本的格狀列表，卡片搬回 #work-list、清掉堆疊加的樣式。
+  // 切換時用 FLIP：先記下每張在畫面上的位置，換好版面再從舊位置補間到新位置，看起來是卡片自己飛過去。
+  // 正中間那張（或九宮格裡最靠近畫面中間那張）會對齊到另一種模式的同一張，捲動位置才接得上。
+  function setMode(mode, animate) {
+    var first = new Map(), focus = null, best = Infinity;
+    if (animate) cards.forEach(function (c) {
+      if (c.hidden) return;
+      var r = c.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      first.set(c, r);
+      var dc = Math.abs(r.top + r.height / 2 - innerHeight / 2);
+      if (!on && dc < best) { best = dc; focus = c; }
+    });
+    if (animate && on) focus = list[Math.round(cur)] || null;
+
+    on = mode === 'stack';
+    toggle.querySelectorAll('button').forEach(function (b) { b.setAttribute('aria-pressed', String(b.getAttribute('data-mode') === mode)); });
+    try { localStorage.setItem('work-view', mode); } catch (err) {}
+    stackList.classList.toggle('is-stack', on);
+    stackList.classList.toggle('tiles', !on);
+    document.body.classList.toggle('has-stack', on);
+    if (on) {
+      cards.forEach(function (c) { stage.insertBefore(c, meta); });
+      stage.hidden = false;
+      front = -1;
+      measure();
+      var fi = focus ? list.indexOf(focus) : -1;
+      if (fi > -1) scrollTo({ top: top0 + fi * STEP, behavior: 'instant' });
+      target = cur = fi > -1 ? fi : target;
+      tick();
+    } else {
+      cards.forEach(function (c) {
+        stackList.insertBefore(c, stage);
+        c.classList.remove('is-front');
+        ['transform', 'zIndex', 'opacity', 'visibility'].forEach(function (k) { c.style[k] = ''; });
+        c._shade.style.opacity = '';
+      });
+      stage.hidden = true;
+      stackList.style.height = stackList.style.marginTop = '';
+      if (focus) focus.scrollIntoView({ block: 'center', behavior: 'instant' });
+    }
+    if (!animate || !Element.prototype.animate) return;
+
+    var EASE = 'cubic-bezier(.65,0,.2,1)', DUR = 720;
+    var sr = stage.getBoundingClientRect();
+    cards.forEach(function (c, k) {
+      if (c.hidden || c.style.visibility === 'hidden') return;
+      var r = c.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > innerHeight) return;
+      var end = c.style.transform || 'none', f = first.get(c);
+      if (!f) {
+        c.animate([{ opacity: 0, transform: (end === 'none' ? '' : end + ' ') + 'scale(.92)' }, { opacity: c.style.opacity || 1, transform: end }], { duration: DUR, delay: 120 + k * 12, easing: EASE, fill: 'backwards' });
+        return;
+      }
+      // 版面上的中心（transform 的原點）跟畫面上看到的中心不一樣（堆疊裡有 3D 位移），兩個都要算進去
+      var ox = on ? sr.left + c.offsetLeft + c.offsetWidth / 2 : r.left + r.width / 2;
+      var oy = on ? sr.top + c.offsetTop + c.offsetHeight / 2 : r.top + r.height / 2;
+      var sx = f.width / r.width, sy = f.height / r.height;
+      var tx = f.left + f.width / 2 - ox - sx * (r.left + r.width / 2 - ox);
+      var ty = f.top + f.height / 2 - oy - sy * (r.top + r.height / 2 - oy);
+      c.animate([
+        { transform: 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px) scale(' + sx.toFixed(4) + ',' + sy.toFixed(4) + ')' + (end === 'none' ? '' : ' ' + end) },
+        { transform: end }
+      ], { duration: DUR, easing: EASE });
+    });
+    if (on) [meta].concat(glows).forEach(function (el) { el.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, delay: 300, easing: 'ease', fill: 'backwards' }); });
+  }
+  var toggle = document.createElement('div');
+  toggle.className = 'view-toggle';
+  toggle.setAttribute('role', 'group'); toggle.setAttribute('aria-label', '瀏覽方式');
+  toggle.innerHTML = '<button type="button" data-mode="stack" title="堆疊" aria-label="堆疊"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="4" y="1.5" width="8" height="2.5" rx=".6"/><rect x="1.5" y="6" width="13" height="4.5" rx=".8"/><rect x="4" y="12.5" width="8" height="2.5" rx=".6"/></svg></button>' +
+    '<button type="button" data-mode="grid" title="九宮格" aria-label="九宮格"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="1" y="1" width="4" height="4" rx=".6"/><rect x="6" y="1" width="4" height="4" rx=".6"/><rect x="11" y="1" width="4" height="4" rx=".6"/><rect x="1" y="6" width="4" height="4" rx=".6"/><rect x="6" y="6" width="4" height="4" rx=".6"/><rect x="11" y="6" width="4" height="4" rx=".6"/><rect x="1" y="11" width="4" height="4" rx=".6"/><rect x="6" y="11" width="4" height="4" rx=".6"/><rect x="11" y="11" width="4" height="4" rx=".6"/></svg></button>';
+  document.querySelector('.work-bar').appendChild(toggle);
+  toggle.addEventListener('click', function (e) {
+    var b = e.target.closest('button');
+    if (b && (b.getAttribute('data-mode') === 'stack') !== on) setMode(b.getAttribute('data-mode'), true);
+  });
+  var saved = 'stack';
+  try { saved = localStorage.getItem('work-view') || 'stack'; } catch (err) {}
+  measure();
+  cur = target;
+  tick();
+  setMode(saved === 'grid' ? 'grid' : 'stack');
+})();
+
 // 4b. Work 卡片景深：滑過（或鍵盤移到）一張時，其他卡片依離它的距離設 --depth（0 近～1 遠），CSS 用它決定退後多少。
 var depthGrid = document.getElementById('work-list');
 if (depthGrid && matchMedia('(hover: hover)').matches) {
   var setDepth = function (e) {
     var on = e.target.closest && e.target.closest('.card');
-    if (!on || !depthGrid.contains(on)) return;
+    if (!on || !depthGrid.contains(on) || depthGrid.classList.contains('is-stack')) return;
     var a = on.getBoundingClientRect(), ax = a.left + a.width / 2, ay = a.top + a.height / 2;
     // 以畫面寬度的 70% 當「最遠」，畫面內看得到的卡片就會用到完整的遠近範圍
     var far = Math.max(window.innerWidth * 0.7, 1);
@@ -424,7 +697,7 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
 
 
   // 內容依序滑入（同一層的兄弟元素錯開時間）
-  var sel = '.tile:not(.t-reel), .ab-tile, #work-list .card, .lab-card, .lab-tile, .pj-hero > *, .pj-sec, .pj-row, .site-footer .wrap > *, .page-head > *, .work-bar';
+  var sel = '.tile:not(.t-reel), .ab-tile, #work-list:not(.is-stack) .card, .lab-card, .lab-tile, .pj-hero > *, .pj-sec, .pj-row, .site-footer .wrap > *, .page-head > *, .work-bar';
   var items = document.querySelectorAll(sel);
   if ('IntersectionObserver' in window) {
     var io = new IntersectionObserver(function (es) {

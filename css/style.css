@@ -356,6 +356,12 @@ figcaption { font-size: 14px; color: var(--muted); }
 }
 
 /* 篩選：黏在頁首下方的玻璃列 */
+/* 堆疊／九宮格切換（main.js 4a 加的），跟篩選列同一套玻璃膠囊 */
+.view-toggle { display: flex; gap: 2px; padding: 5px; border-radius: 999px; background: rgba(0, 0, 0, .45); -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); }
+.view-toggle button { display: grid; place-items: center; width: 36px; height: 32px; border: 0; border-radius: 999px; background: none; color: var(--muted); cursor: pointer; transition: color .2s, background .2s; }
+.view-toggle button:hover { color: var(--fg); }
+.view-toggle button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.view-toggle svg { width: 16px; height: 16px; fill: currentColor; }
 .work-bar { position: sticky; top: calc(var(--hh, 58px) + 10px); z-index: 8; display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; pointer-events: none; }
 .work-bar > * { pointer-events: auto; }
 .work-bar .filters {
@@ -373,6 +379,138 @@ figcaption { font-size: 14px; color: var(--muted); }
   #work-list .card h3 { font-size: 20px; }
   #work-list .tags span { padding: 2px 8px; }
 }
+
+/* Work 堆疊瀏覽（main.js 4a 加上 .is-stack）：舞台黏在畫面上，卡片疊在 3D 透視裡，transform 由 main.js 每格算。
+   卡片只放畫面，名稱、年份、客戶都放在兩側（--cy 是卡片中心：篩選列和底部進度條之間的正中間） */
+#work-list.is-stack { display: block; position: relative; }
+.has-stack .page-hero { position: relative; z-index: 9; pointer-events: none; }
+.has-stack main { overflow-x: clip; }
+.stack-stage {
+  position: sticky; top: 0; height: 100vh; height: 100svh;
+  clip-path: inset(0 -100vw);  /* 只裁上下；左右讓光暈延伸到畫面邊緣（main 用 overflow-x: clip 防橫向捲動） */
+  --sw: min(52vw, 80vh, 960px); --cy: calc(50% + var(--hh, 58px) / 2 + 12px);
+  --cx: calc(50% + 14vw);  /* 整疊往右，左邊留給資訊欄 */
+  perspective: 1600px; perspective-origin: var(--cx) var(--cy);
+}
+#work-list.is-stack .card {
+  position: absolute; left: var(--cx); top: var(--cy); width: var(--sw);
+  margin: calc(var(--sw) / -4.2 - var(--cs-extra, 0px) / 2) 0 0 calc(var(--sw) / -2);
+  transform-origin: 50% 50%; transition: none; will-change: transform;
+  box-shadow: 0 30px 60px -20px rgba(0, 0, 0, .9);
+}
+#work-list.is-stack .card .media img { transform: none; }
+#work-list.is-stack .card-cap, #work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { display: none; }
+.stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
+#work-list.is-stack .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+#work-list.is-stack .card:not(.is-front) { cursor: n-resize; }
+.stack-meta { position: absolute; inset: 0; pointer-events: none; z-index: 2000; }
+.stack-meta .sm-l {
+  position: absolute; left: 0; top: var(--cy); transform: translateY(-50%);
+  display: flex; flex-direction: column; gap: 8px;
+  width: calc((100% - var(--sw)) / 2 + 14vw - 48px);
+}
+.stack-meta b { font-family: var(--display); font-weight: 600; font-size: clamp(28px, 3vw, 48px); line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance; }
+.stack-meta .sm-cat, .stack-meta .sm-client, .stack-meta .sm-n { font-size: 11px; letter-spacing: .08em; }
+.stack-meta .sm-zh { font-size: clamp(17px, 1.5vw, 22px); line-height: 1.4; color: rgba(238, 236, 231, .78); text-wrap: balance; }
+.stack-meta .sm-client { margin-top: 4px; }
+.stack-meta .sm-n { margin-top: 18px; }
+.stack-meta .sm-count { color: var(--fg); }
+.stack-meta .sm-b { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; align-items: center; gap: 16px; font-size: 11px; }
+.stack-meta .sm-bar { flex: 1; position: relative; height: 24px; cursor: pointer; pointer-events: auto; touch-action: none; }
+.stack-meta .sm-bar::before, .stack-meta .sm-bar i { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; margin-top: -.5px; transition: height .2s, margin-top .2s; }
+.stack-meta .sm-bar::before { background: var(--glass-edge); }
+.stack-meta .sm-bar i { background: var(--accent); transform-origin: 0 50%; }
+.stack-meta .sm-bar:hover::before, .stack-meta .sm-bar:hover i, .stack-meta .sm-bar.is-drag::before, .stack-meta .sm-bar.is-drag i { height: 3px; margin-top: -1.5px; }
+.stack-meta .sm-skip { pointer-events: auto; padding: 6px 12px; margin-right: -12px; border: 0; border-radius: 999px; background: none; color: inherit; font-size: 11px; letter-spacing: .08em; cursor: pointer; transition: color .2s, background .2s; }
+.stack-meta .sm-skip:hover { color: var(--on-accent); background: var(--accent); }
+@media (max-width: 760px) {
+  /* 手機：卡片兩側沒位置，資訊放到下方進度條上面，卡片中心往上挪 */
+  .stack-stage { --sw: min(88vw, 80vh); --cy: calc(50% + 24px); --cx: 50%; perspective: 900px; }
+  .stack-meta .sm-l { top: auto; bottom: 50px; transform: none; gap: 4px; width: 100%; }
+  .stack-meta .sm-client, .stack-meta .sm-n { display: none; }
+  .stack-meta b { font-size: 26px; }
+  .stack-meta .sm-zh { font-size: 16px; }
+  .stack-meta .sm-n { margin-top: 0; }
+  .stack-meta::before { content: ""; position: absolute; left: -24px; right: -24px; bottom: 0; height: 170px; background: linear-gradient(to top, #000 62%, transparent); }
+}
+
+/* 卡片樣式：預設只有畫面；data-card 換成視窗框、觀景窗或相紙（三種的零件 main.js 都會放，這裡決定顯示哪一種） */
+.cs-bar, .cs-vf, .cs-label, .cs-go, .cs-sheen, .stack-glow { display: none; }
+/* 光澤＋光暈（gloss）：表面一道斜光隨捲動滑過；正中間那張後面打它自己顏色的光暈（hoal 不要邊框亮邊） */
+#work-list[data-card="gloss"] .card { border-radius: 10px; }
+#work-list[data-card="gloss"] .card .media { border-radius: 10px; }
+#work-list.is-stack[data-card="gloss"] .cs-sheen {
+  display: block; position: absolute; inset: 0; z-index: 2; overflow: hidden; border-radius: inherit; pointer-events: none;
+}
+#work-list.is-stack[data-card="gloss"] .cs-sheen i {
+  position: absolute; top: 0; bottom: 0; left: -100%; width: 300%; will-change: transform;
+  /* 一道白色反射光，後面跟一條很淡的彩虹折射；整層的 opacity 由 main.js 依翻動速度調 */
+  background:
+    linear-gradient(112deg, transparent 40%, rgba(255, 255, 255, .5) 46.5%, rgba(255, 255, 255, .12) 49%, transparent 52%),
+    linear-gradient(112deg, transparent 51%, rgba(255, 70, 70, .22) 52.5%, rgba(255, 200, 60, .22) 53.5%, rgba(80, 255, 160, .22) 54.5%, rgba(70, 150, 255, .24) 55.5%, rgba(190, 90, 255, .2) 56.5%, transparent 58%),
+    linear-gradient(112deg, transparent 58%, rgba(255, 255, 255, .14) 59.5%, transparent 61%);
+  mix-blend-mode: screen; opacity: .12;
+}
+#work-list[data-card="gloss"] .stack-glow {
+  display: block; position: absolute; left: var(--cx); top: var(--cy); width: var(--sw); aspect-ratio: 2.1 / 1;
+  transform: translate(-50%, -50%) scale(1.5, 1.7); background: center / cover no-repeat;
+  filter: blur(70px) saturate(1.7);
+  /* 邊緣淡出，不會在舞台上下被切出一條硬邊 */
+  -webkit-mask-image: radial-gradient(closest-side, #000 35%, transparent); mask-image: radial-gradient(closest-side, #000 35%, transparent); opacity: 0; transition: opacity 1.4s cubic-bezier(.4,0,.2,1); pointer-events: none;
+}
+#work-list[data-card="gloss"] .stack-glow.on { opacity: .6; }
+/* 毛玻璃框：跟選單、篩選列同一套玻璃（半透明＋背景模糊＋上緣亮線），透出後面那疊；正中間那張多一顆玻璃按鈕 */
+#work-list[data-card="glass"] .stack-stage { --cs-extra: 20px; }
+#work-list[data-card="glass"] .card {
+  padding: 10px; border-radius: 18px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, .2), rgba(255, 255, 255, .05) 45%, rgba(255, 255, 255, .12));
+  border: 1px solid rgba(255, 255, 255, .22);
+  -webkit-backdrop-filter: blur(16px) saturate(170%); backdrop-filter: blur(16px) saturate(170%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .28), inset 0 0 0 1px rgba(255, 255, 255, .04), 0 30px 60px -20px rgba(0, 0, 0, .9);
+}
+#work-list[data-card="glass"] .card .media { border-radius: 10px; }
+#work-list[data-card="glass"] .stack-shade { border-radius: 18px; }
+#work-list[data-card="glass"] .cs-go {
+  display: block; position: absolute; right: 14px; bottom: 14px; z-index: 2; padding: 9px 16px; border-radius: 999px;
+  font: 500 11px/1 var(--mono); letter-spacing: .08em; color: #fff;
+  background: rgba(10, 10, 12, .55); border: 1px solid rgba(255, 255, 255, .25);
+  -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur); box-shadow: var(--glass-hi);
+  opacity: 0; transform: translateY(6px); transition: opacity .35s ease, transform .35s cubic-bezier(.2,.7,.2,1), background .25s, color .25s;
+}
+#work-list[data-card="glass"] .card.is-front .cs-go { opacity: 1; transform: none; }
+#work-list[data-card="glass"] .card.is-front:hover .cs-go { background: var(--accent); color: var(--on-accent); border-color: var(--accent); }
+/* 瀏覽器視窗框：上方一條標題列，三個點和網址 */
+#work-list[data-card="browser"] .stack-stage { --cs-extra: 30px; }
+#work-list[data-card="browser"] .card { border-radius: 10px; overflow: hidden; background: #141416; border: 1px solid rgba(255, 255, 255, .14); }
+#work-list[data-card="browser"] .card .media { border-radius: 0; }
+#work-list[data-card="browser"] .cs-bar { display: flex; align-items: center; gap: 6px; height: 30px; padding: 0 12px; background: #1c1c1f; border-bottom: 1px solid rgba(255, 255, 255, .08); }
+#work-list[data-card="browser"] .cs-bar i { width: 9px; height: 9px; border-radius: 50%; background: rgba(255, 255, 255, .22); }
+#work-list[data-card="browser"] .card.is-front .cs-bar i:first-child { background: var(--accent); }
+#work-list[data-card="browser"] .cs-bar em { flex: 1; margin-right: 39px; text-align: center; font: 400 11px/1 var(--mono); font-style: normal; letter-spacing: .04em; color: rgba(255, 255, 255, .5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+/* 觀景窗：四角對位框、REC、時間碼，像攝影機螢幕 */
+#work-list[data-card="viewfinder"] .card, #work-list[data-card="viewfinder"] .card .media { border-radius: 2px; }
+#work-list[data-card="viewfinder"] .cs-vf {
+  display: block; position: absolute; inset: 14px; z-index: 2; pointer-events: none;
+  font: 500 11px/1 var(--mono); letter-spacing: .08em; color: #fff; text-shadow: 0 1px 4px rgba(0, 0, 0, .7);
+  background:
+    linear-gradient(#fff, #fff) 0 0 / 22px 1.5px, linear-gradient(#fff, #fff) 0 0 / 1.5px 22px,
+    linear-gradient(#fff, #fff) 100% 0 / 22px 1.5px, linear-gradient(#fff, #fff) 100% 0 / 1.5px 22px,
+    linear-gradient(#fff, #fff) 0 100% / 22px 1.5px, linear-gradient(#fff, #fff) 0 100% / 1.5px 22px,
+    linear-gradient(#fff, #fff) 100% 100% / 22px 1.5px, linear-gradient(#fff, #fff) 100% 100% / 1.5px 22px;
+  background-repeat: no-repeat; opacity: .9;
+}
+#work-list[data-card="viewfinder"] .cs-vf b { position: absolute; font-weight: 500; }
+#work-list[data-card="viewfinder"] .cs-vf b:nth-child(1) { left: 32px; top: 10px; color: #ff4d3d; }
+#work-list[data-card="viewfinder"] .cs-vf b:nth-child(2) { right: 32px; top: 10px; }
+#work-list[data-card="viewfinder"] .cs-vf b:nth-child(3) { left: 32px; bottom: 10px; }
+#work-list[data-card="viewfinder"] .cs-vf b:nth-child(4) { right: 32px; bottom: 10px; text-transform: uppercase; }
+#work-list[data-card="viewfinder"] .card:not(.is-front) .cs-vf { opacity: 0; }
+/* 相紙：米白外框，下緣寫編號、名稱、年份 */
+#work-list[data-card="print"] .stack-stage { --cs-extra: 52px; }
+#work-list[data-card="print"] .card { padding: 10px 10px 0; border-radius: 3px; background: var(--fg); }
+#work-list[data-card="print"] .card .media { border-radius: 1px; }
+#work-list[data-card="print"] .cs-label { display: flex; align-items: center; gap: 14px; height: 42px; padding: 0 4px; font: 500 11px/1 var(--mono); letter-spacing: .08em; color: #111; }
+#work-list[data-card="print"] .cs-label em { flex: 1; font-style: normal; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
 /* ---------- About：拼貼格狀（跟首頁同一套語彙） ---------- */
 .about-bento { padding-block: 16px 72px; }
