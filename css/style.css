@@ -376,6 +376,7 @@ figcaption { font-size: 14px; color: var(--muted); }
 
 /* Work 堆疊瀏覽（main.js 4a 加上 .is-stack）：舞台黏在畫面上，卡片疊在 3D 透視裡，transform 由 main.js 每格算 */
 #work-list.is-stack { display: block; position: relative; }
+.has-stack .page-hero { position: relative; z-index: 9; pointer-events: none; }
 .stack-stage {
   position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden;
   perspective: 1600px; perspective-origin: 50% calc(50% + 28px);

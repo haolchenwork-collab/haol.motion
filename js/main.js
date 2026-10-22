@@ -218,6 +218,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   stage.appendChild(meta);
   stackList.appendChild(stage);
   stackList.classList.add('is-stack');
+  document.body.classList.add('has-stack');
   stackList.classList.remove('tiles');
 
   var STEP = 260;
@@ -228,6 +229,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   function measure() {
     list = cards.filter(function (c) { return !c.hidden; });
     STEP = Math.max(180, Math.round(innerHeight * 0.32));
+    // 舞台往上拉到頁面最頂：一打開第一張就在畫面正中間，標題和篩選列疊在它上面
+    stackList.style.marginTop = '';
+    stackList.style.marginTop = -(stackList.getBoundingClientRect().top + scrollY) + 'px';
     stackList.style.height = (Math.max(list.length - 1, 0) * STEP + stage.offsetHeight) + 'px';
     top0 = stackList.getBoundingClientRect().top + scrollY;
     H = list.length ? list[0].offsetHeight : 300;
