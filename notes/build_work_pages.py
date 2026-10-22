@@ -297,7 +297,7 @@ def tc(sec):
 
 def part_html(part):
     # 角色標籤旁的負責段落：小時間軸（亮的那段是自己做的）＋時間碼，點了從那一秒開始播
-    a, b = part
+    a, b = part[0], part[1]
     total = b                                    # 負責到結尾時，結束秒就是影片總長
     if len(part) > 2:
         total = part[2]                          # 只負責中間一段：[開始, 結束, 影片總長]
