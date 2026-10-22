@@ -468,7 +468,7 @@ html:has(body.has-stack) { overflow-anchor: none; }
   background: center / 100% 100% no-repeat; filter: blur(120px) saturate(1.6);
   /* 只留卡片左右兩側往外張開的扇形（卡片四角往螢幕四角），上下不亮；--cx/--cy 以 50% 為基準，放大的框也對得到卡片中心 */
   --fan: conic-gradient(from 0deg at var(--cx) var(--cy), transparent 52deg, #000 72deg 108deg, transparent 128deg 232deg, #000 252deg 288deg, transparent 308deg);
-  --edge: linear-gradient(90deg, transparent 8%, #000 38% 62%, transparent 92%);  /* 越往螢幕左右邊越暗 */
+  --edge: linear-gradient(90deg, transparent 18%, #000 46% 62%, transparent 92%);  /* 越往螢幕左右邊越暗 */
   -webkit-mask-image: var(--fan), var(--edge); -webkit-mask-composite: source-in;
   mask-image: var(--fan), var(--edge); mask-composite: intersect;
   opacity: 0; transition: opacity 2.2s cubic-bezier(.45,0,.25,1); pointer-events: none;
