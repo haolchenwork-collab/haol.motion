@@ -12,17 +12,21 @@ document.querySelectorAll('.card[data-loop], .w[data-loop]').forEach(function (c
   if (!canHover || reduceMotion) return;
   var media = card.querySelector('.media');
   var video;
+  // 先載好但不播：堆疊模式翻到正中間（和下一張）就先叫這個，滑上去時不用等
+  card._warm = function () {
+    if (video) return;
+    video = document.createElement('video');
+    video.src = card.getAttribute('data-loop');
+    video.muted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.preload = 'auto';
+    video.setAttribute('aria-hidden', 'true');
+    video.addEventListener('error', function () { video.remove(); });
+    media.appendChild(video);
+  };
   card.addEventListener('mouseenter', function () {
-    if (!video) {
-      video = document.createElement('video');
-      video.src = card.getAttribute('data-loop');
-      video.muted = true;
-      video.loop = true;
-      video.playsInline = true;
-      video.setAttribute('aria-hidden', 'true');
-      video.addEventListener('error', function () { video.remove(); });
-      media.appendChild(video);
-    }
+    card._warm();
     var p = video.play();
     if (p && p.catch) p.catch(function () {});
     card.classList.add('is-playing');
@@ -34,7 +38,7 @@ document.querySelectorAll('.card[data-loop], .w[data-loop]').forEach(function (c
 });
 
 // 2b. 沒有短循環檔的卡片：直接播作品內頁那支 Vimeo（背景模式：靜音、無控制列），從 data-t 那秒開始（自己負責的段落）。
-// 第一次滑上去才載入；離開時用 Vimeo 的 postMessage 暫停，再滑上去接著播。真的開始播了才淡入，載入中先看封面。
+// 第一次滑上去（或堆疊翻到它時先預載）才載入；離開時用 Vimeo 的 postMessage 暫停，再滑上去接著播。真的開始播了才淡入，載入中先看封面。
 document.querySelectorAll('.card[data-vimeo-loop]').forEach(function (card) {
   if (!canHover || reduceMotion) return;
   var media = card.querySelector('.media'), frame, playing = false;
@@ -47,18 +51,19 @@ document.querySelectorAll('.card[data-vimeo-loop]').forEach(function (card) {
     if (d.event === 'ready') { send('addEventListener', 'playing'); if (!card.matches(':hover')) send('pause'); }
     if (d.event === 'playing') { playing = true; if (card.matches(':hover')) card.classList.add('is-playing'); }
   });
+  card._warm = function () {
+    if (frame) return;
+    var h = card.getAttribute('data-vimeo-h'), t = parseInt(card.getAttribute('data-t'), 10);
+    frame = document.createElement('iframe');
+    frame.className = 'card-vimeo';
+    frame.src = 'https://player.vimeo.com/video/' + encodeURIComponent(card.getAttribute('data-vimeo-loop')) + '?background=1&muted=1&loop=1&dnt=1' + (h ? '&h=' + encodeURIComponent(h) : '') + (t ? '#t=' + t + 's' : '');
+    frame.allow = 'autoplay; fullscreen';
+    frame.tabIndex = -1;
+    frame.setAttribute('aria-hidden', 'true');
+    media.appendChild(frame);
+  };
   card.addEventListener('mouseenter', function () {
-    if (!frame) {
-      var h = card.getAttribute('data-vimeo-h'), t = parseInt(card.getAttribute('data-t'), 10);
-      frame = document.createElement('iframe');
-      frame.className = 'card-vimeo';
-      frame.src = 'https://player.vimeo.com/video/' + encodeURIComponent(card.getAttribute('data-vimeo-loop')) + '?background=1&muted=1&loop=1&dnt=1' + (h ? '&h=' + encodeURIComponent(h) : '') + (t ? '#t=' + t + 's' : '');
-      frame.allow = 'autoplay; fullscreen';
-      frame.tabIndex = -1;
-      frame.setAttribute('aria-hidden', 'true');
-      media.appendChild(frame);
-      return;
-    }
+    if (!frame) { card._warm(); return; }
     send('play');
     if (playing) card.classList.add('is-playing');
   });
@@ -385,6 +390,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       c.classList.add('is-front');
       c.tabIndex = 0;
       setGlow(c);
+      // 預覽影片先載好：正中間這張和前後各一張
+      [c, list[f + 1], list[f - 1]].forEach(function (w) { if (w && w._warm) w._warm(); });
       // 滑鼠停在原地、卡片換到它底下時不會有 mouseenter，補一下讓預覽影片接著播
       setTimeout(function () { if (c.classList.contains('is-front') && !c.classList.contains('is-playing') && c.matches(':hover')) c.dispatchEvent(new Event('mouseenter')); }, 150);
       var tags = c.querySelectorAll('.tags span'), zh = c.querySelector('.zh'), yr = c.querySelector('.card-title .mono');
