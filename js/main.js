@@ -528,6 +528,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     });
     if (animate && on) focus = list[Math.round(cur)] || null;
     if (animate && animate.first) focus = cards.filter(function (c) { return !c.hidden; })[0] || focus;
+    // 量完起點才交棒（例如首頁進場：卡片正浮到一半，從當下的位置接著飛，不會先跳回定位）
+    if (animate && animate.measured) animate.measured();
 
     // 切到九宮格：左側資訊和底部進度列不要瞬間消失。複製一份蓋在原位（要在版面變成格狀前量），
     // 文字一行一行往左滑出畫面、進度列往下滑出，光暈跟著收掉
@@ -584,7 +586,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     }
     if (!animate || !Element.prototype.animate) return;
 
-    var EASE = 'cubic-bezier(.6,0,.2,1)', DUR = 1100;
+    var EASE = animate.ease || 'cubic-bezier(.6,0,.2,1)', DUR = 1100;
     stackList.classList.add('morphing');
     clearTimeout(stackList._mT);
     stackList._mT = setTimeout(function () { stackList.classList.remove('morphing'); if (!on) stackList.classList.remove('cap-hide'); }, on ? DUR + 100 : DUR - 250);
@@ -660,9 +662,11 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     setTimeout(function () {
       if (on) return;
       var op = vis.map(function (c) { return parseFloat(getComputedStyle(c).opacity); });
-      enter.forEach(function (an) { an.cancel(); });
-      vis.forEach(function (c, i) { if (op[i] < 1) c.style.opacity = op[i]; });
-      setMode('stack', { first: true });
+      // 進場還在動的時候直接接上：起點量的是卡片當下的位置，緩動一開始就帶著速度，看起來是同一段動作
+      setMode('stack', { first: true, ease: 'cubic-bezier(.3,.12,.2,1)', measured: function () {
+        enter.forEach(function (an) { an.cancel(); });
+        vis.forEach(function (c, i) { if (op[i] < 1) c.style.opacity = op[i]; });
+      } });
       vis.forEach(function (c, i) {
         if (op[i] >= 1) return;
         var to = c.style.opacity === String(op[i]) ? 1 : (parseFloat(c.style.opacity) || 1);
