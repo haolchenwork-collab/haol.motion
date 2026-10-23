@@ -533,7 +533,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   // 正中間那張（或九宮格裡最靠近畫面中間那張）會對齊到另一種模式的同一張，捲動位置才接得上。
   // 封面都是 lazy：九宮格裡在畫面外的，飛進堆疊時還沒載，會是一張空白卡。堆疊看得到的前後幾張先載
   function eager(at) {
-    list.slice(Math.max(0, at - 6), at + 7).forEach(function (c) { var im = c.querySelector('.media img'); if (im) im.loading = 'eager'; });
+    list.slice(Math.max(0, at - 6), at + 11).forEach(function (c) { var im = c.querySelector('.media img'); if (im) im.loading = 'eager'; });
   }
   // 切回九宮格：標題不要同時出來，照畫面上由左到右、由上到下一張接一張
   function capsIn() {
@@ -554,7 +554,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     var m = /cubic-bezier\(([^)]+)\)/.exec(EASE), ez = bezier.apply(null, (m ? m[1] : '.6,0,.2,1').split(',').map(parseFloat));
     var spin = bezier(.25, .1, .2, 1);
     var d = parseFloat(scs.perspective) || 1600, px = sr.left + parseFloat(po[0]), py = sr.top + parseFloat(po[1]);
-    var t0 = performance.now(), SPIN = DUR + 300, maxWait = 0;
+    var t0 = performance.now(), SPIN = DUR + 600, maxWait = 0;
     var items = [];
     cards.forEach(function (c, k) {
       if (c.hidden) return;
@@ -655,8 +655,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var fi = focus ? list.indexOf(focus) : -1;
       if (fi > -1) scrollTo({ top: top0 + fi * STEP, behavior: 'instant' });
       target = cur = fi > -1 ? fi : target;
-      // 九宮格 → 卷軸：卷軸從往後幾張的位置開始滾，卡片一邊飛、卷軸一邊轉，一起停在要看的那張
-      var land = target, sp = Math.min(Math.round(land) + 4, list.length - 1);
+      // 九宮格 → 卷軸：卷軸從往後 8 張的位置開始滾，卡片一邊飛、卷軸一邊轉，一起停在要看的那張
+      var land = target, sp = Math.min(Math.round(land) + 8, list.length - 1);
       if (animate && Element.prototype.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         target = cur = sp;
         spinUntil = performance.now() + 5000;
@@ -774,7 +774,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   if (fromHome && saved !== 'grid' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     setMode('grid');
     // 卷軸一開始會看到的前幾張，在九宮格進場時就先載好
-    cards.filter(function (c) { return !c.hidden; }).slice(0, 7).forEach(function (c) {
+    cards.filter(function (c) { return !c.hidden; }).slice(0, 15).forEach(function (c) {
       var im = c.querySelector('.media img'); if (im) { im.loading = 'eager'; if (im.decode) im.decode().catch(function () {}); }
     });
     // 九宮格先進場：畫面內的卡片依序淡入、往上浮；同時把這些封面解碼好，避免轉場時才載圖卡頓
