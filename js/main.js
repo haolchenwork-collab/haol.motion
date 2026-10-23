@@ -552,7 +552,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   // 卷軸在動、卡片也在飛，同一條時間線，中間不會停
   function flyIn(DUR, EASE, sr, scs, po, first, shade0, op0, pos0, land, sp) {
     var m = /cubic-bezier\(([^)]+)\)/.exec(EASE), ez = bezier.apply(null, (m ? m[1] : '.6,0,.2,1').split(',').map(parseFloat));
-    var spin = bezier(.25, .1, .2, 1);
+    // 滾動的速度曲線：起步慢、中段加速衝過去、最後拉長減速停下（像轉輪）
+    var spin = bezier(.7, 0, .1, 1);
     var d = parseFloat(scs.perspective) || 1600, px = sr.left + parseFloat(po[0]), py = sr.top + parseFloat(po[1]);
     var t0 = performance.now(), SPIN = DUR + 600, maxWait = 0;
     var items = [];
