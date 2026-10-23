@@ -640,17 +640,25 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     setMode('grid');
     // 九宮格先進場：畫面內的卡片依序淡入、往上浮；同時把這些封面解碼好，避免轉場時才載圖卡頓
     var vis = cards.filter(function (c) { var r = c.getBoundingClientRect(); return !c.hidden && r.top < innerHeight && r.bottom > 0; });
-    var EN = 'cubic-bezier(.2,.7,.2,1)', enterMs = 700 + vis.length * 60;
-    vis.forEach(function (c, i) {
-      c.animate([{ opacity: 0, transform: 'translateY(40px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: i * 60, easing: EN, fill: 'backwards' });
+    var EN = 'cubic-bezier(.2,.7,.2,1)';
+    var enter = vis.map(function (c, i) {
+      var im = c.querySelector('img'); if (im && im.decode) im.decode().catch(function () {});
+      return c.animate([{ opacity: 0, transform: 'translateY(40px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: i * 50, easing: EN, fill: 'backwards' });
     });
-    var ready = Promise.all(vis.concat(list.slice(0, 3)).map(function (c) {
-      var im = c.querySelector('img'); return im && im.decode ? im.decode().catch(function () {}) : null;
-    }));
-    var wait = new Promise(function (r) { setTimeout(r, enterMs + 250); });
-    Promise.race([Promise.all([ready, wait]), new Promise(function (r) { setTimeout(r, 2600); })]).then(function () {
-      requestAnimationFrame(function () { requestAnimationFrame(function () { if (!on) setMode('stack', { first: true }); }); });
-    });
+    // 不等全部到位：前幾張浮上來就開始轉卷軸。進場動畫交棒給轉場（位置由轉場接手，透明度從當下的值淡到堆疊裡該有的值），不會一下跳暗
+    setTimeout(function () {
+      if (on) return;
+      var op = vis.map(function (c) { return parseFloat(getComputedStyle(c).opacity); });
+      enter.forEach(function (an) { an.cancel(); });
+      vis.forEach(function (c, i) { if (op[i] < 1) c.style.opacity = op[i]; });
+      setMode('stack', { first: true });
+      vis.forEach(function (c, i) {
+        if (op[i] >= 1) return;
+        var to = c.style.opacity === String(op[i]) ? 1 : (parseFloat(c.style.opacity) || 1);
+        if (c.style.opacity === String(op[i])) c.style.opacity = '';
+        c.animate([{ opacity: op[i] }, { opacity: to }], { duration: 600, easing: EN });
+      });
+    }, 450);
   } else setMode(saved === 'grid' ? 'grid' : 'stack');
 })();
 
