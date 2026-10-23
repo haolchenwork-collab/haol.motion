@@ -596,7 +596,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     var EASE = animate.ease || 'cubic-bezier(.6,0,.2,1)', DUR = 1100;
     stackList.classList.add('morphing');
     clearTimeout(stackList._mT);
-    stackList._mT = setTimeout(function () { stackList.classList.remove('morphing'); if (!on) stackList.classList.remove('cap-hide'); }, on ? DUR + 100 : DUR - 250);
+    stackList._mT = setTimeout(function () { stackList.classList.remove('morphing'); if (!on) stackList.classList.remove('cap-hide'); }, on ? DUR + 460 : DUR - 250);
     var sr = stage.getBoundingClientRect(), scs = getComputedStyle(stage), po = scs.perspectiveOrigin.split(' ');
     cards.forEach(function (c, k) {
       var gone = c.style.visibility === 'hidden', f = first.get(c);
@@ -606,7 +606,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var end = c.style.transform || 'none';
       // 變暗也跟著飛：從原本的暗度補間到新的，不會一出發就一下暗掉（或一下亮起來）
       var s0 = shade0.get(c) || 0, s1 = parseFloat(c._shade.style.opacity) || 0;
-      if (Math.abs(s1 - s0) > 0.01) c._shade.animate([{ opacity: s0 }, { opacity: s1 }], { duration: DUR, easing: EASE });
+      // 切到堆疊：離最前面越遠的卡片，越早變暗、越晚出發；最前面那張先飛，其他張依序塞到後面
+      var depth = on ? Math.abs(list.indexOf(c) - target) : 0, wait = on ? Math.min(depth, 6) * 60 : 0;
+      if (Math.abs(s1 - s0) > 0.01) c._shade.animate([{ opacity: s0 }, { opacity: s1 }], { duration: on ? 380 : DUR, easing: on ? 'ease-out' : EASE, fill: 'forwards' }).finished.then(function (an) { an.cancel(); }).catch(function () {});
       if (!f) {
         c.animate([{ opacity: 0, transform: (end === 'none' ? '' : end + ' ') + 'scale(.92)' }, { opacity: c.style.opacity || 1, transform: end }], { duration: DUR, delay: 120 + k * 12, easing: EASE, fill: 'backwards' });
         return;
@@ -634,7 +636,13 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       // 九宮格裡看得到、堆疊裡藏起來（或變透明）的卡片：邊飛邊淡出，不會一下消失
       if (Math.abs(o1 - o0) > 0.01) { from.opacity = o0; to.opacity = o1; }
       if (gone) from.visibility = to.visibility = 'visible';
-      c.animate([from, to], { duration: DUR, easing: EASE });
+      var kf = [from, to];
+      // 後面第 3 張以後：飛的途中淡到看不見，到定位才（暗暗地）出現；藏起來的那些一開始就淡掉
+      if (on && (depth >= 3 || gone)) {
+        from.opacity = o0; to.opacity = o1;
+        kf = [from, { opacity: 0, offset: gone ? 0.25 : 0.35 }, { opacity: 0, offset: gone ? 1 : 0.7 }, to];
+      }
+      c.animate(kf, { duration: DUR, delay: wait, easing: EASE, fill: 'backwards' });
     });
     // 光暈不在這裡補間：它本身有 1.4s 的 CSS 淡入；以前一起淡到 1，動畫一結束會一下暗掉，舊的那層也會跟著亮起來
     // 切回堆疊：左側文字從畫面左邊一行一行滑進來，進度列從下面滑上來
