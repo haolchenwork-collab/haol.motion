@@ -521,7 +521,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     list.slice(Math.max(0, at - 6), at + 7).forEach(function (c) { var im = c.querySelector('.media img'); if (im) im.loading = 'eager'; });
   }
   function setMode(mode, animate) {
-    var first = new Map(), shade0 = new Map(), op0 = new Map(), focus = null, best = Infinity;
+    var first = new Map(), shade0 = new Map(), op0 = new Map(), pos0 = new Map(), focus = null, best = Infinity;
     if (animate) cards.forEach(function (c) {
       if (c.hidden) return;
       shade0.set(c, parseFloat(c._shade.style.opacity) || 0);
@@ -529,6 +529,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       if (r.bottom < 0 || r.top > innerHeight) return;
       first.set(c, r);
       op0.set(c, c.style.visibility === 'hidden' ? 0 : parseFloat(getComputedStyle(c).opacity));
+      var im0 = c.querySelector('.media > img'); if (im0) pos0.set(c, getComputedStyle(im0).objectPosition);
       var dc = Math.abs(r.top + r.height / 2 - innerHeight / 2);
       if (!on && dc < best) { best = dc; focus = c; }
     });
@@ -643,6 +644,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
         kf = [from, { opacity: 0, offset: gone ? 0.25 : 0.35 }, { opacity: 0, offset: gone ? 1 : 0.7 }, to];
       }
       c.animate(kf, { duration: DUR, delay: wait, easing: EASE, fill: 'backwards' });
+      // 封面裁切：九宮格對齊下方、堆疊置中。卡片搬到另一層時 CSS transition 不會動，這裡自己補間，不然出發那一格圖會跳一下
+      var im = c.querySelector('.media > img'), p0 = pos0.get(c), p1 = im && getComputedStyle(im).objectPosition;
+      if (p0 && p1 && p0 !== p1) im.animate([{ objectPosition: p0 }, { objectPosition: p1 }], { duration: DUR, delay: wait, easing: EASE, fill: 'backwards' });
     });
     // 光暈不在這裡補間：它本身有 1.4s 的 CSS 淡入；以前一起淡到 1，動畫一結束會一下暗掉，舊的那層也會跟著亮起來
     // 切回堆疊：左側文字從畫面左邊一行一行滑進來，進度列從下面滑上來
