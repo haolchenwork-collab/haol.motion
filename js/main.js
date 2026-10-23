@@ -563,7 +563,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       if (!f && Math.abs(i - land) > 5 && Math.abs(i - sp) > 5) return;
       var wait = f ? Math.min(depth, 6) * 60 : 120 + Math.min(depth, 6) * 40;
       maxWait = Math.max(maxWait, wait);
-      items.push({ c: c, f: f, wait: wait, o0: f ? op0.get(c) : 0, s0: shade0.get(c) || 0,
+      items.push({ c: c, i: i, f: f, wait: wait, o0: f ? op0.get(c) : 0, s0: shade0.get(c) || 0,
         ox: sr.left + c.offsetLeft + c.offsetWidth / 2, oy: sr.top + c.offsetTop + c.offsetHeight / 2, w: c.offsetWidth, h: c.offsetHeight });
       // 封面裁切：九宮格對齊下方、堆疊置中，跟著卡片一起補間
       var im = c.querySelector('.media > img'), p0 = pos0.get(c), p1 = im && getComputedStyle(im).objectPosition;
@@ -586,7 +586,10 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
           else o = it.o0 + (oT - it.o0) * e;
           c.style.opacity = o.toFixed(3);
           c.style.visibility = o > 0.005 ? 'visible' : 'hidden';
-          var sT = parseFloat(c._shade.style.opacity) || 0;
+          // 暗度照卷軸此刻的位置重算，但離正中間半張以內都算全亮：滾到兩張中間時不會兩張都半暗、整排一瞬間變暗
+          var a = Math.abs(it.i - cur), nr = Math.min(Math.max((a - 0.5) * 2, 0), 1), sn = nr * nr * (3 - 2 * nr);
+          var kk = Math.min(a / 4, 1), sk = kk * kk * (3 - 2 * kk);
+          var sT = 1 - (1 - 0.8 * sk) * (1 - 0.6 * sn);
           c._shade.style.opacity = (it.s0 + (sT - it.s0) * Math.min(1, e * 2.5)).toFixed(3);
           if (!it.f || e >= 1) return;
           // 卷軸裡此刻的位置（含透視）：位移／縮放放在最前面，畫面上會乘上 k = d / (d - z)，先換回沒透視的平面再補間
