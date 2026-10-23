@@ -348,7 +348,17 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     wbStick = parseFloat(getComputedStyle(wb).top) || 0;
     onScroll();
   }
-  var spinUntil = 0;
+  var spinUntil = 0, morph = null;
+  // cubic-bezier 緩動曲線（給 JS 逐格算的轉場用）
+  function bezier(x1, y1, x2, y2) {
+    function b(t, a, c) { return 3 * a * t * (1 - t) * (1 - t) + 3 * c * t * t * (1 - t) + t * t * t; }
+    return function (x) {
+      if (x <= 0) return 0; if (x >= 1) return 1;
+      var lo = 0, hi = 1, t = x;
+      for (var n = 0; n < 24; n++) { t = (lo + hi) / 2; if (b(t, x1, x2) < x) lo = t; else hi = t; }
+      return b(t, y1, y2);
+    };
+  }
   function onScroll() {
     if (!on || performance.now() < spinUntil) return;
     target = Math.min(Math.max((scrollY - top0) / STEP, 0), Math.max(list.length - 1, 0));
@@ -369,11 +379,12 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     // 跟幀率無關的緩動：每 16.7ms 追上剩下距離的 9%
     var dt = last && t ? Math.min(t - last, 64) : 16.7;
     last = t || 0;
+    if (morph) morph.pre();
     cur += (target - cur) * (1 - Math.pow(0.91, dt / 16.7));
     // 反射光的強度跟著翻動速度：動得越快越亮，停下來只剩一點點。強度本身也緩動（亮起來慢、退得更慢），不會一閃一閃
     var want = Math.min(0.6, 0.1 + Math.abs(target - cur) * 1.4);
     glint += (want - glint) * (1 - Math.pow(want > glint ? 0.88 : 0.94, dt / 16.7));
-    if (Math.abs(target - cur) < 0.0005 && Math.abs(want - glint) < 0.005) { cur = target; last = 0; } else kick();
+    if (!morph && Math.abs(target - cur) < 0.0005 && Math.abs(want - glint) < 0.005) { cur = target; last = 0; } else kick();
     list.forEach(function (c, i) {
       var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
       // 全部正面不傾斜：往外每張縮小一點、往上（下）錯開，露出一條邊，越外圈越密
@@ -381,6 +392,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var sc = 1 - near * 0.12 - Math.min(far, 6) * 0.06;
       // 太遠的藏起來，但位置照算：九宮格切過來時，它們才有地方可以飛
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
+      c._y = y; c._z = -a * 70; c._sc = sc;
       c.style.visibility = a > 5 ? 'hidden' : '';
       if (a > 5) return;
       c.style.zIndex = 1000 - Math.round(a * 100);
@@ -392,7 +404,9 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       c._sheen.style.opacity = glint.toFixed(3);
       c.style.opacity = a > 4 ? (5 - a).toFixed(2) : '';
     });
-    var f = Math.round(cur);
+    if (morph) morph.step();
+    // 轉場時卷軸在滾：最前面那張直接認定是要停的那張，左側文字不會跟著一路換
+    var f = morph ? morph.land : Math.round(cur);
     if (f !== front && list[f]) {
       if (list[front]) {
         list[front].classList.remove('is-front', 'is-playing'); list[front].tabIndex = -1;
@@ -427,7 +441,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? cur / (list.length - 1) : 1).toFixed(3) + ')';
     // 標題和篩選列：捲動位置是一下跳到下一張的，它們如果跟著捲就會一格一格跳。
     // 改成跟卡片同一條緩動：看起來的捲動量 = 實際捲動 − (目標 − 目前) × 每張距離
-    var lag = (Math.min(Math.max(scrollY - top0, 0), (list.length - 1) * STEP) - cur * STEP);
+    var lag = morph ? 0 : (Math.min(Math.max(scrollY - top0, 0), (list.length - 1) * STEP) - cur * STEP);
     var seen = scrollY - lag;
     hero.style.transform = Math.abs(lag) < 0.5 ? '' : 'translate3d(0,' + lag.toFixed(1) + 'px,0)';
     var dBar = Math.max(wbStick, wbTop - seen) - Math.max(wbStick, wbTop - scrollY);
@@ -534,6 +548,59 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       cards.forEach(function (c) { c.style.removeProperty('--cap-d'); });
     }, vis.length * 70 + 700);
   }
+  // 九宮格 → 卷軸，逐格用 JS 算：每一格先讓 tick 算出卷軸（正在滾）裡的位置，再把卡片從九宮格的位置往那裡補間。
+  // 卷軸在動、卡片也在飛，同一條時間線，中間不會停
+  function flyIn(DUR, EASE, sr, scs, po, first, shade0, op0, pos0, land, sp) {
+    var m = /cubic-bezier\(([^)]+)\)/.exec(EASE), ez = bezier.apply(null, (m ? m[1] : '.6,0,.2,1').split(',').map(parseFloat));
+    var spin = bezier(.25, .1, .2, 1);
+    var d = parseFloat(scs.perspective) || 1600, px = sr.left + parseFloat(po[0]), py = sr.top + parseFloat(po[1]);
+    var t0 = performance.now(), SPIN = DUR + 300, maxWait = 0;
+    var items = [];
+    cards.forEach(function (c, k) {
+      if (c.hidden) return;
+      var f = first.get(c), i = list.indexOf(c), depth = Math.abs(i - land);
+      if (!f && Math.abs(i - land) > 5 && Math.abs(i - sp) > 5) return;
+      var wait = f ? Math.min(depth, 6) * 60 : 120 + Math.min(depth, 6) * 40;
+      maxWait = Math.max(maxWait, wait);
+      items.push({ c: c, f: f, wait: wait, fade: depth >= 3, o0: f ? op0.get(c) : 0, s0: shade0.get(c) || 0,
+        ox: sr.left + c.offsetLeft + c.offsetWidth / 2, oy: sr.top + c.offsetTop + c.offsetHeight / 2, w: c.offsetWidth, h: c.offsetHeight });
+      // 封面裁切：九宮格對齊下方、堆疊置中，跟著卡片一起補間
+      var im = c.querySelector('.media > img'), p0 = pos0.get(c), p1 = im && getComputedStyle(im).objectPosition;
+      if (f && p0 && p1 && p0 !== p1) im.animate([{ objectPosition: p0 }, { objectPosition: p1 }], { duration: DUR, delay: wait, easing: EASE, fill: 'backwards' });
+    });
+    morph = {
+      land: Math.round(land),
+      pre: function () {
+        var p = Math.min((performance.now() - t0) / SPIN, 1);
+        cur = target = sp + (land - sp) * spin(p);
+      },
+      step: function () {
+        var now = performance.now() - t0;
+        items.forEach(function (it) {
+          var c = it.c, e = ez((now - it.wait) / DUR);
+          var oT = c.style.visibility === 'hidden' ? 0 : parseFloat(c.style.opacity || 1);
+          var o;
+          if (!it.f) o = oT * e;
+          else if (it.fade || oT === 0) o = e < 0.35 ? it.o0 * (1 - e / 0.35) : e < 0.7 ? 0 : oT * (e - 0.7) / 0.3;
+          else o = it.o0 + (oT - it.o0) * e;
+          c.style.opacity = o.toFixed(3);
+          c.style.visibility = o > 0.005 ? 'visible' : 'hidden';
+          var sT = parseFloat(c._shade.style.opacity) || 0;
+          c._shade.style.opacity = (it.s0 + (sT - it.s0) * Math.min(1, e * 2.5)).toFixed(3);
+          if (!it.f || e >= 1) return;
+          // 卷軸裡此刻的位置（含透視）：位移／縮放放在最前面，畫面上會乘上 k = d / (d - z)，先換回沒透視的平面再補間
+          var k = d / (d - c._z), f = it.f;
+          var fcx = px + (f.left + f.width / 2 - px) / k, fcy = py + (f.top + f.height / 2 - py) / k;
+          var sx = f.width / (it.w * c._sc * k), sy = f.height / (it.h * c._sc * k);
+          var tx = fcx - it.ox, ty = fcy - it.oy - sy * c._y, q = 1 - e;
+          c.style.transform = 'translate(' + (tx * q).toFixed(1) + 'px,' + (ty * q).toFixed(1) + 'px) scale(' + (sx + (1 - sx) * e).toFixed(4) + ',' + (sy + (1 - sy) * e).toFixed(4) + ') ' + c.style.transform;
+        });
+        if (now > Math.max(SPIN, DUR + maxWait) + 20) { morph = null; spinUntil = 0; cur = target = land; kick(); }
+      }
+    };
+    morph.step();
+    kick();
+  }
   function setMode(mode, animate) {
     var first = new Map(), shade0 = new Map(), op0 = new Map(), pos0 = new Map(), focus = null, best = Infinity;
     if (animate) cards.forEach(function (c) {
@@ -588,13 +655,11 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var fi = focus ? list.indexOf(focus) : -1;
       if (fi > -1) scrollTo({ top: top0 + fi * STEP, behavior: 'instant' });
       target = cur = fi > -1 ? fi : target;
-      // 九宮格 → 卷軸：卡片先收到往後幾張的位置，收好後卷軸像轉輪一樣往回滾，停在要看的那張
+      // 九宮格 → 卷軸：卷軸從往後幾張的位置開始滾，卡片一邊飛、卷軸一邊轉，一起停在要看的那張
       var land = target, sp = Math.min(Math.round(land) + 4, list.length - 1);
-      if (animate && Element.prototype.animate && sp > land && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      if (animate && Element.prototype.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         target = cur = sp;
         spinUntil = performance.now() + 5000;
-        clearTimeout(stackList._spinT);
-        stackList._spinT = setTimeout(function () { spinUntil = 0; if (!on) return; target = land; kick(); }, 1450);
       }
       eager(Math.round(target));
       tick();
@@ -622,7 +687,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     clearTimeout(stackList._mT);
     stackList._mT = setTimeout(function () { stackList.classList.remove('morphing'); if (!on) capsIn(); }, on ? DUR + 460 : DUR - 350);
     var sr = stage.getBoundingClientRect(), scs = getComputedStyle(stage), po = scs.perspectiveOrigin.split(' ');
-    cards.forEach(function (c, k) {
+    if (on) { flyIn(DUR, EASE, sr, scs, po, first, shade0, op0, pos0, land, cur); }
+    else cards.forEach(function (c, k) {
       var gone = c.style.visibility === 'hidden', f = first.get(c);
       if (c.hidden || (gone && !f)) return;
       var r = c.getBoundingClientRect();
