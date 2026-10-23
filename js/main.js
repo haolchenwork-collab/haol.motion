@@ -520,6 +520,19 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   function eager(at) {
     list.slice(Math.max(0, at - 6), at + 7).forEach(function (c) { var im = c.querySelector('.media img'); if (im) im.loading = 'eager'; });
   }
+  // 切回九宮格：標題不要同時出來，照畫面上由左到右、由上到下一張接一張
+  function capsIn() {
+    var vis = cards.filter(function (c) { var r = c.getBoundingClientRect(); return !c.hidden && r.bottom > 0 && r.top < innerHeight; });
+    vis.sort(function (a, b) { var ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect(); return Math.round(ra.top - rb.top) || ra.left - rb.left; });
+    vis.forEach(function (c, i) { c.style.setProperty('--cap-d', (i * 0.07).toFixed(2) + 's'); });
+    stackList.classList.add('cap-in');
+    stackList.classList.remove('cap-hide');
+    clearTimeout(stackList._ciT);
+    stackList._ciT = setTimeout(function () {
+      stackList.classList.remove('cap-in');
+      cards.forEach(function (c) { c.style.removeProperty('--cap-d'); });
+    }, vis.length * 70 + 700);
+  }
   function setMode(mode, animate) {
     var first = new Map(), shade0 = new Map(), op0 = new Map(), pos0 = new Map(), focus = null, best = Infinity;
     if (animate) cards.forEach(function (c) {
@@ -585,7 +598,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
         c._shade.style.opacity = '';
       });
       stage.hidden = true;
-      if (!animate) stackList.classList.remove('cap-hide');
+      stackList.classList.remove('cap-in');
+      stackList.classList.toggle('cap-hide', !!animate);
       stackList.style.height = stackList.style.marginTop = '';
       hero.style.transform = wb.style.transform = '';
       clearTimeout(glowTimer); glowShown = null;
@@ -597,7 +611,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     var EASE = animate.ease || 'cubic-bezier(.6,0,.2,1)', DUR = 1100;
     stackList.classList.add('morphing');
     clearTimeout(stackList._mT);
-    stackList._mT = setTimeout(function () { stackList.classList.remove('morphing'); if (!on) stackList.classList.remove('cap-hide'); }, on ? DUR + 460 : DUR - 250);
+    stackList._mT = setTimeout(function () { stackList.classList.remove('morphing'); if (!on) capsIn(); }, on ? DUR + 460 : DUR - 350);
     var sr = stage.getBoundingClientRect(), scs = getComputedStyle(stage), po = scs.perspectiveOrigin.split(' ');
     cards.forEach(function (c, k) {
       var gone = c.style.visibility === 'hidden', f = first.get(c);
@@ -669,6 +683,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     if (!b || (b.getAttribute('data-mode') === 'stack') === on || toggle._capT) return;
     if (b.getAttribute('data-mode') === 'stack') {
       // 標題先在格子裡淡出，卡片才開始飛
+      stackList.classList.remove('cap-in');
       stackList.classList.add('cap-hide');
       toggle._capT = setTimeout(function () { toggle._capT = 0; setMode('stack', true); }, 200);
     } else setMode('grid', true);
