@@ -638,7 +638,19 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   try { var ref = new URL(document.referrer); fromHome = ref.origin === location.origin && /^\/(haol\.motion\/)?(index\.html)?$/.test(ref.pathname); } catch (err) {}
   if (fromHome && saved !== 'grid' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     setMode('grid');
-    setTimeout(function () { if (!on) setMode('stack', { first: true }); }, 900);
+    // 九宮格先進場：畫面內的卡片依序淡入、往上浮；同時把這些封面解碼好，避免轉場時才載圖卡頓
+    var vis = cards.filter(function (c) { var r = c.getBoundingClientRect(); return !c.hidden && r.top < innerHeight && r.bottom > 0; });
+    var EN = 'cubic-bezier(.2,.7,.2,1)', enterMs = 700 + vis.length * 60;
+    vis.forEach(function (c, i) {
+      c.animate([{ opacity: 0, transform: 'translateY(40px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: i * 60, easing: EN, fill: 'backwards' });
+    });
+    var ready = Promise.all(vis.concat(list.slice(0, 3)).map(function (c) {
+      var im = c.querySelector('img'); return im && im.decode ? im.decode().catch(function () {}) : null;
+    }));
+    var wait = new Promise(function (r) { setTimeout(r, enterMs + 250); });
+    Promise.race([Promise.all([ready, wait]), new Promise(function (r) { setTimeout(r, 2600); })]).then(function () {
+      requestAnimationFrame(function () { requestAnimationFrame(function () { if (!on) setMode('stack', { first: true }); }); });
+    });
   } else setMode(saved === 'grid' ? 'grid' : 'stack');
 })();
 
