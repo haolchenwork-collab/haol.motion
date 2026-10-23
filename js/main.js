@@ -555,7 +555,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     // 滾動的速度曲線：起步慢、中段加速衝過去、最後拉長減速停下（像轉輪）
     var spin = bezier(.7, 0, .1, 1);
     var d = parseFloat(scs.perspective) || 1600, px = sr.left + parseFloat(po[0]), py = sr.top + parseFloat(po[1]);
-    var t0 = performance.now(), SPIN = DUR + 600, maxWait = 0;
+    var t0 = performance.now(), SPIN = DUR + 200, maxWait = 0;
     var items = [];
     cards.forEach(function (c, k) {
       if (c.hidden) return;
@@ -656,8 +656,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var fi = focus ? list.indexOf(focus) : -1;
       if (fi > -1) scrollTo({ top: top0 + fi * STEP, behavior: 'instant' });
       target = cur = fi > -1 ? fi : target;
-      // 九宮格 → 卷軸：卷軸從往後 8 張的位置開始滾，卡片一邊飛、卷軸一邊轉，一起停在要看的那張
-      var land = target, sp = Math.min(Math.round(land) + 8, list.length - 1);
+      // 九宮格 → 卷軸：卷軸從往後 3 張的位置開始滾，卡片一邊飛、卷軸一邊轉，一起停在要看的那張
+      var land = target, sp = Math.min(Math.round(land) + 3, list.length - 1);
       if (animate && Element.prototype.animate && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
         target = cur = sp;
         spinUntil = performance.now() + 5000;
