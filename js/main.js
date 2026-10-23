@@ -657,6 +657,17 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
         from.opacity = o0; to.opacity = o1;
         kf = [from, { opacity: 0, offset: gone ? 0.25 : 0.35 }, { opacity: 0, offset: gone ? 1 : 0.7 }, to];
       }
+      // 九宮格 → 卷軸：飛的途中立體翻轉一下（往飛行方向側轉、微微後仰），到定位時轉回正面。
+      // 翻轉放在 transform 最後面，繞卡片自己的中心轉；三格的函式清單一樣，位移／縮放照常補間
+      if (on && end !== 'none') {
+        var dir = tx > 0 ? -1 : 1, M = 0.5;
+        var mx = tx * (1 - M), my = ty * (1 - M), msx = sx + (1 - sx) * M, msy = sy + (1 - sy) * M;
+        from.transform = tf() + ' rotateX(0deg) rotateY(0deg)';
+        to.transform = 'translate(0px,0px) scale(1,1) ' + end + ' rotateX(0deg) rotateY(0deg)';
+        from.offset = 0; to.offset = 1;
+        kf.push({ transform: 'translate(' + mx.toFixed(1) + 'px,' + my.toFixed(1) + 'px) scale(' + msx.toFixed(4) + ',' + msy.toFixed(4) + ') ' + end + ' rotateX(14deg) rotateY(' + (dir * 32) + 'deg)', offset: M });
+        kf.sort(function (a, b) { return a.offset - b.offset; });
+      }
       c.animate(kf, { duration: DUR, delay: wait, easing: EASE, fill: 'backwards' });
       // 封面裁切：九宮格對齊下方、堆疊置中。卡片搬到另一層時 CSS transition 不會動，這裡自己補間，不然出發那一格圖會跳一下
       var im = c.querySelector('.media > img'), p0 = pos0.get(c), p1 = im && getComputedStyle(im).objectPosition;
