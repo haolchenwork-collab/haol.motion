@@ -203,6 +203,7 @@ function filterItems(target, items, keep) {
     if (it._leave) it._leave();
   });
   var stacked = target._stack && target.classList.contains('is-stack');
+  if (stacked && !reduce) { target._stack(function () { items.forEach(function (it) { it.hidden = !keep(it); }); }); return; }
   if (reduce || stacked) { items.forEach(function (it) { it.hidden = !keep(it); }); if (stacked) target._stack(); return; }
 
   var EASE = 'cubic-bezier(.2,.7,.2,1)', DUR = 480;
@@ -438,7 +439,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       });
       $('.sm-idx').textContent = pad(f + 1) + ' / ' + pad(list.length);
     }
-    $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? cur / (list.length - 1) : 1).toFixed(3) + ')';
+    $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? Math.min(Math.max(cur / (list.length - 1), 0), 1) : 1).toFixed(3) + ')';
     // 標題和篩選列：捲動位置是一下跳到下一張的，它們如果跟著捲就會一格一格跳。
     // 改成跟卡片同一條緩動：看起來的捲動量 = 實際捲動 − (目標 − 目前) × 每張距離
     var lag = morph ? 0 : (Math.min(Math.max(scrollY - top0, 0), (list.length - 1) * STEP) - cur * STEP);
@@ -498,12 +499,48 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     e.preventDefault();
     step(dir);
   });
-  stackList._stack = function () {
-    front = -1;
-    cards.forEach(function (c) { c.classList.remove('is-front'); c.tabIndex = -1; });
-    measure();
-    lastMove = 0;
-    if (scrollY > top0) scrollTo({ top: top0 });
+  // 卷軸自己滾一段：cur 從 a 滾到 b（用 morph 的 pre 接管，捲動先不理），滾完呼叫 done
+  function roll(a, b, dur, ez, land, done, frame) {
+    var t0 = performance.now();
+    spinUntil = t0 + dur + 5000;
+    morph = {
+      land: land,
+      pre: function () {
+        var q = Math.min((performance.now() - t0) / dur, 1);
+        cur = target = a + (b - a) * ez(q);
+        if (frame) frame(q);
+      },
+      step: function () {
+        if (performance.now() - t0 < dur) return;
+        morph = null; spinUntil = 0; cur = target = b; kick();
+        if (done) done();
+      }
+    };
+    kick();
+  }
+  stackList._stack = function (apply) {
+    var reset = function () {
+      front = -1;
+      cards.forEach(function (c) { c.classList.remove('is-front'); c.tabIndex = -1; });
+      measure();
+      lastMove = 0;
+      if (scrollY > top0) scrollTo({ top: top0, behavior: 'instant' });
+    };
+    // 切換類別：舊的那疊往前捲走、淡掉，新的那疊從下面捲上來、停在第一張
+    if (apply && stage.animate) {
+      if (morph) { morph = null; spinUntil = 0; }
+      var c0 = cur, o0 = parseFloat(stage.style.opacity || 1);
+      roll(c0, c0 + 1.6, 300, bezier(.5, 0, .9, .6), Math.round(c0), function () {
+        apply();
+        reset();
+        cur = target = -2.2;
+        eager(0);
+        roll(-2.2, 0, 760, bezier(.15, .6, .2, 1), 0, function () { stage.style.opacity = ''; }, function (q) { stage.style.opacity = Math.min(q / 0.6, 1).toFixed(3); });
+      }, function (q) { stage.style.opacity = (o0 * (1 - q * q)).toFixed(3); });
+      return;
+    }
+    if (apply) apply();
+    reset();
     target = cur = 0;
     tick();
     stage.animate && stage.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 420, easing: 'ease' });
