@@ -328,7 +328,6 @@ figcaption { font-size: 14px; color: var(--muted); }
   filter: blur(3px);
   -webkit-mask-image: linear-gradient(to top, #000 22%, transparent 48%);
   mask-image: linear-gradient(to top, #000 22%, transparent 48%);
-  transition: transform .6s cubic-bezier(.2,.7,.2,1);
 }
 #work-list .card .media::after {
   content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
@@ -417,11 +416,13 @@ html:has(body.has-stack) { overflow-anchor: none; }
   #work-list[data-card="gloss"] .stack-stage:not(.is-live):has(.card.is-front:hover) .stack-glow.on { opacity: .31; transition-duration: .6s; }
 }
 #work-list.is-stack .card-cap, #work-list.is-stack .card .media::after, #work-list.is-stack .card .media-blur { display: none; }
-/* 九宮格 → 卷軸：卡片上的標題和底部漸層先跟著卡片飛、同時淡出往下滑，再收掉（main.js 轉場時加 cap-out） */
-#work-list.is-stack.cap-out .card-cap { display: grid; animation: cap-out .45s cubic-bezier(.4,0,.6,1) forwards; }
-#work-list.is-stack.cap-out .card .media::after { display: block; animation: cap-fade .45s ease-out forwards; }
-@keyframes cap-out { to { opacity: 0; transform: translateY(16px); } }
-@keyframes cap-fade { to { opacity: 0; } }
+/* 九宮格 → 卷軸：卡片還在格子裡時，標題、底部漸層和模糊先快速淡出往下滑，再開始飛（main.js 加 cap-hide）；切回九宮格時，卡片落定才淡回來 */
+#work-list .card-cap, #work-list .card .media::after { transition: opacity .22s ease, translate .22s ease; }
+#work-list .media-blur { transition: transform .6s cubic-bezier(.2,.7,.2,1), opacity .22s ease; }
+#work-list.cap-hide .card-cap { opacity: 0; translate: 0 12px; }
+#work-list.cap-hide .card .media::after, #work-list.cap-hide .media-blur { opacity: 0; }
+/* 轉場的 1.1 秒裡光暈先不流動：它是 120px 模糊，每格重算會跟卡片動畫搶效能 */
+#work-list.morphing .stack-glow { animation-play-state: paused; }
 .stack-shade { position: absolute; inset: 0; z-index: 3; border-radius: inherit; background: #000; opacity: 0; pointer-events: none; }
 #work-list.is-stack .card:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
 #work-list.is-stack .card:not(.is-front) { pointer-events: none; }
