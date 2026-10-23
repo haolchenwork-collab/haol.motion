@@ -516,6 +516,10 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   // 堆疊／九宮格切換：九宮格就是原本的格狀列表，卡片搬回 #work-list、清掉堆疊加的樣式。
   // 切換時用 FLIP：先記下每張在畫面上的位置，換好版面再從舊位置補間到新位置，看起來是卡片自己飛過去。
   // 正中間那張（或九宮格裡最靠近畫面中間那張）會對齊到另一種模式的同一張，捲動位置才接得上。
+  // 封面都是 lazy：九宮格裡在畫面外的，飛進堆疊時還沒載，會是一張空白卡。堆疊看得到的前後幾張先載
+  function eager(at) {
+    list.slice(Math.max(0, at - 6), at + 7).forEach(function (c) { var im = c.querySelector('.media img'); if (im) im.loading = 'eager'; });
+  }
   function setMode(mode, animate) {
     var first = new Map(), shade0 = new Map(), op0 = new Map(), focus = null, best = Infinity;
     if (animate) cards.forEach(function (c) {
@@ -569,6 +573,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var fi = focus ? list.indexOf(focus) : -1;
       if (fi > -1) scrollTo({ top: top0 + fi * STEP, behavior: 'instant' });
       target = cur = fi > -1 ? fi : target;
+      eager(Math.round(target));
       tick();
     } else {
       cards.forEach(function (c) {
@@ -666,6 +671,10 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   try { var ref = new URL(document.referrer); fromHome = ref.origin === location.origin && /^\/(haol\.motion\/)?(index\.html)?$/.test(ref.pathname); } catch (err) {}
   if (fromHome && saved !== 'grid' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
     setMode('grid');
+    // 卷軸一開始會看到的前幾張，在九宮格進場時就先載好
+    cards.filter(function (c) { return !c.hidden; }).slice(0, 7).forEach(function (c) {
+      var im = c.querySelector('.media img'); if (im) { im.loading = 'eager'; if (im.decode) im.decode().catch(function () {}); }
+    });
     // 九宮格先進場：畫面內的卡片依序淡入、往上浮；同時把這些封面解碼好，避免轉場時才載圖卡頓
     var vis = cards.filter(function (c) { var r = c.getBoundingClientRect(); return !c.hidden && r.top < innerHeight && r.bottom > 0; });
     var EN = 'cubic-bezier(.2,.7,.2,1)';
