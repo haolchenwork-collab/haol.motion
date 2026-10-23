@@ -575,6 +575,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
         c._shade.style.opacity = '';
       });
       stage.hidden = true;
+      if (!animate) stackList.classList.remove('cap-hide');
       stackList.style.height = stackList.style.marginTop = '';
       hero.style.transform = wb.style.transform = '';
       clearTimeout(glowTimer); glowShown = null;
@@ -582,9 +583,11 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       if (focus) focus.scrollIntoView({ block: 'center', behavior: 'instant' });
     }
     if (!animate || !Element.prototype.animate) return;
-    if (on) { stackList.classList.add('cap-out'); clearTimeout(stackList._capT); stackList._capT = setTimeout(function () { stackList.classList.remove('cap-out'); }, 460); }
 
     var EASE = 'cubic-bezier(.6,0,.2,1)', DUR = 1100;
+    stackList.classList.add('morphing');
+    clearTimeout(stackList._mT);
+    stackList._mT = setTimeout(function () { stackList.classList.remove('morphing'); if (!on) stackList.classList.remove('cap-hide'); }, on ? DUR + 100 : DUR - 250);
     var sr = stage.getBoundingClientRect();
     cards.forEach(function (c, k) {
       if (c.hidden || c.style.visibility === 'hidden') return;
@@ -627,7 +630,12 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   document.querySelector('.work-bar').appendChild(toggle);
   toggle.addEventListener('click', function (e) {
     var b = e.target.closest('button');
-    if (b && (b.getAttribute('data-mode') === 'stack') !== on) setMode(b.getAttribute('data-mode'), true);
+    if (!b || (b.getAttribute('data-mode') === 'stack') === on || toggle._capT) return;
+    if (b.getAttribute('data-mode') === 'stack') {
+      // 標題先在格子裡淡出，卡片才開始飛
+      stackList.classList.add('cap-hide');
+      toggle._capT = setTimeout(function () { toggle._capT = 0; setMode('stack', true); }, 200);
+    } else setMode('grid', true);
   });
   var saved = 'stack';
   try { saved = localStorage.getItem('work-view') || 'stack'; } catch (err) {}
@@ -646,6 +654,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var im = c.querySelector('img'); if (im && im.decode) im.decode().catch(function () {});
       return c.animate([{ opacity: 0, transform: 'translateY(40px) scale(.96)' }, { opacity: 1, transform: 'none' }], { duration: 700, delay: i * 50, easing: EN, fill: 'backwards' });
     });
+    // 標題在進場途中就先淡出，轉場開始時卡片上已經沒有字
+    setTimeout(function () { if (!on) stackList.classList.add('cap-hide'); }, 230);
     // 不等全部到位：前幾張浮上來就開始轉卷軸。進場動畫交棒給轉場（位置由轉場接手，透明度從當下的值淡到堆疊裡該有的值），不會一下跳暗
     setTimeout(function () {
       if (on) return;
