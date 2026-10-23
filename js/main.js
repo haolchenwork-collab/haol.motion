@@ -375,11 +375,12 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     if (Math.abs(target - cur) < 0.0005 && Math.abs(want - glint) < 0.005) { cur = target; last = 0; } else kick();
     list.forEach(function (c, i) {
       var d = i - cur, a = Math.abs(d), s = d < 0 ? -1 : 1, near = Math.min(a, 1), far = Math.max(a - 1, 0);
-      if (a > 5) { c.style.visibility = 'hidden'; return; }
       // 全部正面不傾斜：往外每張縮小一點、往上（下）錯開，露出一條邊，越外圈越密
       var y = s * (near * H * 0.46 + Math.min(far, 6) * U * 0.15);
       var sc = 1 - near * 0.12 - Math.min(far, 6) * 0.06;
-      c.style.visibility = '';
+      // 太遠的藏起來，但位置照算：九宮格切過來時，它們才有地方可以飛
+      c.style.visibility = a > 5 ? 'hidden' : '';
+      if (a > 5) return;
       c.style.zIndex = 1000 - Math.round(a * 100);
       c.style.transform = 'translate3d(0,' + y.toFixed(1) + 'px,' + (-a * 70).toFixed(1) + 'px) scale(' + sc.toFixed(3) + ')';
       // 變暗用 smoothstep 曲線：離開中間時慢慢暗下去，沒有一離開就掉一階的感覺。
@@ -516,13 +517,14 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   // 切換時用 FLIP：先記下每張在畫面上的位置，換好版面再從舊位置補間到新位置，看起來是卡片自己飛過去。
   // 正中間那張（或九宮格裡最靠近畫面中間那張）會對齊到另一種模式的同一張，捲動位置才接得上。
   function setMode(mode, animate) {
-    var first = new Map(), shade0 = new Map(), focus = null, best = Infinity;
+    var first = new Map(), shade0 = new Map(), op0 = new Map(), focus = null, best = Infinity;
     if (animate) cards.forEach(function (c) {
       if (c.hidden) return;
       shade0.set(c, parseFloat(c._shade.style.opacity) || 0);
       var r = c.getBoundingClientRect();
       if (r.bottom < 0 || r.top > innerHeight) return;
       first.set(c, r);
+      op0.set(c, c.style.visibility === 'hidden' ? 0 : parseFloat(getComputedStyle(c).opacity));
       var dc = Math.abs(r.top + r.height / 2 - innerHeight / 2);
       if (!on && dc < best) { best = dc; focus = c; }
     });
@@ -592,10 +594,11 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     stackList._mT = setTimeout(function () { stackList.classList.remove('morphing'); if (!on) stackList.classList.remove('cap-hide'); }, on ? DUR + 100 : DUR - 250);
     var sr = stage.getBoundingClientRect();
     cards.forEach(function (c, k) {
-      if (c.hidden || c.style.visibility === 'hidden') return;
+      var gone = c.style.visibility === 'hidden', f = first.get(c);
+      if (c.hidden || (gone && !f)) return;
       var r = c.getBoundingClientRect();
-      if (r.bottom < 0 || r.top > innerHeight) return;
-      var end = c.style.transform || 'none', f = first.get(c);
+      if (!f && (r.bottom < 0 || r.top > innerHeight)) return;
+      var end = c.style.transform || 'none';
       // 變暗也跟著飛：從原本的暗度補間到新的，不會一出發就一下暗掉（或一下亮起來）
       var s0 = shade0.get(c) || 0, s1 = parseFloat(c._shade.style.opacity) || 0;
       if (Math.abs(s1 - s0) > 0.01) c._shade.animate([{ opacity: s0 }, { opacity: s1 }], { duration: DUR, easing: EASE });
@@ -609,10 +612,27 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       var sx = f.width / r.width, sy = f.height / r.height;
       var tx = f.left + f.width / 2 - ox - sx * (r.left + r.width / 2 - ox);
       var ty = f.top + f.height / 2 - oy - sy * (r.top + r.height / 2 - oy);
-      c.animate([
-        { transform: 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px) scale(' + sx.toFixed(4) + ',' + sy.toFixed(4) + ')' + (end === 'none' ? '' : ' ' + end) },
-        { transform: end }
-      ], { duration: DUR, easing: EASE });
+      var tf = function () { return 'translate(' + tx.toFixed(1) + 'px,' + ty.toFixed(1) + 'px) scale(' + sx.toFixed(4) + ',' + sy.toFixed(4) + ')' + (end === 'none' ? '' : ' ' + end); };
+      // 堆疊有透視：往後退的卡片，位移和縮放在畫面上都會被縮小，算出來的起點會偏掉、一出發就跳一下。
+      // 直接套上起點量實際落在哪，校正兩輪
+      if (on) for (var n = 0; n < 2; n++) {
+        c.style.transform = tf();
+        var g = c.getBoundingClientRect();
+        sx *= f.width / g.width; sy *= f.height / g.height;
+        c.style.transform = tf(); g = c.getBoundingClientRect();
+        tx += 100; ty += 100;
+        c.style.transform = tf(); var g2 = c.getBoundingClientRect();
+        tx -= 100; ty -= 100;
+        var kx = (g2.left - g.left) / 100 || 1, ky = (g2.top - g.top) / 100 || 1;
+        tx += (f.left - g.left) / kx; ty += (f.top - g.top) / ky;
+      }
+      c.style.transform = end === 'none' ? '' : end;
+      var o0 = op0.get(c), o1 = gone ? 0 : parseFloat(c.style.opacity || 1);
+      var from = { transform: tf() }, to = { transform: end };
+      // 九宮格裡看得到、堆疊裡藏起來（或變透明）的卡片：邊飛邊淡出，不會一下消失
+      if (Math.abs(o1 - o0) > 0.01) { from.opacity = o0; to.opacity = o1; }
+      if (gone) from.visibility = to.visibility = 'visible';
+      c.animate([from, to], { duration: DUR, easing: EASE });
     });
     // 光暈不在這裡補間：它本身有 1.4s 的 CSS 淡入；以前一起淡到 1，動畫一結束會一下暗掉，舊的那層也會跟著亮起來
     // 切回堆疊：左側文字從畫面左邊一行一行滑進來，進度列從下面滑上來
