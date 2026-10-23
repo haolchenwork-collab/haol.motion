@@ -582,6 +582,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       if (focus) focus.scrollIntoView({ block: 'center', behavior: 'instant' });
     }
     if (!animate || !Element.prototype.animate) return;
+    if (on) { stackList.classList.add('cap-out'); clearTimeout(stackList._capT); stackList._capT = setTimeout(function () { stackList.classList.remove('cap-out'); }, 460); }
 
     var EASE = 'cubic-bezier(.6,0,.2,1)', DUR = 1100;
     var sr = stage.getBoundingClientRect();
