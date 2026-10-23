@@ -719,12 +719,21 @@ var box = document.querySelector('dialog.lightbox');
 if (box) {
   var boxMedia = box.querySelector('.lightbox-media');
   var boxText = box.querySelector('.lightbox-body');
+  // 影片本身的比例：有 data-ar 就照它（格子形狀和影片不同時用），不然看格子是寬的還是直的
+  function filmRatio(entry) {
+    var ar = parseFloat(entry.getAttribute('data-ar'));
+    if (ar > 0) return ar;
+    if (entry.classList.contains('cr-wide')) return 16 / 9;
+    if (entry.classList.contains('cr-tall')) return 9 / 16;
+    return 1;
+  }
   function openEntry(entry) {
     boxMedia.innerHTML = '';
     var m = entry.querySelector('.media').cloneNode(true);
     m.querySelectorAll('.cr-play').forEach(function (n) { n.remove(); });
-    if (entry.classList.contains('cr-wide')) m.classList.add('is-wide');
-    if (entry.classList.contains('cr-tall')) m.classList.add('is-tall');
+    var ar = filmRatio(entry);
+    if (ar > 1.2) m.classList.add('is-wide');
+    if (ar < 0.8) m.classList.add('is-tall');
     var film = entry.getAttribute('data-film');
     var loop = entry.getAttribute('data-loop');
     if (film) {
@@ -770,8 +779,7 @@ if (box) {
     }
     el.className = 'cr-play';
     el.setAttribute('aria-hidden', 'true');
-    if (entry.classList.contains('cr-wide')) el.style.setProperty('--ar', 16 / 9);
-    if (entry.classList.contains('cr-tall')) el.style.setProperty('--ar', 9 / 16);
+    el.style.setProperty('--ar', filmRatio(entry));
     entry.querySelector('.media').appendChild(el);
     plays.push(el);
   });

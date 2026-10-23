@@ -10,7 +10,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <script>try{if(sessionStorage.getItem("pt")!==null&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("pt-in")}catch(e){}</script>
-<link rel="stylesheet" href="../css/style.css?v=104">
+<link rel="stylesheet" href="../css/style.css?v=105">
 <script data-goatcounter="https://haolmotion.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -34,12 +34,13 @@
     <p>接案之外，我做自己想看的畫面。沒有客戶、沒有 brief，題目來自季節、旅行和日常裡的小東西：一場雪、一台電車、一碗冰。每一件都從一個念頭開始，一路做到完成。</p>
   </section>
 
-  <section class="wrap" style="padding-bottom:96px">
+  <section class="wrap cr-body">
     <!-- 新增一件：複製最上面一件貼在最前面，改 id、日期、標題和 data-film（vimeo:編號 或 mp4 網址）。
-         class 加 cr-big 是大格（2×2），加 cr-wide 是橫的寬格（適合 16:9 的作品），加 cr-tall 是直的高格（適合 9:16 的作品）。
+         class 加 cr-xl 是最大格（3×2），cr-big 是大格（2×2），cr-wide 是橫的寬格（2×1），cr-tall 是直的高格（1×2），什麼都不加是小方格。
+         加 cr-l 會把這格放到最左邊，大格就能左右輪流。格子形狀和影片比例不一樣時，加 data-ar="影片寬÷高"（例如 1.778 或 1）。
          想在點開時多一段說明，在 h3 後面加 <p class="lab-note">一兩句</p> -->
     <div class="cr-grid" id="lab-list">
-      <button type="button" class="lab-card cr-wide" id="lab-011" data-entry data-film="../videos/lab/ig-pulse.mp4" aria-haspopup="dialog">
+      <button type="button" class="lab-card cr-xl" id="lab-011" data-ar="1.778" data-entry data-film="../videos/lab/ig-pulse.mp4" aria-haspopup="dialog">
         <div class="media"><img src="../images/lab/ig-pulse.jpg" alt="Pulse" loading="lazy"></div>
         <div class="cap"><h3>🌀</h3><span class="lab-meta">2026.09</span></div>
       </button>
@@ -51,7 +52,7 @@
         <div class="media"><img src="../images/lab/ig-1k.jpg" alt="1K" loading="lazy"></div>
         <div class="cap"><h3>1K ✨</h3><span class="lab-meta">2026.06</span></div>
       </button>
-      <button type="button" class="lab-card cr-wide" id="lab-008" data-entry data-film="vimeo:896800326" aria-haspopup="dialog">
+      <button type="button" class="lab-card cr-wide cr-l" id="lab-008" data-entry data-film="vimeo:896800326" aria-haspopup="dialog">
         <div class="media"><img src="https://i.vimeocdn.com/video/1772248893-20da0ecbf4f4a577938dcb1d3b9483b8642452c9cb9f7056d7aadd481b00ae8a-d_960" alt="Star" loading="lazy"></div>
         <div class="cap"><h3>Star</h3><span class="lab-meta">2023.12</span></div>
       </button>
@@ -67,7 +68,7 @@
         <div class="media"><img src="https://i.vimeocdn.com/video/1771665618-f174f66db62d1dffd22df0d638417792f1fcb2fee4a095d71a9bb8196b3103e6-d_960" alt="Ice Cream" loading="lazy"></div>
         <div class="cap"><h3>Ice Cream</h3><span class="lab-meta">2023.07</span></div>
       </button>
-      <button type="button" class="lab-card cr-big" id="lab-003" data-entry data-film="vimeo:896424437" aria-haspopup="dialog">
+      <button type="button" class="lab-card cr-big cr-l" id="lab-003" data-entry data-film="vimeo:896424437" aria-haspopup="dialog">
         <div class="media"><img src="https://i.vimeocdn.com/video/1771665523-eb78efce2ee1576905916ffcea59c9cc1a59bc9cda7e18f21476340c746081ef-d_960" alt="Enoshima" loading="lazy"></div>
         <div class="cap"><h3>Enoshima</h3><span class="lab-meta">2023.04</span></div>
       </button>
@@ -75,12 +76,12 @@
         <div class="media"><img src="https://i.vimeocdn.com/video/1771665602-7d610c89769604fd865237d5c6d4ba8cf3ecb806adcb610f0d7c0b031ccbec0e-d_960" alt="Sakura" loading="lazy"></div>
         <div class="cap"><h3>Sakura</h3><span class="lab-meta">2023.06</span></div>
       </button>
-      <button type="button" class="lab-card" id="lab-002" data-entry data-film="vimeo:896424427" aria-haspopup="dialog">
-        <div class="media"><img src="https://i.vimeocdn.com/video/1771666448-d50d590238fdde7c4ac11a2334bf1b756b4e638a01dd9b1855a8dfe207f63027-d_960" alt="Snow" loading="lazy"></div>
+      <button type="button" class="lab-card cr-wide" id="lab-002" data-ar="1" data-entry data-film="vimeo:896424427" aria-haspopup="dialog">
+        <div class="media"><img src="https://i.vimeocdn.com/video/1771666448-d50d590238fdde7c4ac11a2334bf1b756b4e638a01dd9b1855a8dfe207f63027-d_960" alt="Snow" loading="lazy" style="object-position:50% 20%"></div>
         <div class="cap"><h3>Snow</h3><span class="lab-meta">2023.03</span></div>
       </button>
-      <button type="button" class="lab-card" id="lab-001" data-entry data-film="vimeo:896424420" aria-haspopup="dialog">
-        <div class="media"><img src="https://i.vimeocdn.com/video/1771665490-700df9e690d4f25a3477571e64b01f37d10a933ee61c2473481e2daacce0b87a-d_960" alt="Rabbit" loading="lazy"></div>
+      <button type="button" class="lab-card cr-wide" id="lab-001" data-ar="1" data-entry data-film="vimeo:896424420" aria-haspopup="dialog">
+        <div class="media"><img src="https://i.vimeocdn.com/video/1771665490-700df9e690d4f25a3477571e64b01f37d10a933ee61c2473481e2daacce0b87a-d_960" alt="Rabbit" loading="lazy" style="object-position:50% 35%"></div>
         <div class="cap"><h3>Rabbit</h3><span class="lab-meta">2023.01</span></div>
       </button>
     </div>
@@ -112,6 +113,6 @@
   </div>
 </footer>
 
-<script src="../js/main.js?v=111"></script>
+<script src="../js/main.js?v=112"></script>
 </body>
 </html>
