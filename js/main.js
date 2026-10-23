@@ -563,7 +563,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       if (!f && Math.abs(i - land) > 5 && Math.abs(i - sp) > 5) return;
       var wait = f ? Math.min(depth, 6) * 60 : 120 + Math.min(depth, 6) * 40;
       maxWait = Math.max(maxWait, wait);
-      items.push({ c: c, f: f, wait: wait, fade: depth >= 3, o0: f ? op0.get(c) : 0, s0: shade0.get(c) || 0,
+      items.push({ c: c, f: f, wait: wait, o0: f ? op0.get(c) : 0, s0: shade0.get(c) || 0,
         ox: sr.left + c.offsetLeft + c.offsetWidth / 2, oy: sr.top + c.offsetTop + c.offsetHeight / 2, w: c.offsetWidth, h: c.offsetHeight });
       // 封面裁切：九宮格對齊下方、堆疊置中，跟著卡片一起補間
       var im = c.querySelector('.media > img'), p0 = pos0.get(c), p1 = im && getComputedStyle(im).objectPosition;
@@ -581,8 +581,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
           var c = it.c, e = ez((now - it.wait) / DUR);
           var oT = c.style.visibility === 'hidden' ? 0 : parseFloat(c.style.opacity || 1);
           var o;
+          // 亮度跟著「此刻」卷軸的位置走：轉到正中間的那張是亮的，不會整排都暗掉
           if (!it.f) o = oT * e;
-          else if (it.fade || oT === 0) o = e < 0.35 ? it.o0 * (1 - e / 0.35) : e < 0.7 ? 0 : oT * (e - 0.7) / 0.3;
           else o = it.o0 + (oT - it.o0) * e;
           c.style.opacity = o.toFixed(3);
           c.style.visibility = o > 0.005 ? 'visible' : 'hidden';
