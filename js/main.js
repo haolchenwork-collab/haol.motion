@@ -527,6 +527,7 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
       if (!on && dc < best) { best = dc; focus = c; }
     });
     if (animate && on) focus = list[Math.round(cur)] || null;
+    if (animate && animate.first) focus = cards.filter(function (c) { return !c.hidden; })[0] || focus;
 
     // 切到九宮格：左側資訊和底部進度列不要瞬間消失。複製一份蓋在原位（要在版面變成格狀前量），
     // 文字一行一行往左滑出畫面、進度列往下滑出，光暈跟著收掉
@@ -632,7 +633,13 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
   measure();
   cur = target;
   tick();
-  setMode(saved === 'grid' ? 'grid' : 'stack');
+  // 從首頁點 WORK 進來：先停在九宮格，再用切換動畫轉成卷軸（從第一張開始）
+  var fromHome = false;
+  try { var ref = new URL(document.referrer); fromHome = ref.origin === location.origin && /^\/(haol\.motion\/)?(index\.html)?$/.test(ref.pathname); } catch (err) {}
+  if (fromHome && saved !== 'grid' && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setMode('grid');
+    setTimeout(function () { if (!on) setMode('stack', { first: true }); }, 900);
+  } else setMode(saved === 'grid' ? 'grid' : 'stack');
 })();
 
 // 4b. Work 卡片景深：滑過（或鍵盤移到）一張時，其他卡片依離它的距離設 --depth（0 近～1 遠），CSS 用它決定退後多少。
