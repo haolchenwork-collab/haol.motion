@@ -677,4 +677,13 @@ html:has(body.has-stack) { overflow-anchor: none; }
 
 /* Four-point star separator (from the old Wix about page) */
 .star4 { display: inline-block; flex: none; align-self: center; width: 1.1em; height: 1.1em; font-size: inherit; font-style: normal; color: transparent; overflow: hidden; background: var(--accent); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0Q57 43 100 50Q57 57 50 100Q43 57 0 50Q43 43 50 0Z'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0Q57 43 100 50Q57 57 50 100Q43 57 0 50Q43 43 50 0Z'/%3E%3C/svg%3E") center / contain no-repeat; animation: star4 3.2s cubic-bezier(.65,0,.35,1) infinite; }
+/* stagger: each star starts at a different point of the loop */
+.star4:nth-child(8n+1) { animation-delay: -0.4s; }
+.star4:nth-child(8n+2) { animation-delay: -0.8s; }
+.star4:nth-child(8n+3) { animation-delay: -1.2s; }
+.star4:nth-child(8n+4) { animation-delay: -1.6s; }
+.star4:nth-child(8n+5) { animation-delay: -2.0s; }
+.star4:nth-child(8n+6) { animation-delay: -2.4s; }
+.star4:nth-child(8n+7) { animation-delay: -2.8s; }
+.star4:nth-child(8n+8) { animation-delay: -3.2s; }
 @media (prefers-reduced-motion: reduce) { .star4 { animation: none; transform: rotate(-12deg); } }
