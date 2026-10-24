@@ -82,10 +82,16 @@
 .duo { padding-top: 8px; }
 .lab-block { grid-column: span 7; display: flex; flex-direction: column; gap: 8px; min-width: 0; }
 .lab-block .bar { padding-block: 32px 4px; }
-.lab-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.lab-row { flex: 1; min-height: 360px; display: grid; grid-template-columns: 1.5fr 0.75fr 1.15fr 0.6fr; gap: 8px; transition: grid-template-columns .5s cubic-bezier(.6,0,.2,1); }
+/* 不等寬直條：滑過哪一張，那張就展開變寬 */
+.lab-row:has(.lab-tile:nth-child(1):hover) { grid-template-columns: 2.4fr 0.6fr 0.8fr 0.5fr; }
+.lab-row:has(.lab-tile:nth-child(2):hover) { grid-template-columns: 0.8fr 2.2fr 0.8fr 0.5fr; }
+.lab-row:has(.lab-tile:nth-child(3):hover) { grid-template-columns: 0.8fr 0.6fr 2.2fr 0.5fr; }
+.lab-row:has(.lab-tile:nth-child(4):hover) { grid-template-columns: 0.8fr 0.6fr 0.8fr 2.2fr; }
 .lab-tile { position: relative; display: block; border-radius: 4px; overflow: hidden; }
-.lab-tile .media { aspect-ratio: 1 / 1; border-radius: 0; }
-.lab-tile .tag { position: absolute; left: 8px; bottom: 8px; z-index: 2; font-family: var(--mono); font-size: 11px; background: var(--bg); color: var(--accent); padding: 2px 8px; border-radius: 999px; }
+.lab-tile .media { aspect-ratio: auto; height: 100%; border-radius: 0; }
+.lab-tile .tag { position: absolute; left: 8px; bottom: 8px; z-index: 2; font-family: var(--mono); font-size: 11px; background: var(--bg); color: var(--accent); padding: 2px 8px; border-radius: 999px; white-space: nowrap; }
+.lab-tile .no { position: absolute; top: 10px; left: 10px; z-index: 2; font-family: var(--mono); font-size: 11px; color: var(--fg); background: var(--bg); padding: 2px 7px; border-radius: 999px; }
 .lab-tile:hover .media { outline: 2px solid var(--accent); outline-offset: -2px; }
 
 .t-about { grid-column: span 5; display: flex; flex-direction: column; justify-content: space-between; gap: 20px; padding: 24px; margin-top: 32px; }
@@ -123,7 +129,10 @@
   .t-title h1 { font-size: 10.5vw; }
   .player .play { font-size: 15px; padding: 12px 18px; gap: 10px; }
   .w { grid-column: span 12; }
-  .lab-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  /* 手機：橫向滑動的直式片條 */
+  .lab-row { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; min-height: 0; margin-inline: calc(var(--gutter) * -1); padding-inline: var(--gutter); scroll-padding-inline: var(--gutter); scrollbar-width: none; }
+  .lab-tile { flex: 0 0 62%; scroll-snap-align: start; }
+  .lab-tile .media { aspect-ratio: 3 / 4; height: auto; }
 }
 @media (prefers-reduced-motion: reduce) {
   .ticker-track, .t-status .pulse { animation: none; }
