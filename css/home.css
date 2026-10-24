@@ -67,8 +67,8 @@
 .w:hover .cap h3 { color: var(--accent); }
 .w video { opacity: 0; transition: opacity .3s; }
 .w.is-playing video { opacity: 1; }
+
 /* 分割變形：桌機滑鼠在作品區移動時，不規則格線的欄寬與列高跟著游標伸縮（main.js 加 .is-split 並設定切法） */
-/* 分割變形：桌機滑鼠在作品區移動時，3×3 格線的欄寬與列高跟著游標伸縮（main.js 加 .is-split 並設 --c1~3、--r1~3） */
 .works.is-split {
   /* 欄、列的切法和每張的位置由 main.js 4c 設定 */
   grid-auto-flow: row;

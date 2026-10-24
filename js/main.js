@@ -886,16 +886,9 @@ if (splitGrid && !reduceMotion) {
   var splitMq = matchMedia('(hover: hover) and (min-width: 1001px)');
   var FLOW_X = 0.2, FLOW_Y = 0.15, SPREAD = 0.3, PICK_X = 0.5, PICK_Y = 0.4, EASE_K = 0.12;
   // 切法：cols / rows 是每一欄、列原本的寬高比例，cells 是每張卡片佔的 [欄起, 欄迄]、[列起, 列迄]（從 0 數）
-  var LAYOUTS = {
-    a: { cols: [1, 1, 1, 1], rows: [1, 1, 1],
-         cells: [[[0, 1], [0, 1]], [[2, 3], [0, 0]], [[2, 2], [1, 2]], [[3, 3], [1, 1]], [[0, 1], [2, 2]], [[3, 3], [2, 2]]] },
-    b: { cols: [1, 1, 1, 1], rows: [1, 1, 1, 1],
-         cells: [[[0, 2], [0, 1]], [[3, 3], [0, 2]], [[0, 0], [2, 3]], [[1, 1], [2, 3]], [[2, 2], [2, 2]], [[2, 3], [3, 3]]] },
-    c: { cols: [1.3, 0.7, 1, 0.8, 1.2], rows: [1, 1, 1],
-         cells: [[[0, 1], [0, 1]], [[2, 4], [0, 0]], [[2, 2], [1, 2]], [[3, 4], [1, 1]], [[0, 1], [2, 2]], [[3, 4], [2, 2]]] }
-  };
-  var L = LAYOUTS[splitGrid.getAttribute('data-layout')] || LAYOUTS.a;
-  var NC = L.cols.length, NR = L.rows.length;
+  var L = { cols: [1.25, 0.7, 1.15, 0.8, 1.1], rows: [1, 1, 1],
+    cells: [[[0, 1], [0, 1]], [[2, 4], [0, 0]], [[2, 2], [1, 2]], [[3, 4], [1, 1]], [[0, 1], [2, 2]], [[3, 4], [2, 2]]] };
+  var NC = L.cols.length;
   var range = function (r) { var out = []; for (var i = r[0]; i <= r[1]; i++) out.push(i); return out; };
   var cells = L.cells.map(function (c) { return [range(c[0]), range(c[1])]; });
   var cards = Array.prototype.slice.call(splitGrid.querySelectorAll('.w'));
