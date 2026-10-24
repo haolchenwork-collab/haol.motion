@@ -614,9 +614,10 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .ab-clients { grid-column: span 8; display: flex; flex-direction: column; justify-content: space-between; gap: 14px; }
 .ab-marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .ab-marquee-track { display: flex; width: max-content; gap: 22px; align-items: center; font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2vw, 28px); white-space: nowrap; animation: ab-marquee 40s linear infinite; }
-.ab-marquee-track i { font-style: normal; color: var(--accent); }
+.ab-marquee-track i { width: 1.1em; height: 1.1em; }
 .ab-clients:hover .ab-marquee-track { animation-play-state: paused; }
 @keyframes ab-marquee { to { transform: translateX(-50%); } }
+@keyframes star4 { 0% { transform: rotate(-12deg) scale(1); } 50% { transform: rotate(78deg) scale(.72); } 100% { transform: rotate(168deg) scale(1); } }
 
 .ab-contact { grid-column: span 4; display: flex; flex-direction: column; gap: 14px; background: var(--accent); color: var(--on-accent); text-decoration: none; }
 .ab-contact .ab-label { color: rgba(0, 0, 0, .6); }
@@ -648,10 +649,9 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .k-row.rev .k-track { animation-direction: reverse; }
 .k-track > * { flex: none; }
 .k-out { color: var(--bg); -webkit-text-stroke: 2px var(--muted); paint-order: stroke fill; }
-.k-star { color: var(--accent); font-size: .4em; font-style: normal; display: inline-block; animation: k-spin 6s linear infinite; }
+.k-row .k-star { width: .45em; height: .45em; }
 @keyframes k-run { to { transform: translateX(-50%); } }
-@keyframes k-spin { to { transform: rotate(360deg); } }
-@media (prefers-reduced-motion: reduce) { .k-track, .k-star { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .k-track { animation: none; } }
 
 /* ---------- 全站動態 ---------- */
 /* 換頁轉場：快速淡出淡入 */
@@ -674,3 +674,7 @@ html:has(body.has-stack) { overflow-anchor: none; }
 /* 堆疊模式的封面對準圖的正中間 */
 #work-list.is-stack .card .media > img, #work-list.is-stack .card .media > video { object-position: center; }
 #work-list.is-stack .card .media-blur { background-position: center; }
+
+/* Four-point star separator (from the old Wix about page) */
+.star4 { display: inline-block; flex: none; align-self: center; width: 1.1em; height: 1.1em; font-size: inherit; font-style: normal; color: transparent; overflow: hidden; background: var(--accent); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0Q57 43 100 50Q57 57 50 100Q43 57 0 50Q43 43 50 0Z'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 0Q57 43 100 50Q57 57 50 100Q43 57 0 50Q43 43 50 0Z'/%3E%3C/svg%3E") center / contain no-repeat; animation: star4 3.2s cubic-bezier(.65,0,.35,1) infinite; }
+@media (prefers-reduced-motion: reduce) { .star4 { animation: none; transform: rotate(-12deg); } }
