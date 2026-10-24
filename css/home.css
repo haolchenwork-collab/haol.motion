@@ -237,3 +237,6 @@ html:not(.intro-playing) .reel-intro { display: none; }
   background: rgba(14, 14, 16, 0.5); border-color: var(--glass-edge); box-shadow: var(--glass-hi);
   -webkit-backdrop-filter: var(--glass-blur); backdrop-filter: var(--glass-blur);
 }
+
+/* 首頁作品格子：封面和預覽影片都對準正中間（全站預設是對齊下方） */
+.works .w .media > img, .works .w .media > video { object-position: center; }
