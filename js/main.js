@@ -835,7 +835,26 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
         enter.forEach(function (an) { an.cancel(); });
       } });
     }, 450);
-  } else setMode(saved === 'grid' ? 'grid' : 'stack');
+  } else {
+    setMode(saved === 'grid' ? 'grid' : 'stack');
+    // 從作品頁回來：回到剛剛點進去的那張，不是從第一張開始
+    var back = null;
+    try { back = JSON.parse(sessionStorage.getItem('work-back') || 'null'); sessionStorage.removeItem('work-back'); } catch (err) {}
+    var bc = back && Date.now() - back.t < 30 * 60 * 1000 && cards[back.i];
+    if (bc && !bc.hidden) {
+      if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+      if (on) {
+        var bi = list.indexOf(bc);
+        if (bi > -1) { scrollTo({ top: top0 + bi * STEP, behavior: 'instant' }); target = cur = bi; eager(bi); tick(); }
+      } else bc.scrollIntoView({ block: 'center', behavior: 'instant' });
+    }
+  }
+  // 點作品時記下是哪一張（作品頁的「← 所有作品」或瀏覽器返回都會用到）
+  stackList.addEventListener('click', function (e) {
+    var c = e.target.closest && e.target.closest('.card');
+    if (!c) return;
+    try { sessionStorage.setItem('work-back', JSON.stringify({ i: cards.indexOf(c), t: Date.now() })); } catch (err) {}
+  });
 })();
 
 // 4b. Work 卡片景深：滑過（或鍵盤移到）一張時，其他卡片依離它的距離設 --depth（0 近～1 遠），CSS 用它決定退後多少。
