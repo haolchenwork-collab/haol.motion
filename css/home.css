@@ -42,7 +42,7 @@
 .ticker { margin-top: 8px; border-block: 1px solid var(--line); overflow: hidden; white-space: nowrap; }
 .ticker-track { display: inline-flex; gap: 0; padding-block: 14px; animation: ticker 32s linear infinite; }
 .ticker-track span { font-family: var(--display); font-weight: 600; font-size: clamp(20px, 2.2vw, 30px); color: var(--muted); padding-inline: 28px; }
-.ticker-track span.sep { color: var(--accent); padding-inline: 0; }
+.ticker-track span.sep { padding-inline: 0; }
 @keyframes ticker { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
 /* ---------- 區塊標題列 ---------- */
