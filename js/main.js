@@ -885,32 +885,37 @@ var splitGrid = document.querySelector('.home .works');
 if (splitGrid && !reduceMotion) {
   var splitMq = matchMedia('(hover: hover) and (min-width: 1001px)');
   var FLOW_X = 0.2, FLOW_Y = 0.15, SPREAD = 0.3, PICK_X = 0.5, PICK_Y = 0.4, EASE_K = 0.12;
-  // 每張卡片佔的欄、列（跟 home.css 的 .works.is-split 一致）
-  var cells = [[[0, 1], [0, 1]], [[2], [0]], [[2], [1]], [[0], [2]], [[1], [2]], [[2], [2]]];
+  // 切法：cols / rows 是每一欄、列原本的寬高比例，cells 是每張卡片佔的 [欄起, 欄迄]、[列起, 列迄]（從 0 數）
+  var L = { cols: [1.25, 0.7, 1.15, 0.8, 1.1], rows: [1, 1, 1],
+    cells: [[[0, 1], [0, 1]], [[2, 4], [0, 0]], [[2, 2], [1, 2]], [[3, 4], [1, 1]], [[0, 1], [2, 2]], [[3, 4], [2, 2]]] };
+  var NC = L.cols.length;
+  var range = function (r) { var out = []; for (var i = r[0]; i <= r[1]; i++) out.push(i); return out; };
+  var cells = L.cells.map(function (c) { return [range(c[0]), range(c[1])]; });
   var cards = Array.prototype.slice.call(splitGrid.querySelectorAll('.w'));
-  var tx = null, ty = null, picked = -1, cur = [1, 1, 1, 1, 1, 1], raf = 0;
-  var flow = function (p, k) {
-    return [0, 1, 2].map(function (i) {
-      if (p === null) return 1;
-      var d = (p - (i + 0.5) / 3) / SPREAD;
-      return 1 + k * Math.exp(-d * d);
+  var tx = null, ty = null, picked = -1, cur = L.cols.concat(L.rows), raf = 0;
+  var flow = function (p, k, base) {
+    var n = base.length;
+    return base.map(function (b, i) {
+      if (p === null) return b;
+      var d = (p - (i + 0.5) / n) / SPREAD;
+      return b * (1 + k * Math.exp(-d * d));
     });
   };
   var tick = function () {
-    var goal = flow(tx, FLOW_X).concat(flow(ty, FLOW_Y)), moving = false;
+    var goal = flow(tx, FLOW_X, L.cols).concat(flow(ty, FLOW_Y, L.rows)), moving = false;
     if (picked >= 0) {
       var c = cells[picked];
-      // 大張跨兩欄兩列，撐大的量分給兩條，整體放大的感覺跟小張差不多
+      // 大張跨好幾欄好幾列，撐大的量分給每一條，整體放大的感覺跟小張差不多
       c[0].forEach(function (i) { goal[i] += PICK_X / c[0].length; });
-      c[1].forEach(function (i) { goal[3 + i] += PICK_Y / c[1].length; });
+      c[1].forEach(function (i) { goal[NC + i] += PICK_Y / c[1].length; });
     }
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < goal.length; i++) {
       cur[i] += (goal[i] - cur[i]) * EASE_K;
       if (Math.abs(goal[i] - cur[i]) > 0.002) moving = true; else cur[i] = goal[i];
     }
-    ['--c1', '--c2', '--c3', '--r1', '--r2', '--r3'].forEach(function (name, i) {
-      splitGrid.style.setProperty(name, cur[i].toFixed(4) + 'fr');
-    });
+    var fr = function (v) { return 'minmax(0, ' + v.toFixed(4) + 'fr)'; };
+    splitGrid.style.gridTemplateColumns = cur.slice(0, NC).map(fr).join(' ');
+    splitGrid.style.gridTemplateRows = cur.slice(NC).map(fr).join(' ');
     raf = moving ? requestAnimationFrame(tick) : 0;
   };
   var kick = function () { if (!raf) raf = requestAnimationFrame(tick); };
@@ -932,7 +937,16 @@ if (splitGrid && !reduceMotion) {
   splitGrid.addEventListener('focusout', function (e) {
     if (!splitGrid.contains(e.relatedTarget) && !splitGrid.matches(':hover')) { picked = -1; kick(); }
   });
-  var applySplit = function () { splitGrid.classList.toggle('is-split', splitMq.matches); };
+  var applySplit = function () {
+    var on = splitMq.matches;
+    splitGrid.classList.toggle('is-split', on);
+    cards.forEach(function (card, i) {
+      var c = L.cells[i];
+      card.style.gridColumn = on && c ? (c[0][0] + 1) + ' / ' + (c[0][1] + 2) : '';
+      card.style.gridRow = on && c ? (c[1][0] + 1) + ' / ' + (c[1][1] + 2) : '';
+    });
+    if (on) { kick(); } else { splitGrid.style.gridTemplateColumns = splitGrid.style.gridTemplateRows = ''; }
+  };
   applySplit();
   if (splitMq.addEventListener) splitMq.addEventListener('change', applySplit);
 }

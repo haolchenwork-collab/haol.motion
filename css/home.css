@@ -52,6 +52,7 @@
 
 /* ---------- 精選作品：大小不一的格子 ---------- */
 .works { grid-auto-flow: dense; }
+#work { container-type: inline-size; }
 .w { position: relative; display: block; grid-column: span 4; border-radius: 4px; overflow: hidden; min-width: 0; }
 .w .media { aspect-ratio: 16 / 10; border-radius: 0; }
 .w-xl { grid-column: span 8; grid-row: span 2; }
@@ -67,19 +68,13 @@
 .w video { opacity: 0; transition: opacity .3s; }
 .w.is-playing video { opacity: 1; }
 
-/* 分割變形：桌機滑鼠在作品區移動時，3×3 格線的欄寬與列高跟著游標伸縮（main.js 加 .is-split 並設 --c1~3、--r1~3） */
+/* 分割變形：桌機滑鼠在作品區移動時，不規則格線的欄寬與列高跟著游標伸縮（main.js 加 .is-split 並設定切法） */
 .works.is-split {
-  grid-template-columns: minmax(0, var(--c1, 1fr)) minmax(0, var(--c2, 1fr)) minmax(0, var(--c3, 1fr));
-  grid-template-rows: minmax(0, var(--r1, 1fr)) minmax(0, var(--r2, 1fr)) minmax(0, var(--r3, 1fr));
-  aspect-ratio: 1.6; grid-auto-flow: row;
+  /* 欄、列的切法和每張的位置由 main.js 4c 設定 */
+  grid-auto-flow: row;
+  /* 最高不超過「螢幕高 − 頂部導覽 − 標題列」，標題＋格子一個畫面就看得完 */
+  height: min(calc(100cqw / 1.6), calc(100svh - 160px));
 }
-.works.is-split .w { grid-column: auto; grid-row: auto; }
-.works.is-split .w-xl { grid-column: 1 / 3; grid-row: 1 / 3; }
-.works.is-split .w:nth-child(2) { grid-column: 3; grid-row: 1; }
-.works.is-split .w:nth-child(3) { grid-column: 3; grid-row: 2; }
-.works.is-split .w:nth-child(4) { grid-column: 1; grid-row: 3; }
-.works.is-split .w:nth-child(5) { grid-column: 2; grid-row: 3; }
-.works.is-split .w:nth-child(6) { grid-column: 3; grid-row: 3; }
 .works.is-split .w .media { aspect-ratio: auto; height: 100%; min-height: 0; }
 .works.is-split .w .cap { white-space: nowrap; overflow: hidden; }
 
