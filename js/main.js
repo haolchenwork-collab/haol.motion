@@ -442,7 +442,8 @@ if (stackList && !matchMedia('(prefers-reduced-motion: reduce)').matches) (funct
     $('.sm-bar i').style.transform = 'scaleX(' + (list.length > 1 ? Math.min(Math.max(cur / (list.length - 1), 0), 1) : 1).toFixed(3) + ')';
     // 標題和篩選列：捲動位置是一下跳到下一張的，它們如果跟著捲就會一格一格跳。
     // 改成跟卡片同一條緩動：看起來的捲動量 = 實際捲動 − (目標 − 目前) × 每張距離
-    var lag = morph ? 0 : (Math.min(Math.max(scrollY - top0, 0), (list.length - 1) * STEP) - cur * STEP);
+    // 轉場時卷軸在滾：標題和篩選列直接用要停的那張算，固定在原位，不跟著滾、也不會被捲出畫面
+    var lag = Math.min(Math.max(scrollY - top0, 0), (list.length - 1) * STEP) - (morph ? morph.land : cur) * STEP;
     var seen = scrollY - lag;
     hero.style.transform = Math.abs(lag) < 0.5 ? '' : 'translate3d(0,' + lag.toFixed(1) + 'px,0)';
     var dBar = Math.max(wbStick, wbTop - seen) - Math.max(wbStick, wbTop - scrollY);
