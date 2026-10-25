@@ -70,7 +70,7 @@ export async function onRequestGet({ request, env }) {
   // Cache each range for a few minutes so reloading the page or switching
   // tabs does not run into GoatCounter's rate limit.
   const cache = typeof caches !== "undefined" ? caches.default : null;
-  const cacheKey = new Request(new URL(request.url).origin + "/__stats-cache/" + encodeURIComponent(range));
+  const cacheKey = new Request(new URL(request.url).origin + "/__stats-cache/v2/" + encodeURIComponent(range));
   try {
     const cached = cache && (await cache.match(cacheKey));
     if (cached) return cached;
@@ -78,14 +78,27 @@ export async function onRequestGet({ request, env }) {
 
   try {
     const total = await gc(env, "/stats/total", q);
+    // The same length of time just before this range, for the "vs last period" figure.
+    let prevTotal = null;
+    if (RANGES[range]) {
+      const span = new Date(end) - new Date(start);
+      const prevStart = hour(new Date(start) - span);
+      // Skip it when that earlier stretch reaches back before tracking began.
+      if (prevStart >= SINCE) prevTotal = (await gcSoft(env, "/stats/total", { start: prevStart, end: start })).total ?? null;
+    }
     const hits = await gc(env, "/stats/hits", { ...q, limit: 100 });
     const refs = await gcSoft(env, "/stats/toprefs", { ...q, limit: 10 });
     const locs = await gcSoft(env, "/stats/locations", { ...q, limit: 10 });
     const sizes = await gcSoft(env, "/stats/sizes", { ...q, limit: 6 });
 
     const pages = new Map();
+    const plays = [];
     for (const h of hits.hits || []) {
-      if (h.event) continue;
+      if (h.event) {
+        // Video plays are sent from js/main.js as events named play/<page>.
+        if (h.path.startsWith("play/")) plays.push({ name: h.path.slice(5), title: h.title || "", count: h.count });
+        continue;
+      }
       const path = normPath(h.path);
       const title = (h.title || "").replace(/\s*\|\s*浩辰 HaoChen\s*$/, "").trim();
       const cur = pages.get(path) || { path, title: "", count: 0 };
@@ -99,6 +112,8 @@ export async function onRequestGet({ request, env }) {
     const res = json({
       start, end,
       total: total.total,
+      prevTotal,
+      plays: plays.sort((a, b) => b.count - a.count),
       daily: (total.stats || []).map((s) => ({ day: s.day, count: s.daily })),
       pages: [...pages.values()].sort((a, b) => b.count - a.count),
       refs: pick(refs),
