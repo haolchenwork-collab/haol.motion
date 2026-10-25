@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Admin | 浩辰 HaoChen</title>
+<link rel="icon" href="../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#0b0b0c;--panel:#131315;--fg:#f2f2f2;--muted:#8a8a8f;--line:#26262a;--accent:#ff5a1f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans TC",sans-serif}
+main{max-width:960px;margin:0 auto;padding:40px 16px 80px}
+header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px}
+h1{font-family:Syne,sans-serif;font-weight:800;font-size:clamp(32px,7vw,52px);margin:0;line-height:1}
+h2{font-size:15px;font-weight:700;margin:0 0 14px}
+.tabs{display:flex;gap:6px;flex-wrap:wrap}
+.tabs button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
+.tabs button[aria-pressed=true]{border-color:var(--accent);color:var(--fg)}
+.sub{color:var(--muted);font-size:13px;margin:6px 0 0}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
+.big{font-family:"JetBrains Mono",monospace;font-size:44px;font-weight:500;line-height:1.1}
+.chart{display:flex;align-items:flex-end;gap:2px;height:120px;margin-top:18px}
+.chart i{flex:1;background:var(--accent);border-radius:2px 2px 0 0;min-height:1px;opacity:.85}
+.chart i:hover{opacity:1}
+.axis{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;font-family:"JetBrains Mono",monospace;margin-top:6px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:700px){.grid{grid-template-columns:1fr}}
+table{width:100%;border-collapse:collapse;font-size:14px}
+td{padding:9px 0;border-bottom:1px solid var(--line);vertical-align:middle}
+tr:last-child td{border-bottom:0}
+td.n{text-align:right;font-family:"JetBrains Mono",monospace;width:64px}
+.bar{height:3px;background:var(--accent);border-radius:2px;margin-top:5px;min-width:2px}
+.path{color:var(--muted);font-size:11px;font-family:"JetBrains Mono",monospace}
+.empty{color:var(--muted);font-size:13px}
+.msg{color:var(--accent)}
+a{color:var(--fg)}
+</style>
+</head>
+<body>
+<main>
+<header>
+  <div>
+    <h1>Admin</h1>
+    <p class="sub">數字是訪客數（同一人一天看同一頁只算一次）。<a href="https://haolmotion.goatcounter.com" target="_blank" rel="noopener">GoatCounter 完整後台 →</a></p>
+  </div>
+  <div class="tabs" role="group" aria-label="期間">
+    <button data-range="7">7 天</button>
+    <button data-range="30">30 天</button>
+    <button data-range="90">90 天</button>
+    <button data-range="all">全部</button>
+  </div>
+</header>
+
+<p id="msg" class="msg" hidden></p>
+
+<section class="tile">
+  <h2>訪客總數</h2>
+  <div class="big" id="total">…</div>
+  <div class="chart" id="chart"></div>
+  <div class="axis"><span id="a0"></span><span id="a1"></span></div>
+</section>
+
+<section class="tile">
+  <h2>各頁面</h2>
+  <table id="pages"></table>
+</section>
+
+<div class="grid">
+  <section class="tile"><h2>從哪裡來</h2><table id="refs"></table></section>
+  <section class="tile"><h2>國家／地區</h2><table id="locations"></table></section>
+</div>
+<section class="tile"><h2>螢幕大小</h2><table id="sizes"></table></section>
+</main>
+
+<script>
+const $ = (id) => document.getElementById(id);
+const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (n) => Number(n || 0).toLocaleString();
+const SIZES = {"Phones":"手機","Tablets":"平板","Computer monitors":"電腦","Computer monitors larger than HD":"大螢幕","(unknown)":"未知"};
+
+function rows(el, list, label) {
+  if (!list.length) { el.innerHTML = '<tr><td class="empty">這段期間還沒有資料</td></tr>'; return; }
+  const max = Math.max(1, ...list.map((r) => r.count));
+  el.innerHTML = list.map((r) => `<tr><td>${label(r)}<div class="bar" style="width:${r.count / max * 100}%"></div></td><td class="n">${fmt(r.count)}</td></tr>`).join("");
+}
+
+function render(d) {
+  $("total").textContent = fmt(d.total);
+  const max = Math.max(1, ...d.daily.map((x) => x.count));
+  $("chart").innerHTML = d.daily.map((x) => `<i style="height:${x.count / max * 100}%" title="${esc(x.day)}：${fmt(x.count)}"></i>`).join("");
+  $("a0").textContent = d.daily.length ? d.daily[0].day : "";
+  $("a1").textContent = d.daily.length ? d.daily[d.daily.length - 1].day : "";
+  rows($("pages"), d.pages, (r) => `${esc(r.title || r.path)}<div class="path">${esc(r.path)}</div>`);
+  rows($("refs"), d.refs, (r) => esc(r.name));
+  rows($("locations"), d.locations, (r) => esc(r.name));
+  rows($("sizes"), d.sizes, (r) => esc(SIZES[r.name] || r.name));
+}
+
+function show(text) { $("msg").hidden = !text; $("msg").textContent = text || ""; }
+
+async function load(range) {
+  document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.range === range));
+  try { localStorage.setItem("admin-range", range); } catch (e) {}
+  show("");
+  $("total").textContent = "…";
+  let r;
+  try {
+    r = await fetch("../api/stats?range=" + encodeURIComponent(range), { credentials: "same-origin", cache: "no-store" });
+  } catch (e) { show("連不上伺服器，請稍後重新整理。"); return; }
+  if (r.status === 404) { show("這個網址沒有後台。請改用 Cloudflare 的網址打開 /admin/。"); $("total").textContent = "—"; return; }
+  let d = {};
+  try { d = await r.json(); } catch (e) {}
+  if (r.status === 401 || r.status === 403) { show("登入已過期，請重新整理頁面再登入一次。"); $("total").textContent = "—"; return; }
+  if (d.error === "not_configured") { show("後台還沒設定完成：Cloudflare 缺少 GoatCounter 金鑰或登入設定。"); $("total").textContent = "—"; return; }
+  if (!r.ok) { show("暫時讀不到 GoatCounter 的數據，請稍後重新整理。"); $("total").textContent = "—"; return; }
+  render(d);
+}
+
+document.querySelectorAll(".tabs button").forEach((b) => b.addEventListener("click", () => load(b.dataset.range)));
+let saved = "30";
+try { saved = localStorage.getItem("admin-range") || "30"; } catch (e) {}
+load(saved);
+</script>
+</body>
+</html>
