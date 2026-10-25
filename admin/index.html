@@ -80,7 +80,7 @@ a{color:var(--fg)}
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt = (n) => Number(n || 0).toLocaleString();
-const SIZES = {"Phones":"手機","Tablets":"平板","Computer monitors":"電腦","Computer monitors larger than HD":"大螢幕","(unknown)":"未知"};
+const SIZES = {phone:"手機",largephone:"大手機",tablet:"平板",desktop:"電腦",desktophd:"大螢幕",unknown:"未知"};
 
 function rows(el, list, label) {
   if (!list.length) { el.innerHTML = '<tr><td class="empty">這段期間還沒有資料</td></tr>'; return; }
@@ -95,9 +95,9 @@ function render(d) {
   $("a0").textContent = d.daily.length ? d.daily[0].day : "";
   $("a1").textContent = d.daily.length ? d.daily[d.daily.length - 1].day : "";
   rows($("pages"), d.pages, (r) => `${esc(r.title || r.path)}<div class="path">${esc(r.path)}</div>`);
-  rows($("refs"), d.refs, (r) => esc(r.name));
-  rows($("locations"), d.locations, (r) => esc(r.name));
-  rows($("sizes"), d.sizes, (r) => esc(SIZES[r.name] || r.name));
+  rows($("refs"), d.refs, (r) => esc(r.name || "（直接開啟）"));
+  rows($("locations"), d.locations, (r) => esc(r.name || "未知"));
+  rows($("sizes"), d.sizes.filter((r) => r.count > 0), (r) => esc(SIZES[r.id] || r.name || r.id || "未知"));
 }
 
 function show(text) { $("msg").hidden = !text; $("msg").textContent = text || ""; }

@@ -95,7 +95,7 @@ export async function onRequestGet({ request, env }) {
       pages.set(path, cur);
     }
 
-    const pick = (r) => (r.stats || []).map((s) => ({ name: s.name || "（直接開啟）", count: s.count }));
+    const pick = (r) => (r.stats || []).map((s) => ({ id: s.id || "", name: s.name || "", count: s.count }));
     const res = json({
       start, end,
       total: total.total,
