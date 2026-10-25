@@ -194,6 +194,14 @@ const fmt = (n) => Number(n || 0).toLocaleString();
 // 75 → "1分15秒", 40 → "40秒"
 const dur = (s) => (s >= 60 ? Math.floor(s / 60) + "分" : "") + (s % 60 || s < 60 ? (s % 60) + "秒" : "");
 const SIZES = {phone:"手機",largephone:"大手機",tablet:"平板",desktop:"電腦",desktophd:"大螢幕",unknown:"未知"};
+// GoatCounter sends country codes such as "TW"; the browser knows their Chinese names.
+let regionNames = null;
+try { regionNames = new Intl.DisplayNames(["zh-TW"], { type: "region" }); } catch (e) {}
+function country(r) {
+  const code = (r.id || "").split("-")[0].toUpperCase();
+  try { if (regionNames && /^[A-Z]{2}$/.test(code)) return regionNames.of(code); } catch (e) {}
+  return r.name || "未知";
+}
 const EMPTY = '<li class="empty">這段期間還沒有資料</li>';
 
 function list(el, items, label) {
@@ -334,7 +342,7 @@ function render(d) {
 
   const refs = d.refs.map((r) => ({ ...r, name: r.name || "直接開啟" }));
   list($("refs"), refs, (r) => esc(r.name));
-  list($("locations"), d.locations, (r) => esc(r.name || "未知"));
+  list($("locations"), d.locations, (r) => esc(country(r)));
   list($("sizes"), d.sizes.filter((r) => r.count > 0), (r) => esc(SIZES[r.id] || r.name || r.id || "未知"));
   chart(d.daily);
 }
