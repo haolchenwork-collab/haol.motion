@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Stats | 浩辰 HaoChen</title>
+<link rel="icon" href="../images/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{--bg:#0b0b0c;--fg:#f2f2f2;--muted:#8a8a8f;--line:#26262a;--accent:#ff5a1f}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans TC",sans-serif}
+main{max-width:760px;margin:0 auto;padding:48px 16px 80px}
+h1{font-family:Syne,sans-serif;font-weight:800;font-size:clamp(32px,7vw,56px);margin:0 0 8px}
+.sub{color:var(--muted);font-size:14px;margin:0 0 32px}
+.total{display:flex;gap:24px;flex-wrap:wrap;margin-bottom:40px}
+.tile{border:1px solid var(--line);border-radius:12px;padding:20px 24px;min-width:180px}
+.tile b{display:block;font-family:"JetBrains Mono",monospace;font-size:40px;font-weight:500}
+.tile span{color:var(--muted);font-size:13px}
+table{width:100%;border-collapse:collapse}
+td{padding:12px 0;border-bottom:1px solid var(--line);vertical-align:middle}
+td.n{text-align:right;font-family:"JetBrains Mono",monospace;width:80px}
+.bar{height:4px;background:var(--accent);border-radius:2px;margin-top:6px;min-width:2px}
+.err{color:var(--accent)}
+a{color:var(--fg)}
+</style>
+</head>
+<body>
+<main>
+<h1>Stats</h1>
+<p class="sub">網站累計瀏覽次數（GoatCounter）。這頁不會被搜尋引擎收錄，也不計入瀏覽數。<br><a href="https://haolmotion.goatcounter.com" target="_blank" rel="noopener">完整後台 →</a></p>
+<div class="total"><div class="tile"><b id="total">…</b><span>全站總瀏覽</span></div></div>
+<p id="msg" class="sub"></p>
+<table id="list"></table>
+</main>
+<script>
+const SITE="https://haolmotion.goatcounter.com/counter/";
+const BASE=location.pathname.replace(/stats\/(index\.html)?$/,"").replace(/\/$/,"");
+const PAGES=[["首頁", ["/", "/index.html"]], ["Work 作品列表", ["/work/", "/work/index.html"]], ["About", ["/about/", "/about/index.html"]], ["Creative", ["/lab/", "/lab/index.html"]], ["Ballbreaker", ["/work/ballbreaker.html"]], ["Disney Channel Ident", ["/work/disney-channel-ident.html"]], ["Dragon Boat Festival", ["/work/dragon-boat-festival.html"]], ["Esthesia Collision", ["/work/esthesia-collision.html"]], ["FOOD TAIPEI EXPO 2026", ["/work/food-taipei-2026.html"]], ["GMA 31st · Best Taiwanese Male", ["/work/gma31-best-taiwanese-male.html"]], ["GMA 33rd · Best Hakka Singer", ["/work/gma33-best-hakka.html"]], ["GMA 33rd · Best MV", ["/work/gma33-best-mv.html"]], ["Gogoro Share", ["/work/gogoro-share.html"]], ["Golden Horse 61st", ["/work/golden-horse-61.html"]], ["Golden Horse 62nd", ["/work/golden-horse-62.html"]], ["Good Financial EP7", ["/work/good-financial-ep7.html"]], ["Lunar New Year 2024", ["/work/lunar-new-year-2024.html"]], ["Taiwan National Day", ["/work/national-day-2019.html"]], ["New Taipei Dome", ["/work/new-taipei-dome.html"]], ["Presidential Cup 2025", ["/work/presidential-cup-2025.html"]], ["SPARK 101", ["/work/spark-101.html"]], ["Taitung Expo 2026", ["/work/taitung-expo-2026.html"]], ["Taiwan Lantern Festival", ["/work/taiwan-lantern-festival-2025.html"]], ["The Thrifty Family", ["/work/thrifty-family.html"]], ["TIAF 2023", ["/work/tiaf-2023.html"]]];
+const num=s=>parseInt(String(s).replace(/[^0-9]/g,""),10)||0;
+async function count(path){
+  const r=await fetch(SITE+encodeURIComponent(path)+".json");
+  if(r.status===404)return 0;
+  if(r.status===403)throw new Error("off");
+  if(!r.ok)throw new Error("http "+r.status);
+  return num((await r.json()).count);
+}
+(async()=>{
+  try{
+    document.getElementById("total").textContent=(await count("TOTAL")).toLocaleString();
+    const rows=await Promise.all(PAGES.map(async([name,paths])=>[name,(await Promise.all(paths.map(p=>count(BASE+p)))).reduce((a,b)=>a+b,0)]));
+    rows.sort((a,b)=>b[1]-a[1]);
+    const max=Math.max(1,...rows.map(r=>r[1]));
+    document.getElementById("list").innerHTML=rows.map(([n,c])=>`<tr><td>${n}<div class="bar" style="width:${c/max*100}%"></div></td><td class="n">${c.toLocaleString()}</td></tr>`).join("");
+  }catch(e){
+    document.getElementById("total").textContent="—";
+    document.getElementById("msg").innerHTML=e.message==="off"
+      ?'<span class="err">讀不到數字：請到 GoatCounter 的 Settings 打開「Allow adding visitor counts on your website」。</span>'
+      :'<span class="err">暫時讀不到數字，請稍後重新整理。</span>';
+  }
+})();
+</script>
+</body>
+</html>
