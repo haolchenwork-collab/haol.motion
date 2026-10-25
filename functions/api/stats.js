@@ -10,6 +10,14 @@
 const GC = "https://haolmotion.goatcounter.com/api/v0";
 const SINCE = "2026-10-12T00:00:00Z"; // tracking went live
 const RANGES = { "7": 7, "30": 30, "90": 90 };
+// Middle of each time-on-page bucket sent by js/main.js, in seconds.
+const STAY_MID = { "0-10s": 5, "10-30s": 20, "30-60s": 45, "1-2m": 90, "2-5m": 210, "5m+": 420 };
+
+function stayStats(b) {
+  let n = 0, sum = 0;
+  for (const k in b) { n += b[k]; sum += b[k] * STAY_MID[k]; }
+  return { n, avg: n ? Math.round(sum / n) : 0 };
+}
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
@@ -70,7 +78,7 @@ export async function onRequestGet({ request, env }) {
   // Cache each range for a few minutes so reloading the page or switching
   // tabs does not run into GoatCounter's rate limit.
   const cache = typeof caches !== "undefined" ? caches.default : null;
-  const cacheKey = new Request(new URL(request.url).origin + "/__stats-cache/v2/" + encodeURIComponent(range));
+  const cacheKey = new Request(new URL(request.url).origin + "/__stats-cache/v3/" + encodeURIComponent(range));
   try {
     const cached = cache && (await cache.match(cacheKey));
     if (cached) return cached;
@@ -86,17 +94,35 @@ export async function onRequestGet({ request, env }) {
       // Skip it when that earlier stretch reaches back before tracking began.
       if (prevStart >= SINCE) prevTotal = (await gcSoft(env, "/stats/total", { start: prevStart, end: start })).total ?? null;
     }
-    const hits = await gc(env, "/stats/hits", { ...q, limit: 100 });
+    // Page views and events share one list, capped at 100 rows per call, so
+    // keep asking (leaving out what we already have) until it says no more.
+    const hitRows = [];
+    const seen = [];
+    for (let i = 0; i < 5; i++) {
+      const params = { ...q, limit: 100 };
+      if (seen.length) params.exclude_paths = seen.join(",");
+      const r = await gc(env, "/stats/hits", params);
+      for (const h of r.hits || []) { hitRows.push(h); seen.push(h.path_id); }
+      if (!r.more || !(r.hits || []).length) break;
+    }
     const refs = await gcSoft(env, "/stats/toprefs", { ...q, limit: 10 });
     const locs = await gcSoft(env, "/stats/locations", { ...q, limit: 10 });
     const sizes = await gcSoft(env, "/stats/sizes", { ...q, limit: 6 });
 
     const pages = new Map();
     const plays = [];
-    for (const h of hits.hits || []) {
+    const stay = new Map(); // page -> { b: { bucket: count } }
+    for (const h of hitRows) {
       if (h.event) {
         // Video plays are sent from js/main.js as events named play/<page>.
         if (h.path.startsWith("play/")) plays.push({ name: h.path.slice(5), title: h.title || "", count: h.count });
+        // Time on page arrives as stay/<page>/<bucket>.
+        const m = h.path.match(/^stay\/(.+)\/([^/]+)$/);
+        if (m && STAY_MID[m[2]]) {
+          const cur = stay.get(m[1]) || { name: m[1], b: {} };
+          cur.b[m[2]] = (cur.b[m[2]] || 0) + h.count;
+          stay.set(m[1], cur);
+        }
         continue;
       }
       const path = normPath(h.path);
@@ -108,12 +134,17 @@ export async function onRequestGet({ request, env }) {
       pages.set(path, cur);
     }
 
+    const all = {};
+    for (const p of stay.values()) for (const k in p.b) all[k] = (all[k] || 0) + p.b[k];
+    const stayPages = [...stay.values()].map((p) => ({ name: p.name, ...stayStats(p.b) })).sort((a, b) => b.n - a.n);
+
     const pick = (r) => (r.stats || []).map((s) => ({ id: s.id || "", name: s.name || "", count: s.count }));
     const res = json({
       start, end,
       total: total.total,
       prevTotal,
       plays: plays.sort((a, b) => b.count - a.count),
+      stay: { ...stayStats(all), buckets: Object.keys(STAY_MID).map((k) => ({ name: k, count: all[k] || 0 })), pages: stayPages },
       daily: (total.stats || []).map((s) => ({ day: s.day, count: s.daily })),
       pages: [...pages.values()].sort((a, b) => b.count - a.count),
       refs: pick(refs),
