@@ -114,8 +114,8 @@ async function load(range) {
   if (r.status === 404) { show("這個網址沒有後台。請改用 Cloudflare 的網址打開 /admin/。"); $("total").textContent = "—"; return; }
   let d = {};
   try { d = await r.json(); } catch (e) {}
-  if (r.status === 401 || r.status === 403) { show("登入已過期，請重新整理頁面再登入一次。"); $("total").textContent = "—"; return; }
-  if (d.error === "not_configured") { show("後台還沒設定完成：Cloudflare 缺少 GoatCounter 金鑰或登入設定。"); $("total").textContent = "—"; return; }
+  if (r.status === 401 || r.status === 403) { show("密碼不對或已登出，請重新整理頁面再輸入一次密碼。"); $("total").textContent = "—"; return; }
+  if (d.error === "not_configured") { show("後台還沒設定完成：Cloudflare 還沒放 GoatCounter 金鑰。"); $("total").textContent = "—"; return; }
   if (!r.ok) { show("暫時讀不到 GoatCounter 的數據，請稍後重新整理。"); $("total").textContent = "—"; return; }
   render(d);
 }
