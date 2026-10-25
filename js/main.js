@@ -73,11 +73,37 @@ document.querySelectorAll('.card[data-vimeo-loop]').forEach(function (card) {
   });
 });
 
+// 0. 影片播放次數：記成 GoatCounter 事件 play/<作品>，後台 /admin/ 會列出來。
+// 同一頁同一支只記一次；統計碼被擋（例如廣告阻擋器）就什麼都不做。
+var playedOnce = {};
+function pageSlug() {
+  var f = location.pathname.split('/').pop().replace(/\.html$/, '');
+  return f && f !== 'index' ? f : (location.pathname.indexOf('/work/') !== -1 ? 'work' : 'home');
+}
+function trackPlay(name, title) {
+  if (playedOnce[name]) return;
+  playedOnce[name] = true;
+  try {
+    if (window.goatcounter && window.goatcounter.count) {
+      window.goatcounter.count({ path: 'play/' + name, title: title || name, event: true });
+    }
+  } catch (e) {}
+}
+document.querySelectorAll('.pj-film video[controls]').forEach(function (v) {
+  v.addEventListener('play', function () {
+    if (v.autoplay && v.currentTime < 0.5 && !v._userPlay) return;  // 自動播放不算
+    trackPlay(pageSlug(), document.title.split(' | ')[0]);
+  });
+  // 按了播放鍵或點了畫面，才算真的有人看
+  ['pointerdown', 'keydown'].forEach(function (t) { v.addEventListener(t, function () { v._userPlay = true; }); });
+});
+
 // 3. 影片：點了才載入 Vimeo 播放器，頁面開啟比較快。
 document.querySelectorAll('.player[data-vimeo]').forEach(function (btn) {
   btn.addEventListener('click', function () {
     var id = btn.getAttribute('data-vimeo');
     if (!id || btn.querySelector('iframe')) return;
+    trackPlay(pageSlug() === 'home' ? 'reel' : pageSlug(), pageSlug() === 'home' ? 'Reel' : document.title.split(' | ')[0]);
     // 首頁 Reel：先拿掉靜音循環的那支，換成有聲音、有控制列的完整播放器
     btn.parentNode.querySelectorAll('[data-reel-bg]').forEach(function (f) { f.remove(); });
     var frame = document.createElement('iframe');
@@ -170,7 +196,9 @@ document.querySelectorAll('a[data-film]').forEach(function (el) {
   el.addEventListener('click', function (e) {
     e.preventDefault();
     var h = el.querySelector('h3');
-    openFilm(el.getAttribute('data-film'), h ? h.textContent : '影片');
+    var title = h ? h.textContent : '影片';
+    trackPlay('film/' + title.trim(), title.trim());
+    openFilm(el.getAttribute('data-film'), title);
   });
 });
 
