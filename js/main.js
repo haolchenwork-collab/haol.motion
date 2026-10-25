@@ -78,7 +78,9 @@ document.querySelectorAll('.card[data-vimeo-loop]').forEach(function (card) {
 var playedOnce = {};
 function pageSlug() {
   var f = location.pathname.split('/').pop().replace(/\.html$/, '');
-  return f && f !== 'index' ? f : (location.pathname.indexOf('/work/') !== -1 ? 'work' : 'home');
+  if (f && f !== 'index') return f;
+  var m = location.pathname.match(/\/(work|about|lab)\/(index\.html)?$/);
+  return m ? m[1] : 'home';
 }
 function trackPlay(name, title) {
   if (playedOnce[name]) return;
@@ -89,6 +91,30 @@ function trackPlay(name, title) {
     }
   } catch (e) {}
 }
+// 0b. 停留時間：只算分頁真的開在前面的時間，離開或切走時記一次 stay/<頁面>/<區間>。
+// 用區間不記秒數，GoatCounter 才算得出各區間有幾個人；後台再換算成平均停留。
+(function () {
+  var shown = 0, since = document.visibilityState === 'visible' ? Date.now() : 0, sent = false;
+  function bucket(sec) {
+    return sec < 10 ? '0-10s' : sec < 30 ? '10-30s' : sec < 60 ? '30-60s' : sec < 120 ? '1-2m' : sec < 300 ? '2-5m' : '5m+';
+  }
+  function flush() {
+    if (since) { shown += Date.now() - since; since = 0; }
+    if (sent || shown < 1000) return;
+    sent = true;
+    try {
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({ path: 'stay/' + pageSlug() + '/' + bucket(shown / 1000), title: document.title.split(' | ')[0], event: true });
+      }
+    } catch (e) {}
+  }
+  document.addEventListener('visibilitychange', function () {
+    if (document.visibilityState === 'hidden') flush();
+    else if (!since) since = Date.now();
+  });
+  window.addEventListener('pagehide', flush);
+})();
+
 document.querySelectorAll('.pj-film video[controls]').forEach(function (v) {
   v.addEventListener('play', function () {
     if (v.autoplay && v.currentTime < 0.5 && !v._userPlay) return;  // 自動播放不算

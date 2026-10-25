@@ -10,103 +10,196 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <style>
-:root{--bg:#0b0b0c;--panel:#131315;--fg:#f2f2f2;--muted:#8a8a8f;--line:#26262a;--accent:#ff5a1f}
+/* Same tokens as css/style.css so the admin reads as part of the portfolio. */
+:root{
+  --bg:#000;--surface:#111113;--surface-2:#18181A;--fg:#EEECE7;--muted:#A3A19B;--faint:#6d6b66;
+  --line:#2A2A2D;--accent:#C6FF3D;--on-accent:#000;--down:#ff8a7a;
+  --display:'Syne','Noto Sans TC',system-ui,sans-serif;
+  --body:'Noto Sans TC',system-ui,-apple-system,'PingFang TC',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+  color-scheme:dark;
+}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--fg);font-family:"Noto Sans TC",sans-serif}
-main{max-width:960px;margin:0 auto;padding:40px 16px 80px}
-header{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:28px}
-h1{font-family:Syne,sans-serif;font-weight:800;font-size:clamp(32px,7vw,52px);margin:0;line-height:1}
-h2{font-size:15px;font-weight:700;margin:0 0 14px}
-.tabs{display:flex;gap:6px;flex-wrap:wrap}
-.tabs button{background:none;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
-.tabs button[aria-pressed=true]{border-color:var(--accent);color:var(--fg)}
-.sub{color:var(--muted);font-size:13px;margin:6px 0 0}
-.tile{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin-bottom:16px}
-.big{font-family:"JetBrains Mono",monospace;font-size:44px;font-weight:500;line-height:1.1}
-.chart{display:flex;align-items:flex-end;gap:2px;height:120px;margin-top:18px}
-.chart i{flex:1;background:var(--accent);border-radius:2px 2px 0 0;min-height:1px;opacity:.85}
-.chart i:hover{opacity:1}
-.axis{display:flex;justify-content:space-between;color:var(--muted);font-size:11px;font-family:"JetBrains Mono",monospace;margin-top:6px}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-@media (max-width:700px){.grid{grid-template-columns:1fr}}
-table{width:100%;border-collapse:collapse;font-size:14px}
-td{padding:9px 0;border-bottom:1px solid var(--line);vertical-align:middle}
-tr:last-child td{border-bottom:0}
-td.n{text-align:right;font-family:"JetBrains Mono",monospace;width:64px}
-.bar{height:3px;background:var(--accent);border-radius:2px;margin-top:5px;min-width:2px}
-.path{color:var(--muted);font-size:11px;font-family:"JetBrains Mono",monospace}
-.empty{color:var(--muted);font-size:13px}
-.msg{color:var(--accent)}
-.kpis{display:flex;flex-wrap:wrap;gap:12px 40px;align-items:flex-end}
-.kpi > span{display:block;color:var(--muted);font-size:13px;margin-bottom:4px}
-.delta{font-family:"JetBrains Mono",monospace;font-size:14px;margin-left:8px}
-.up{color:#4cd08a}.down{color:#ff7a7a}.flat{color:var(--muted)}
-.works td.thumb{width:104px;padding-right:14px}
-.works img{display:block;width:96px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;background:#222}
-.works a{text-decoration:none}
-.works a:hover .wt{text-decoration:underline}
-.wt{font-weight:500}
-.zh{color:var(--muted);font-size:12px}
-td.p{text-align:right;font-family:"JetBrains Mono",monospace;width:72px;color:var(--muted)}
-th{color:var(--muted);font-weight:400;font-size:12px;text-align:right;padding:0 0 8px}
-th:first-child{text-align:left}
-@media (max-width:520px){.works td.thumb{width:76px}.works img{width:68px}}
-a{color:var(--fg)}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--body);font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+a{color:var(--fg);text-decoration:none}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:4px}
+.mono{font-family:var(--mono);font-size:12px;letter-spacing:.06em}
+.muted{color:var(--muted)}
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px}
+@media (max-width:600px){.wrap{padding:0 16px}}
+
+/* Top bar */
+.top{position:sticky;top:0;z-index:5;background:rgba(0,0,0,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;padding-block:14px}
+.logo{font-family:var(--display);font-weight:800;font-size:20px;letter-spacing:.02em}
+.logo .dot{color:var(--accent)}
+.logo .tag{font-family:var(--mono);font-weight:400;font-size:11px;letter-spacing:.12em;color:var(--on-accent);background:var(--accent);border-radius:4px;padding:2px 6px;margin-left:10px;vertical-align:4px}
+.tabs{display:flex;gap:4px;background:var(--surface-2);border:1px solid var(--line);border-radius:999px;padding:3px}
+.tabs button{background:none;border:0;color:var(--muted);border-radius:999px;padding:6px 14px;font:500 13px var(--body);cursor:pointer}
+.tabs button:hover{color:var(--fg)}
+.tabs button[aria-pressed=true]{background:var(--accent);color:var(--on-accent)}
+
+/* Page head */
+.head{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;padding:44px 0 28px}
+.head h1{font-family:var(--display);font-weight:800;font-size:clamp(40px,7vw,84px);line-height:.95;margin:0;letter-spacing:-.01em}
+.head h1 .slash{color:var(--accent)}
+.head p{margin:0;max-width:440px;color:var(--muted);font-size:13px}
+.head p a{border-bottom:1px solid var(--accent)}
+.msg{margin:0 0 20px;padding:12px 16px;border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:8px;background:var(--surface)}
+
+/* Cards */
+.grid{display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px 24px}
+.card-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}
+.card-h h2{font-family:var(--display);font-weight:800;font-size:20px;margin:0;letter-spacing:.01em}
+.card-h .mono{color:var(--faint)}
+
+/* KPI row */
+.kpis{grid-template-columns:repeat(4,1fr);margin-bottom:16px}
+@media (max-width:960px){.kpis{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:480px){.kpis{gap:10px}.kpi{min-height:118px;padding:16px}.kpi .num{font-size:38px;margin-top:10px}.top-work{flex-direction:column;align-items:flex-start;gap:6px;margin-top:10px}.top-work img{width:100%}.kpi .foot{font-size:11px}}
+.kpi{display:flex;flex-direction:column;justify-content:space-between;min-height:150px}
+.kpi .label{color:var(--muted);font-size:13px}
+.kpi .num{font-family:var(--display);font-weight:800;font-size:clamp(40px,5vw,60px);line-height:1;margin-top:14px}
+.kpi .foot{margin-top:10px;min-height:18px}
+.kpi.hl{background:var(--accent);border-color:var(--accent);color:var(--on-accent)}
+.kpi.hl .label,.kpi.hl .foot{color:rgba(0,0,0,.65)}
+.delta{font-family:var(--mono);font-size:12px}
+.delta.up{color:var(--on-accent)}
+.kpi:not(.hl) .delta.up{color:var(--accent)}
+.delta.down{color:#5a1200}
+.kpi:not(.hl) .delta.down{color:var(--down)}
+.top-work{display:flex;gap:12px;align-items:center;margin-top:14px}
+.top-work img{width:84px;aspect-ratio:16/9;object-fit:cover;border-radius:6px;background:var(--surface-2);flex:none}
+.top-work b{display:block;font-weight:500;font-size:15px;line-height:1.3}
+
+/* Chart */
+.chart-card{margin-bottom:16px}
+.chart{position:relative;height:200px}
+.chart svg{display:block;width:100%;height:100%;overflow:visible}
+.chart .gl{stroke:var(--line);stroke-width:1}
+.chart rect.b{fill:var(--accent);opacity:.9;transition:opacity .15s}
+.chart rect.b.dim{opacity:.35}
+.chart rect.hit{fill:transparent;cursor:default}
+.axis{display:flex;justify-content:space-between;margin-top:10px;color:var(--faint)}
+.tip{position:absolute;pointer-events:none;transform:translate(-50%,-110%);background:var(--fg);color:#000;border-radius:6px;padding:5px 9px;font:500 12px var(--mono);white-space:nowrap;opacity:0;transition:opacity .1s}
+.tip.on{opacity:1}
+
+/* Two columns */
+.cols{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-items:start}
+@media (max-width:900px){.cols{grid-template-columns:1fr}}
+.side{display:grid;gap:16px}
+
+/* Work ranking */
+.works{list-style:none;margin:0;padding:0}
+.works li{border-top:1px solid var(--line)}
+.works li:first-child{border-top:0}
+.works a,.works .row{display:grid;grid-template-columns:28px 120px minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 0}
+.works a:hover .t{color:var(--accent)}
+.works .rk{font-family:var(--mono);font-size:12px;color:var(--faint)}
+.works li:nth-child(-n+3) .rk{color:var(--accent)}
+.works .th{width:120px;aspect-ratio:16/9;border-radius:6px;overflow:hidden;background:var(--surface-2) repeating-linear-gradient(135deg,rgba(255,255,255,.035) 0 10px,transparent 10px 20px)}
+.works .th img{width:100%;height:100%;object-fit:cover;display:block}
+.works .t{font-weight:500;line-height:1.3;transition:color .15s}
+.works .zh{color:var(--muted);font-size:12px;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.works .meter{height:3px;background:var(--line);border-radius:2px;margin-top:8px;overflow:hidden}
+.works .meter i{display:block;height:100%;background:var(--accent);border-radius:2px}
+.works .nums{display:flex;gap:18px;text-align:right;font-family:var(--mono);font-size:13px}
+.works .nums span{min-width:44px}
+.works .nums small{display:block;color:var(--faint);font-size:10px;letter-spacing:.08em}
+.works .nums .pl{color:var(--muted)}
+@media (max-width:600px){
+  .works a,.works .row{grid-template-columns:72px minmax(0,1fr);gap:12px}
+  .works .rk{display:none}
+  .works .th{width:72px}
+  .works .nums{grid-column:2;justify-content:flex-start;margin-top:-4px}
+  .works .nums span{min-width:0;text-align:left}
+  .works .nums small{display:inline;margin-right:4px}
+}
+
+/* Simple lists */
+.list{list-style:none;margin:0;padding:0}
+.list li{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;align-items:center;padding:9px 0;border-top:1px solid var(--line)}
+.list li:first-child{border-top:0}
+.list .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .ct{font-family:var(--mono);font-size:13px}
+.list .meter{grid-column:1/-1;height:3px;background:var(--line);border-radius:2px;overflow:hidden}
+.list .meter i{display:block;height:100%;background:var(--muted);border-radius:2px}
+.list li:first-child .meter i{background:var(--accent)}
+.sub{color:var(--faint);font-family:var(--mono);font-size:11px;margin-left:6px}
+.empty{color:var(--faint);font-size:13px;padding:8px 0}
+.others{margin-top:16px}
+footer{padding:40px 0 60px;color:var(--faint)}
 </style>
 </head>
 <body>
-<main>
-<header>
-  <div>
-    <h1>Admin</h1>
-    <p class="sub">訪客數：同一人一天看同一頁只算一次。播放：按下播放鍵的次數，自動播放不算。<a href="https://haolmotion.goatcounter.com" target="_blank" rel="noopener">GoatCounter 完整後台 →</a></p>
-  </div>
-  <div class="tabs" role="group" aria-label="期間">
-    <button data-range="7">7 天</button>
-    <button data-range="30">30 天</button>
-    <button data-range="90">90 天</button>
-    <button data-range="all">全部</button>
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="../index.html">HAOCHEN<span class="dot">.</span><span class="tag">ADMIN</span></a>
+    <div class="tabs" role="group" aria-label="期間">
+      <button data-range="7">7 天</button>
+      <button data-range="30">30 天</button>
+      <button data-range="90">90 天</button>
+      <button data-range="all">全部</button>
+    </div>
   </div>
 </header>
 
-<p id="msg" class="msg" hidden></p>
-
-<section class="tile">
-  <div class="kpis">
-    <div class="kpi"><span>訪客總數</span><div class="big"><span id="total">…</span><span class="delta" id="delta"></span></div></div>
-    <div class="kpi"><span>影片播放</span><div class="big" id="playsTotal">…</div></div>
+<main class="wrap">
+  <div class="head">
+    <h1>Stats<span class="slash">/</span></h1>
+    <p>訪客：同一人一天看同一頁只算一次。播放：按下完整影片的播放鍵才算，預覽和自動播放不算。停留：分頁開在前面的時間，切到別的分頁不算，這次上線後才開始記錄。數字每 5 分鐘更新。<a href="https://haolmotion.goatcounter.com" target="_blank" rel="noopener">GoatCounter 後台 →</a></p>
   </div>
-  <div class="chart" id="chart"></div>
-  <div class="axis"><span id="a0"></span><span id="a1"></span></div>
-</section>
 
-<section class="tile">
-  <h2>作品排行</h2>
-  <table class="works" id="works"></table>
-</section>
+  <p id="msg" class="msg" hidden></p>
 
-<section class="tile">
-  <h2>其他頁面</h2>
-  <table id="pages"></table>
-</section>
+  <section class="grid kpis">
+    <div class="card kpi hl"><span class="label">訪客</span><div class="num" id="total">…</div><div class="foot"><span class="delta" id="delta"></span></div></div>
+    <div class="card kpi"><span class="label">影片播放</span><div class="num" id="playsTotal">…</div><div class="foot mono muted" id="playRate"></div></div>
+    <div class="card kpi"><span class="label">最多人看的作品</span><div id="topWork"></div></div>
+    <div class="card kpi"><span class="label">平均停留</span><div class="num" id="stayAvg">…</div><div class="foot mono muted" id="stayN"></div></div>
+  </section>
 
-<div class="grid">
-  <section class="tile"><h2>從哪裡來</h2><table id="refs"></table></section>
-  <section class="tile"><h2>國家／地區</h2><table id="locations"></table></section>
-</div>
-<section class="tile"><h2>螢幕大小</h2><table id="sizes"></table></section>
+  <section class="card chart-card">
+    <div class="card-h"><h2>每日訪客</h2><span class="mono" id="range"></span></div>
+    <div class="chart" id="chart"><div class="tip" id="tip"></div></div>
+    <div class="axis mono"><span id="a0"></span><span id="a1"></span></div>
+  </section>
+
+  <div class="grid cols">
+    <div>
+      <section class="card">
+        <div class="card-h"><h2>作品排行</h2><span class="mono" id="worksN"></span></div>
+        <ol class="works" id="works"></ol>
+      </section>
+      <section class="card others">
+        <div class="card-h"><h2>其他頁面</h2></div>
+        <ul class="list" id="pages"></ul>
+      </section>
+    </div>
+    <div class="side">
+      <section class="card"><div class="card-h"><h2>停留多久</h2></div><ul class="list" id="stayDist"></ul></section>
+      <section class="card"><div class="card-h"><h2>從哪裡來</h2></div><ul class="list" id="refs"></ul></section>
+      <section class="card"><div class="card-h"><h2>國家／地區</h2></div><ul class="list" id="locations"></ul></section>
+      <section class="card"><div class="card-h"><h2>裝置</h2></div><ul class="list" id="sizes"></ul></section>
+    </div>
+  </div>
 </main>
+<footer class="wrap mono">只有你看得到這一頁。</footer>
 
 <script>
 const $ = (id) => document.getElementById(id);
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 const fmt = (n) => Number(n || 0).toLocaleString();
+// 75 → "1分15秒", 40 → "40秒"
+const dur = (s) => (s >= 60 ? Math.floor(s / 60) + "分" : "") + (s % 60 || s < 60 ? (s % 60) + "秒" : "");
 const SIZES = {phone:"手機",largephone:"大手機",tablet:"平板",desktop:"電腦",desktophd:"大螢幕",unknown:"未知"};
+const EMPTY = '<li class="empty">這段期間還沒有資料</li>';
 
-function rows(el, list, label) {
-  if (!list.length) { el.innerHTML = '<tr><td class="empty">這段期間還沒有資料</td></tr>'; return; }
-  const max = Math.max(1, ...list.map((r) => r.count));
-  el.innerHTML = list.map((r) => `<tr><td>${label(r)}<div class="bar" style="width:${r.count / max * 100}%"></div></td><td class="n">${fmt(r.count)}</td></tr>`).join("");
+function list(el, items, label) {
+  if (!items.length) { el.innerHTML = EMPTY; return; }
+  const max = Math.max(1, ...items.map((r) => r.count));
+  el.innerHTML = items.map((r) => `<li><span class="nm">${label(r)}</span><span class="ct">${fmt(r.count)}</span><span class="meter"><i style="width:${r.count / max * 100}%"></i></span></li>`).join("");
 }
 
 // Titles and thumbnails come from the public work list, so new projects show up on their own.
@@ -119,32 +212,68 @@ async function loadCatalog() {
     const base = new URL("../work/", location.href);
     doc.querySelectorAll("a.card").forEach((a) => {
       const img = a.querySelector("img");
-      const info = {
-        title: (a.querySelector("h3") || {}).textContent || "",
-        zh: (a.querySelector(".zh") || {}).textContent || "",
-        img: img ? new URL(img.getAttribute("src"), base).href : "",
-        href: a.getAttribute("href") && !a.hasAttribute("data-film") ? new URL(a.getAttribute("href"), base).href : "",
-      };
+      const film = a.hasAttribute("data-film");
       const href = a.getAttribute("href") || "";
-      if (href.endsWith(".html") && !a.hasAttribute("data-film")) map[href.replace(/\.html$/, "")] = info;
-      if (a.hasAttribute("data-film") && info.title) map["film/" + info.title.trim()] = info;
+      const info = {
+        title: ((a.querySelector("h3") || {}).textContent || "").trim(),
+        zh: ((a.querySelector(".zh") || {}).textContent || "").trim(),
+        img: img ? new URL(img.getAttribute("src"), base).href : "",
+        href: href && !film ? new URL(href, base).href : "",
+      };
+      if (href.endsWith(".html") && !film) map[href.replace(/\.html$/, "")] = info;
+      if (film && info.title) map["film/" + info.title] = info;
     });
   } catch (e) {}
   return map;
 }
 
+function chart(daily) {
+  const box = $("chart"), tip = $("tip");
+  box.querySelectorAll("svg").forEach((s) => s.remove());
+  if (!daily.length) return;
+  const W = 1000, H = 200, n = daily.length, gap = n > 60 ? 1 : 3;
+  const bw = (W - gap * (n - 1)) / n;
+  const max = Math.max(1, ...daily.map((d) => d.count));
+  const step = Math.pow(10, Math.floor(Math.log10(max)));
+  const top = Math.ceil(max / step) * step;
+  let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="每日訪客長條圖">`;
+  [0.5, 1].forEach((f) => { const y = H - f * H; s += `<line class="gl" x1="0" x2="${W}" y1="${y}" y2="${y}" vector-effect="non-scaling-stroke"/>`; });
+  daily.forEach((d, i) => {
+    const h = Math.max(d.count ? 2 : 0, d.count / top * H), x = i * (bw + gap);
+    s += `<rect class="b" data-i="${i}" x="${x}" y="${H - h}" width="${bw}" height="${h}" rx="2"/>`;
+    s += `<rect class="hit" data-i="${i}" x="${x - gap / 2}" y="0" width="${bw + gap}" height="${H}"/>`;
+  });
+  box.insertAdjacentHTML("afterbegin", s + "</svg>");
+  const bars = box.querySelectorAll("rect.b");
+  box.querySelectorAll("rect.hit").forEach((r) => {
+    r.addEventListener("mouseenter", () => {
+      const i = +r.dataset.i, d = daily[i];
+      bars.forEach((b, j) => b.classList.toggle("dim", j !== i));
+      tip.textContent = d.day.slice(5).replace("-", "/") + " · " + fmt(d.count) + " 人";
+      tip.style.left = ((i + 0.5) / n * 100) + "%";
+      tip.style.top = (100 - d.count / top * 100) + "%";
+      tip.classList.add("on");
+    });
+  });
+  box.onmouseleave = () => { bars.forEach((b) => b.classList.remove("dim")); tip.classList.remove("on"); };
+  $("a0").textContent = daily[0].day.replace(/-/g, "/");
+  $("a1").textContent = daily[n - 1].day.replace(/-/g, "/");
+  $("range").textContent = "最高 " + fmt(max) + " 人／天";
+}
+
 function render(d) {
   $("total").textContent = fmt(d.total);
   const dl = $("delta");
-  if (d.prevTotal == null) { dl.textContent = ""; dl.className = "delta"; }
+  if (d.prevTotal == null) { dl.textContent = "上一期資料還不夠，暫不比較"; dl.className = "delta"; }
   else {
     const pct = d.prevTotal ? Math.round((d.total - d.prevTotal) / d.prevTotal * 100) : null;
-    dl.textContent = pct == null ? "（上一期 0）" : (pct > 0 ? "▲ " : pct < 0 ? "▼ " : "") + Math.abs(pct) + "% 比上一期";
-    dl.className = "delta " + (pct > 0 ? "up" : pct < 0 ? "down" : "flat");
-    dl.title = "上一段同樣長的期間：" + fmt(d.prevTotal) + " 位訪客";
+    dl.textContent = pct == null ? "上一期 0 人" : (pct > 0 ? "▲ " : pct < 0 ? "▼ " : "") + Math.abs(pct) + "%　比上一期（" + fmt(d.prevTotal) + "）";
+    dl.className = "delta " + (pct > 0 ? "up" : pct < 0 ? "down" : "");
   }
+
   const plays = d.plays || [];
-  $("playsTotal").textContent = fmt(plays.reduce((a, p) => a + p.count, 0));
+  const playSum = plays.reduce((a, p) => a + p.count, 0);
+  $("playsTotal").textContent = fmt(playSum);
   const playBy = {};
   plays.forEach((p) => { playBy[p.name] = (playBy[p.name] || 0) + p.count; });
 
@@ -158,34 +287,60 @@ function render(d) {
   Object.keys(playBy).forEach((k) => {
     if (k.startsWith("film/") && !works.some((w) => w.key === k)) works.push({ key: k, visitors: 0, title: k.slice(5) });
   });
-  works.forEach((w) => { w.plays = playBy[w.key] || 0; });
+  const stay = d.stay || { n: 0, avg: 0, buckets: [], pages: [] };
+  const stayBy = {};
+  stay.pages.forEach((p) => { stayBy[p.name] = p.avg; });
+  works.forEach((w) => { w.plays = playBy[w.key] || 0; w.stay = stayBy[w.key] || 0; });
   works.sort((a, b) => b.visitors - a.visitors || b.plays - a.plays);
+  $("playRate").textContent = playSum ? (playBy.reel ? "其中 Reel " + fmt(playBy.reel) + " 次" : "") : "還沒有人按播放";
+  $("worksN").textContent = works.length ? works.length + " 部" : "";
+
+  const info = (w) => catalog[w.key] || {};
+  const top1 = works[0];
+  $("topWork").innerHTML = top1
+    ? `<div class="top-work">${info(top1).img ? `<img src="${esc(info(top1).img)}" alt="">` : ""}<div><b>${esc(info(top1).title || top1.title || top1.key)}</b><span class="mono muted">${fmt(top1.visitors)} 人</span></div></div>`
+    : '<div class="empty">還沒有資料</div>';
+
   const wEl = $("works");
-  if (!works.length) wEl.innerHTML = '<tr><td class="empty">這段期間還沒有資料</td></tr>';
+  if (!works.length) wEl.innerHTML = EMPTY;
   else {
     const max = Math.max(1, ...works.map((w) => w.visitors));
-    wEl.innerHTML = '<tr><th colspan="2">作品</th><th>訪客</th><th>播放</th></tr>' + works.map((w) => {
-      const c = catalog[w.key] || {};
-      const name = esc(c.title || w.title || w.key);
-      const inner = `${c.img ? `<img src="${esc(c.img)}" alt="" loading="lazy">` : ""}`;
-      const label = `<div class="wt">${name}</div>${c.zh ? `<div class="zh">${esc(c.zh)}</div>` : ""}<div class="bar" style="width:${w.visitors / max * 100}%"></div>`;
-      const link = (x) => c.href ? `<a href="${esc(c.href)}" target="_blank" rel="noopener">${x}</a>` : x;
-      return `<tr><td class="thumb">${link(inner)}</td><td>${link(label)}</td><td class="n">${fmt(w.visitors)}</td><td class="p">${w.plays ? "▶ " + fmt(w.plays) : "—"}</td></tr>`;
+    wEl.innerHTML = works.map((w, i) => {
+      const c = info(w);
+      const body = `<span class="rk">${String(i + 1).padStart(2, "0")}</span>
+        <span class="th">${c.img ? `<img src="${esc(c.img)}" alt="" loading="lazy">` : ""}</span>
+        <span><div class="t">${esc(c.title || w.title || w.key)}</div>${c.zh ? `<div class="zh">${esc(c.zh)}</div>` : ""}<div class="meter"><i style="width:${w.visitors / max * 100}%"></i></div></span>
+        <span class="nums"><span><small>訪客</small>${fmt(w.visitors)}</span><span class="pl"><small>播放</small>${w.plays ? fmt(w.plays) : "—"}</span><span class="pl"><small>停留</small>${w.stay ? dur(w.stay) : "—"}</span></span>`;
+      return `<li>${c.href ? `<a href="${esc(c.href)}" target="_blank" rel="noopener">${body}</a>` : `<div class="row">${body}</div>`}</li>`;
     }).join("");
   }
-  if (playBy.reel) others.forEach((r) => { if (r.path === "/") r.title = "首頁（Reel 播放 " + fmt(playBy.reel) + " 次）"; });
 
-  const max = Math.max(1, ...d.daily.map((x) => x.count));
-  $("chart").innerHTML = d.daily.map((x) => `<i style="height:${x.count / max * 100}%" title="${esc(x.day)}：${fmt(x.count)}"></i>`).join("");
-  $("a0").textContent = d.daily.length ? d.daily[0].day : "";
-  $("a1").textContent = d.daily.length ? d.daily[d.daily.length - 1].day : "";
-  rows($("pages"), others, (r) => `${esc(r.title || r.path)}<div class="path">${esc(r.path)}</div>`);
-  rows($("refs"), d.refs, (r) => esc(r.name || "（直接開啟）"));
-  rows($("locations"), d.locations, (r) => esc(r.name || "未知"));
-  rows($("sizes"), d.sizes.filter((r) => r.count > 0), (r) => esc(SIZES[r.id] || r.name || r.id || "未知"));
+  const pageName = (r) => {
+    if (r.path === "/") return "首頁" + (playBy.reel ? `<span class="sub">Reel 播放 ${fmt(playBy.reel)}</span>` : "");
+    if (r.path === "/work/") return "作品列表";
+    if (r.path === "/about/") return "About";
+    if (r.path === "/lab/") return "Creative";
+    return esc(r.title || r.path) + `<span class="sub">${esc(r.path)}</span>`;
+  };
+  const otherKey = { "/": "home", "/work/": "work", "/about/": "about", "/lab/": "lab" };
+  list($("pages"), others, (r) => pageName(r) + (stayBy[otherKey[r.path]] ? `<span class="sub">停留 ${dur(stayBy[otherKey[r.path]])}</span>` : ""));
+
+  $("stayAvg").textContent = stay.n ? dur(stay.avg) : "—";
+  $("stayN").textContent = stay.n ? "依 " + fmt(stay.n) + " 次瀏覽估算" : "還沒有記錄";
+  const STAY = {"0-10s":"10 秒內","10-30s":"10–30 秒","30-60s":"30 秒–1 分","1-2m":"1–2 分","2-5m":"2–5 分","5m+":"5 分以上"};
+  if (stay.n) {
+    $("stayDist").innerHTML = stay.buckets.map((b) => `<li><span class="nm">${STAY[b.name] || esc(b.name)}</span><span class="ct">${fmt(b.count)}<span class="sub">${Math.round(b.count / stay.n * 100)}%</span></span><span class="meter"><i style="width:${b.count / Math.max(1, ...stay.buckets.map((x) => x.count)) * 100}%"></i></span></li>`).join("");
+  } else $("stayDist").innerHTML = EMPTY;
+
+  const refs = d.refs.map((r) => ({ ...r, name: r.name || "直接開啟" }));
+  list($("refs"), refs, (r) => esc(r.name));
+  list($("locations"), d.locations, (r) => esc(r.name || "未知"));
+  list($("sizes"), d.sizes.filter((r) => r.count > 0), (r) => esc(SIZES[r.id] || r.name || r.id || "未知"));
+  chart(d.daily);
 }
 
 function show(text) { $("msg").hidden = !text; $("msg").textContent = text || ""; }
+function fail(text) { show(text); ["total", "playsTotal", "stayAvg"].forEach((id) => { $(id).textContent = "—"; }); }
 
 async function load(range) {
   document.querySelectorAll(".tabs button").forEach((b) => b.setAttribute("aria-pressed", b.dataset.range === range));
@@ -195,13 +350,13 @@ async function load(range) {
   let r;
   try {
     r = await fetch("../api/stats?range=" + encodeURIComponent(range), { credentials: "same-origin", cache: "no-store" });
-  } catch (e) { show("連不上伺服器，請稍後重新整理。"); return; }
-  if (r.status === 404) { show("這個網址沒有後台。請改用 Cloudflare 的網址打開 /admin/。"); $("total").textContent = "—"; return; }
+  } catch (e) { fail("連不上伺服器，請稍後重新整理。"); return; }
+  if (r.status === 404) { fail("這個網址沒有後台。請改用 haol-motion.pages.dev/admin/ 打開。"); return; }
   let d = {};
   try { d = await r.json(); } catch (e) {}
-  if (r.status === 401 || r.status === 403) { show("密碼不對或已登出，請重新整理頁面再輸入一次密碼。"); $("total").textContent = "—"; return; }
-  if (d.error === "not_configured") { show("後台還沒設定完成：Cloudflare 還沒放 GoatCounter 金鑰。"); $("total").textContent = "—"; return; }
-  if (!r.ok) { show("暫時讀不到 GoatCounter 的數據，請稍後重新整理。"); $("total").textContent = "—"; return; }
+  if (r.status === 401 || r.status === 403) { fail("密碼不對或已登出，請重新整理頁面再輸入一次密碼。"); return; }
+  if (d.error === "not_configured") { fail("後台還沒設定完成：Cloudflare 還沒放 GoatCounter 金鑰。"); return; }
+  if (!r.ok) { fail("暫時讀不到 GoatCounter 的數據，請稍後重新整理。"); return; }
   if (!catalog) catalog = await loadCatalog();
   render(d);
 }
