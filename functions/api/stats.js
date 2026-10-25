@@ -3,69 +3,19 @@
 //
 // Environment variables (set in Cloudflare Pages > Settings > Variables):
 //   GOATCOUNTER_TOKEN   secret, a GoatCounter API key with "Read statistics" only
-//   ACCESS_TEAM_DOMAIN  e.g. haolmotion.cloudflareaccess.com
-//   ACCESS_AUD          the Application Audience (AUD) tag of the Access app
+//   ADMIN_PASSWORD      secret, checked by functions/api/_middleware.js
 //
-// Cloudflare Access sits in front of /admin/* and /api/*. This function also
-// checks the Access token itself, so the numbers stay private even if the
-// Access application is misconfigured. Without the variables it refuses.
+// /admin/* and /api/* both sit behind the password middleware.
 
 const GC = "https://haolmotion.goatcounter.com/api/v0";
 const SINCE = "2026-10-12T00:00:00Z"; // tracking went live
 const RANGES = { "7": 7, "30": 30, "90": 90 };
-
-let jwksCache = null;
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), {
     status,
     headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" },
   });
-}
-
-function b64url(s) {
-  s = s.replace(/-/g, "+").replace(/_/g, "/");
-  const bin = atob(s + "===".slice((s.length + 3) % 4));
-  return Uint8Array.from(bin, (c) => c.charCodeAt(0));
-}
-
-async function verifyAccess(request, env) {
-  const token = request.headers.get("Cf-Access-Jwt-Assertion");
-  if (!token) return false;
-  const parts = token.split(".");
-  if (parts.length !== 3) return false;
-  let header, payload;
-  try {
-    header = JSON.parse(new TextDecoder().decode(b64url(parts[0])));
-    payload = JSON.parse(new TextDecoder().decode(b64url(parts[1])));
-  } catch {
-    return false;
-  }
-  if (header.alg !== "RS256") return false;
-
-  const issuer = "https://" + env.ACCESS_TEAM_DOMAIN;
-  const findKey = () => jwksCache && jwksCache.keys.find((k) => k.kid === header.kid);
-  // Refetch when stale, or when the key id is new (Access rotates its keys).
-  if (!jwksCache || jwksCache.at < Date.now() - 3600e3 || !findKey()) {
-    const r = await fetch(issuer + "/cdn-cgi/access/certs");
-    if (!r.ok) return false;
-    jwksCache = { at: Date.now(), keys: (await r.json()).keys || [] };
-  }
-  const jwk = findKey();
-  if (!jwk) return false;
-
-  const key = await crypto.subtle.importKey(
-    "jwk", { kty: jwk.kty, n: jwk.n, e: jwk.e, alg: "RS256", ext: true },
-    { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" }, false, ["verify"]);
-  const ok = await crypto.subtle.verify(
-    "RSASSA-PKCS1-v1_5", key, b64url(parts[2]),
-    new TextEncoder().encode(parts[0] + "." + parts[1]));
-  if (!ok) return false;
-
-  const now = Date.now() / 1000;
-  const aud = Array.isArray(payload.aud) ? payload.aud : [payload.aud];
-  return payload.iss === issuer && aud.includes(env.ACCESS_AUD) &&
-    typeof payload.exp === "number" && payload.exp > now;
 }
 
 function hour(d) {
@@ -89,10 +39,7 @@ function normPath(p) {
 }
 
 export async function onRequestGet({ request, env }) {
-  if (!env.GOATCOUNTER_TOKEN || !env.ACCESS_TEAM_DOMAIN || !env.ACCESS_AUD) {
-    return json({ error: "not_configured" }, 500);
-  }
-  if (!(await verifyAccess(request, env))) return json({ error: "unauthorized" }, 401);
+  if (!env.GOATCOUNTER_TOKEN) return json({ error: "not_configured" }, 500);
 
   const range = new URL(request.url).searchParams.get("range") || "30";
   const now = new Date();
