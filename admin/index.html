@@ -108,6 +108,8 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .works .nums span{min-width:44px}
 .works .nums small{display:block;color:var(--faint);font-size:10px;letter-spacing:.08em}
 .works .nums .pl{color:var(--muted)}
+.works .nums .avg{display:block;font-style:normal;color:var(--faint);font-size:10px;margin-top:1px}
+@media (max-width:600px){.works .nums .avg{display:inline;margin-left:4px}}
 @media (max-width:600px){
   .works a,.works .row{grid-template-columns:72px minmax(0,1fr);gap:12px}
   .works .rk{display:none}
@@ -148,7 +150,7 @@ footer{padding:40px 0 60px;color:var(--faint)}
 <main class="wrap">
   <div class="head">
     <h1>Stats<span class="slash">/</span></h1>
-    <p>訪客：同一人一天看同一頁只算一次。播放：按下完整影片的播放鍵才算，預覽和自動播放不算。停留：分頁開在前面的時間，切到別的分頁不算，這次上線後才開始記錄。數字每 5 分鐘更新。<a href="https://haolmotion.goatcounter.com" target="_blank" rel="noopener">GoatCounter 後台 →</a></p>
+    <p>訪客：同一人一天看同一頁只算一次。播放：按下完整影片的播放鍵才算，預覽和自動播放不算。停留：分頁開在前面的時間，切到別的分頁不算。預覽：滑鼠在作品卡片上停滿 2 秒算一次，下面小字是平均看多久，手機沒有預覽所以不算。數字每 5 分鐘更新。<a href="https://haolmotion.goatcounter.com" target="_blank" rel="noopener">GoatCounter 後台 →</a></p>
   </div>
 
   <p id="msg" class="msg" hidden></p>
@@ -292,14 +294,19 @@ function render(d) {
     if (m) works.push({ key: m[1], visitors: r.count, title: r.title });
     else others.push(r);
   });
-  Object.keys(playBy).forEach((k) => {
-    if (k.startsWith("film/") && !works.some((w) => w.key === k)) works.push({ key: k, visitors: 0, title: k.slice(5) });
+  const prevBy = {};
+  (d.previews || []).forEach((p) => { prevBy[p.name] = p; });
+  // Films only open in a pop-up, and some works only get looked at on the cards, so add those too.
+  [...Object.keys(playBy), ...Object.keys(prevBy)].forEach((k) => {
+    if (k === "reel" || works.some((w) => w.key === k)) return;
+    if (k.startsWith("film/") || catalog[k]) works.push({ key: k, visitors: 0, title: k.replace(/^film\//, "") });
   });
   const stay = d.stay || { n: 0, avg: 0, buckets: [], pages: [] };
   const stayBy = {};
   stay.pages.forEach((p) => { stayBy[p.name] = p.avg; });
   works.forEach((w) => { w.plays = playBy[w.key] || 0; w.stay = stayBy[w.key] || 0; });
-  works.sort((a, b) => b.visitors - a.visitors || b.plays - a.plays);
+  works.forEach((w) => { w.pv = prevBy[w.key] || null; });
+  works.sort((a, b) => b.visitors - a.visitors || (b.pv ? b.pv.n : 0) - (a.pv ? a.pv.n : 0) || b.plays - a.plays);
   $("playRate").textContent = playSum ? (playBy.reel ? "其中 Reel " + fmt(playBy.reel) + " 次" : "") : "還沒有人按播放";
   $("worksN").textContent = works.length ? works.length + " 部" : "";
 
@@ -318,7 +325,7 @@ function render(d) {
       const body = `<span class="rk">${String(i + 1).padStart(2, "0")}</span>
         <span class="th">${c.img ? `<img src="${esc(c.img)}" alt="" loading="lazy">` : ""}</span>
         <span><div class="t">${esc(c.title || w.title || w.key)}</div>${c.zh ? `<div class="zh">${esc(c.zh)}</div>` : ""}<div class="meter"><i style="width:${w.visitors / max * 100}%"></i></div></span>
-        <span class="nums"><span><small>訪客</small>${fmt(w.visitors)}</span><span class="pl"><small>播放</small>${w.plays ? fmt(w.plays) : "—"}</span><span class="pl"><small>停留</small>${w.stay ? dur(w.stay) : "—"}</span></span>`;
+        <span class="nums"><span class="pl"><small>預覽</small>${w.pv ? fmt(w.pv.n) + `<i class="avg">${dur(w.pv.avg)}</i>` : "—"}</span><span><small>點進去</small>${fmt(w.visitors)}</span><span class="pl"><small>播放</small>${w.plays ? fmt(w.plays) : "—"}</span><span class="pl"><small>停留</small>${w.stay ? dur(w.stay) : "—"}</span></span>`;
       return `<li>${c.href ? `<a href="${esc(c.href)}" target="_blank" rel="noopener">${body}</a>` : `<div class="row">${body}</div>`}</li>`;
     }).join("");
   }

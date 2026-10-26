@@ -115,6 +115,42 @@ function trackPlay(name, title) {
   window.addEventListener('pagehide', flush);
 })();
 
+// 0c. 作品卡片預覽：滑鼠停在卡片上看短循環的時間，每張卡片累計，
+// 看滿 2 秒才算，離開或切走分頁時每張記一次 preview/<作品>/<區間>。手機沒有預覽，不會記。
+(function () {
+  if (!canHover || reduceMotion) return;
+  var seen = {}, sent = {};
+  function bucket(sec) { return sec < 5 ? '2-5s' : sec < 10 ? '5-10s' : sec < 30 ? '10-30s' : '30s+'; }
+  function key(card) {
+    var href = card.getAttribute('href') || '';
+    if (card.hasAttribute('data-film')) { var h = card.querySelector('h3'); return h ? 'film/' + h.textContent.trim() : ''; }
+    return href.split('/').pop().replace(/\.html$/, '');
+  }
+  document.querySelectorAll('.card[data-loop], .w[data-loop], .card[data-vimeo-loop]').forEach(function (card) {
+    var k = key(card), since = 0;
+    if (!k) return;
+    card.addEventListener('mouseenter', function () { since = Date.now(); });
+    card.addEventListener('mouseleave', function () {
+      if (since) { seen[k] = (seen[k] || 0) + Date.now() - since; since = 0; }
+    });
+    card._previewFlush = function () { if (since) { seen[k] = (seen[k] || 0) + Date.now() - since; since = Date.now(); } };
+  });
+  function flush() {
+    document.querySelectorAll('.card, .w').forEach(function (c) { if (c._previewFlush) c._previewFlush(); });
+    Object.keys(seen).forEach(function (k) {
+      if (sent[k] || seen[k] < 2000) return;
+      sent[k] = true;
+      try {
+        if (window.goatcounter && window.goatcounter.count) {
+          window.goatcounter.count({ path: 'preview/' + k + '/' + bucket(seen[k] / 1000), title: k, event: true });
+        }
+      } catch (e) {}
+    });
+  }
+  document.addEventListener('visibilitychange', function () { if (document.visibilityState === 'hidden') flush(); });
+  window.addEventListener('pagehide', flush);
+})();
+
 document.querySelectorAll('.pj-film video[controls]').forEach(function (v) {
   v.addEventListener('play', function () {
     if (v.autoplay && v.currentTime < 0.5 && !v._userPlay) return;  // 自動播放不算
