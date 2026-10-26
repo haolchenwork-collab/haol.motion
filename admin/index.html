@@ -130,7 +130,6 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .list li:first-child .meter i{background:var(--accent)}
 .sub{color:var(--faint);font-family:var(--mono);font-size:11px;margin-left:6px}
 .empty{color:var(--faint);font-size:13px;padding:8px 0}
-.others{margin-top:16px}
 footer{padding:40px 0 60px;color:var(--faint)}
 </style>
 </head>
@@ -174,12 +173,9 @@ footer{padding:40px 0 60px;color:var(--faint)}
         <div class="card-h"><h2>作品排行</h2><span class="mono" id="worksN"></span></div>
         <ol class="works" id="works"></ol>
       </section>
-      <section class="card others">
-        <div class="card-h"><h2>其他頁面</h2></div>
-        <ul class="list" id="pages"></ul>
-      </section>
     </div>
     <div class="side">
+      <section class="card"><div class="card-h"><h2>其他頁面</h2></div><ul class="list" id="pages"></ul></section>
       <section class="card"><div class="card-h"><h2>停留多久</h2></div><ul class="list" id="stayDist"></ul></section>
       <section class="card"><div class="card-h"><h2>從哪裡來</h2></div><ul class="list" id="refs"></ul></section>
       <section class="card"><div class="card-h"><h2>國家／地區</h2></div><ul class="list" id="locations"></ul></section>
@@ -300,6 +296,10 @@ function render(d) {
   [...Object.keys(playBy), ...Object.keys(prevBy)].forEach((k) => {
     if (k === "reel" || works.some((w) => w.key === k)) return;
     if (k.startsWith("film/") || catalog[k]) works.push({ key: k, visitors: 0, title: k.replace(/^film\//, "") });
+  });
+  // Every work on the site gets a row, even ones nobody has looked at yet.
+  Object.keys(catalog).forEach((k) => {
+    if (!works.some((w) => w.key === k)) works.push({ key: k, visitors: 0, title: catalog[k].title || k });
   });
   const stay = d.stay || { n: 0, avg: 0, buckets: [], pages: [] };
   const stayBy = {};
