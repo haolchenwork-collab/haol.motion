@@ -115,6 +115,28 @@ function trackPlay(name, title) {
   window.addEventListener('pagehide', flush);
 })();
 
+// 0d. 聯絡點擊：按 Email、LinkedIn、IG、Behance 就記 contact/<管道>/<頁面>，同一頁同一個管道只記一次。
+(function () {
+  var done = {};
+  function kind(href) {
+    if (/^mailto:/i.test(href)) return 'email';
+    var m = href.match(/linkedin|instagram|behance/i);
+    return m ? m[0].toLowerCase() : '';
+  }
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest && e.target.closest('a[href]');
+    if (!a) return;
+    var k = kind(a.getAttribute('href'));
+    if (!k || done[k]) return;
+    done[k] = true;
+    try {
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({ path: 'contact/' + k + '/' + pageSlug(), title: k, event: true });
+      }
+    } catch (err) {}
+  }, true);
+})();
+
 // 0c. 作品卡片預覽：滑鼠停在卡片上看短循環的時間，每張卡片累計，
 // 看滿 2 秒才算，離開或切走分頁時每張記一次 preview/<作品>/<區間>。手機沒有預覽，不會記。
 (function () {

@@ -152,7 +152,7 @@ footer{padding:40px 0 60px;color:var(--faint)}
 <main class="wrap">
   <div class="head">
     <h1>Stats<span class="slash">/</span></h1>
-    <p>訪客：同一人一天看同一頁只算一次。播放：按下完整影片的播放鍵才算，預覽和自動播放不算。停留：分頁開在前面的時間，切到別的分頁不算。預覽：滑鼠在作品卡片上停滿 2 秒算一次，下面小字是平均看多久，手機沒有預覽所以不算。數字每 5 分鐘更新。<a href="https://haolmotion.goatcounter.com" target="_blank" rel="noopener">GoatCounter 後台 →</a></p>
+    <p>訪客：同一人一天看同一頁只算一次。播放：按下完整影片的播放鍵才算，預覽和自動播放不算。停留：分頁開在前面的時間，切到別的分頁不算。聯絡點擊：按了 Email、LinkedIn、IG、Behance 的次數。預覽：滑鼠在作品卡片上停滿 2 秒算一次，下面小字是平均看多久，手機沒有預覽所以不算。數字每 5 分鐘更新。<a href="https://haolmotion.goatcounter.com" target="_blank" rel="noopener">GoatCounter 後台 →</a></p>
   </div>
 
   <p id="msg" class="msg" hidden></p>
@@ -179,6 +179,7 @@ footer{padding:40px 0 60px;color:var(--faint)}
       </section>
     </div>
     <div class="side">
+      <section class="card"><div class="card-h"><h2>聯絡點擊</h2><span class="mono" id="contactN"></span></div><ul class="list" id="contacts"></ul></section>
       <section class="card"><div class="card-h"><h2>其他頁面</h2></div><ul class="list" id="pages"></ul></section>
       <section class="card"><div class="card-h"><h2>停留多久</h2></div><ul class="list" id="stayDist"></ul></section>
       <section class="card"><div class="card-h"><h2>從哪裡來</h2></div><ul class="list" id="refs"></ul></section>
@@ -357,6 +358,24 @@ function render(d) {
   if (stay.n) {
     $("stayDist").innerHTML = stay.buckets.map((b) => `<li><span class="nm">${STAY[b.name] || esc(b.name)}</span><span class="ct">${fmt(b.count)}<span class="sub">${Math.round(b.count / stay.n * 100)}%</span></span><span class="meter"><i style="width:${b.count / Math.max(1, ...stay.buckets.map((x) => x.count)) * 100}%"></i></span></li>`).join("");
   } else $("stayDist").innerHTML = EMPTY;
+
+  // Contact clicks: one row per channel, with the page people clicked it from most.
+  const CH = { email: "Email", linkedin: "LinkedIn", instagram: "Instagram", behance: "Behance" };
+  const PAGE = { home: "首頁", work: "作品列表", about: "About", lab: "Creative" };
+  const byCh = {};
+  (d.contacts || []).forEach((c) => {
+    const x = byCh[c.name] || (byCh[c.name] = { name: c.name, count: 0, pages: {} });
+    x.count += c.count;
+    x.pages[c.page] = (x.pages[c.page] || 0) + c.count;
+  });
+  const chs = Object.values(byCh).sort((a, b) => b.count - a.count);
+  const chSum = chs.reduce((a, c) => a + c.count, 0);
+  $("contactN").textContent = chSum ? "共 " + fmt(chSum) + " 次" : "";
+  list($("contacts"), chs, (c) => {
+    const top = Object.entries(c.pages).sort((a, b) => b[1] - a[1])[0];
+    const where = top ? PAGE[top[0]] || (catalog[top[0]] || {}).title || top[0] : "";
+    return esc(CH[c.name] || c.name) + (where ? `<span class="sub">多從 ${esc(where)}</span>` : "");
+  });
 
   const refs = d.refs.map((r) => ({ ...r, name: r.name || "直接開啟" }));
   list($("refs"), refs, (r) => esc(r.name));
