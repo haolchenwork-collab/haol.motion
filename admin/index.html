@@ -94,6 +94,9 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .works{list-style:none;margin:0;padding:0}
 .works li{border-top:1px solid var(--line)}
 .works li:first-child{border-top:0}
+.works.short li:nth-child(n+11){display:none}
+.more{display:block;width:100%;margin-top:8px;padding:12px;border:1px solid var(--line);border-radius:999px;background:none;color:var(--muted);font-size:12px;cursor:pointer}
+.more:hover{color:var(--fg);border-color:var(--muted)}
 .works a,.works .row{display:grid;grid-template-columns:28px 120px minmax(0,1fr) auto;gap:16px;align-items:center;padding:12px 0}
 .works a:hover .t{color:var(--accent)}
 .works .rk{font-family:var(--mono);font-size:12px;color:var(--faint)}
@@ -172,6 +175,7 @@ footer{padding:40px 0 60px;color:var(--faint)}
       <section class="card">
         <div class="card-h"><h2>作品排行</h2><span class="mono" id="worksN"></span></div>
         <ol class="works" id="works"></ol>
+        <button class="more mono" id="worksMore" hidden></button>
       </section>
     </div>
     <div class="side">
@@ -210,6 +214,7 @@ function list(el, items, label) {
 
 // Titles and thumbnails come from the public work list, so new projects show up on their own.
 let catalog = null;
+let worksOpen = false;
 async function loadCatalog() {
   const map = {};
   try {
@@ -329,6 +334,12 @@ function render(d) {
       return `<li>${c.href ? `<a href="${esc(c.href)}" target="_blank" rel="noopener">${body}</a>` : `<div class="row">${body}</div>`}</li>`;
     }).join("");
   }
+  // Only the top 10 by default; the rest open on request.
+  const more = $("worksMore");
+  more.hidden = works.length <= 10;
+  wEl.classList.toggle("short", works.length > 10 && !worksOpen);
+  more.textContent = worksOpen ? "收起" : "看全部 " + works.length + " 部";
+  more.onclick = () => { worksOpen = !worksOpen; render(d); };
 
   const pageName = (r) => {
     if (r.path === "/") return "首頁" + (playBy.reel ? `<span class="sub">Reel 播放 ${fmt(playBy.reel)}</span>` : "");
