@@ -13,9 +13,12 @@ const RANGES = { "7": 7, "30": 30, "90": 90 };
 // Middle of each time-on-page bucket sent by js/main.js, in seconds.
 const STAY_MID = { "0-10s": 5, "10-30s": 20, "30-60s": 45, "1-2m": 90, "2-5m": 210, "5m+": 420 };
 
-function stayStats(b) {
+// Same for hover previews on the work cards.
+const PREVIEW_MID = { "2-5s": 3.5, "5-10s": 7.5, "10-30s": 20, "30s+": 45 };
+
+function stayStats(b, mid = STAY_MID) {
   let n = 0, sum = 0;
-  for (const k in b) { n += b[k]; sum += b[k] * STAY_MID[k]; }
+  for (const k in b) { n += b[k]; sum += b[k] * mid[k]; }
   return { n, avg: n ? Math.round(sum / n) : 0 };
 }
 
@@ -78,7 +81,7 @@ export async function onRequestGet({ request, env }) {
   // Cache each range for a few minutes so reloading the page or switching
   // tabs does not run into GoatCounter's rate limit.
   const cache = typeof caches !== "undefined" ? caches.default : null;
-  const cacheKey = new Request(new URL(request.url).origin + "/__stats-cache/v3/" + encodeURIComponent(range));
+  const cacheKey = new Request(new URL(request.url).origin + "/__stats-cache/v4/" + encodeURIComponent(range));
   try {
     const cached = cache && (await cache.match(cacheKey));
     if (cached) return cached;
@@ -112,11 +115,18 @@ export async function onRequestGet({ request, env }) {
     const pages = new Map();
     const plays = [];
     const stay = new Map(); // page -> { b: { bucket: count } }
+    const previews = new Map();
     for (const h of hitRows) {
       if (h.event) {
         // Video plays are sent from js/main.js as events named play/<page>.
         if (h.path.startsWith("play/")) plays.push({ name: h.path.slice(5), title: h.title || "", count: h.count });
         // Time on page arrives as stay/<page>/<bucket>.
+        const pv = h.path.match(/^preview\/(.+)\/([^/]+)$/);
+        if (pv && PREVIEW_MID[pv[2]]) {
+          const cur = previews.get(pv[1]) || { name: pv[1], b: {} };
+          cur.b[pv[2]] = (cur.b[pv[2]] || 0) + h.count;
+          previews.set(pv[1], cur);
+        }
         const m = h.path.match(/^stay\/(.+)\/([^/]+)$/);
         if (m && STAY_MID[m[2]]) {
           const cur = stay.get(m[1]) || { name: m[1], b: {} };
@@ -144,6 +154,7 @@ export async function onRequestGet({ request, env }) {
       total: total.total,
       prevTotal,
       plays: plays.sort((a, b) => b.count - a.count),
+      previews: [...previews.values()].map((p) => ({ name: p.name, ...stayStats(p.b, PREVIEW_MID) })).sort((a, b) => b.n - a.n),
       stay: { ...stayStats(all), buckets: Object.keys(STAY_MID).map((k) => ({ name: k, count: all[k] || 0 })), pages: stayPages },
       daily: (total.stats || []).map((s) => ({ day: s.day, count: s.daily })),
       pages: [...pages.values()].sort((a, b) => b.count - a.count),
