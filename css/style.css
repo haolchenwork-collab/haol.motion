@@ -570,6 +570,10 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .lang-toggle button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
 .lang-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .ab-intro > .ab-label { align-items: center; }
+.i18n { display: grid; }
+.i18n > span { grid-area: 1 / 1; align-self: end; }
+.i18n > .i18n-en, .show-en .i18n > .i18n-zh { visibility: hidden; }
+.show-en .i18n > .i18n-en { visibility: visible; }
 .ab-intro { grid-column: span 7; display: flex; flex-direction: column; gap: 18px; }
 .ab-intro h1 { margin: 8px 0 0; font-family: var(--display); font-weight: 800; font-size: clamp(44px, 5.4vw, 92px); line-height: .86; letter-spacing: -.035em; }
 .ab-role { margin: 0; font-family: var(--display); font-weight: 600; font-size: clamp(18px, 1.6vw, 24px); }
