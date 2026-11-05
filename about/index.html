@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <script>try{if(sessionStorage.getItem("pt")!==null&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("pt-in")}catch(e){}</script>
-<link rel="stylesheet" href="../css/style.css?v=173">
+<link rel="stylesheet" href="../css/style.css?v=174">
 <script data-goatcounter="https://haolmotion.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -136,10 +136,22 @@
   // 跑馬燈和頁尾是單行，直接換字就好
   // 切換時文字會模糊淡出、從另一側滑入，依序錯開（--d）
   var swap = [], n = 0, cur = null, swapTimer;
+  // 把文字拆成一個個詞（英文、數字連在一起，中文一字一格），每格多一點延遲（--t）做出時間差
+  function words(htmlText, d) {
+    var tmp = document.createElement('textarea'); tmp.innerHTML = htmlText;
+    var toks = tmp.value.match(/[A-Za-z0-9’'.&+\-]+|\s+|[\s\S]/g) || [];
+    var count = toks.filter(function (t) { return !/^\s+$/.test(t); }).length;
+    var step = Math.min(35, 600 / Math.max(count, 1)), i = 0;
+    return toks.map(function (t) {
+      if (/^\s+$/.test(t)) return ' ';
+      var esc = t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
+      return '<span class="w" style="--t:' + Math.round(d + step * i++) + 'ms">' + esc + '</span>';
+    }).join('');
+  }
   els.forEach(function (el) {
     if (el.closest('.ab-marquee-track, .site-footer')) { el.dataset.zh = el.innerHTML; el.classList.add('i18n-swap'); swap.push(el); return; }
-    el.style.setProperty('--d', (n++ * 40) + 'ms');
-    el.innerHTML = '<span class="i18n-zh" lang="zh-Hant">' + el.innerHTML + '</span><span class="i18n-en" lang="en">' + el.dataset.en + '</span>';
+    var d = n++ * 90;
+    el.innerHTML = '<span class="i18n-zh" lang="zh-Hant">' + words(el.innerHTML, d) + '</span><span class="i18n-en" lang="en">' + words(el.dataset.en, d) + '</span>';
     el.classList.add('i18n');
   });
   alts.forEach(function (el) { el.dataset.zhAlt = el.alt; });
