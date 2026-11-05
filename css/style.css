@@ -564,6 +564,12 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .ab-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 8px; }
 .ab-tile { position: relative; min-width: 0; margin: 0; border-radius: 6px; background: var(--surface); padding: 22px; overflow: hidden; }
 .ab-label { display: flex; justify-content: space-between; gap: 12px; font-family: var(--mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.lang-toggle { display: inline-flex; padding: 2px; border: 1px solid var(--glass-edge, rgba(255,255,255,.18)); border-radius: 999px; gap: 2px; }
+.lang-toggle button { appearance: none; border: 0; background: none; color: var(--muted); font: inherit; letter-spacing: .08em; padding: 5px 11px; border-radius: 999px; cursor: pointer; transition: background .2s, color .2s; }
+.lang-toggle button:hover { color: var(--fg, #fff); }
+.lang-toggle button[aria-pressed="true"] { background: var(--accent); color: var(--on-accent); }
+.lang-toggle button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.ab-intro > .ab-label { align-items: center; }
 .ab-intro { grid-column: span 7; display: flex; flex-direction: column; gap: 18px; }
 .ab-intro h1 { margin: 8px 0 0; font-family: var(--display); font-weight: 800; font-size: clamp(44px, 5.4vw, 92px); line-height: .86; letter-spacing: -.035em; }
 .ab-role { margin: 0; font-family: var(--display); font-weight: 600; font-size: clamp(18px, 1.6vw, 24px); }
