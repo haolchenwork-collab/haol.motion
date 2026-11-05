@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <script>try{if(sessionStorage.getItem("pt")!==null&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("pt-in")}catch(e){}</script>
-<link rel="stylesheet" href="../css/style.css?v=172">
+<link rel="stylesheet" href="../css/style.css?v=173">
 <script data-goatcounter="https://haolmotion.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -134,18 +134,27 @@
   var metaZh = meta.content, metaEn = 'HaoChen Liao is a 2D motion designer and 3D artist based in Taiwan. Experience, skills and clients.';
   // 區塊文字：中英兩版疊在同一格，只顯示其中一個，高度取較高的那版，切換時版面不會跳動
   // 跑馬燈和頁尾是單行，直接換字就好
-  var swap = [];
+  // 切換時文字會模糊淡出、從另一側滑入，依序錯開（--d）
+  var swap = [], n = 0, cur = null, swapTimer;
   els.forEach(function (el) {
-    if (el.closest('.ab-marquee-track, .site-footer')) { el.dataset.zh = el.innerHTML; swap.push(el); return; }
+    if (el.closest('.ab-marquee-track, .site-footer')) { el.dataset.zh = el.innerHTML; el.classList.add('i18n-swap'); swap.push(el); return; }
+    el.style.setProperty('--d', (n++ * 40) + 'ms');
     el.innerHTML = '<span class="i18n-zh" lang="zh-Hant">' + el.innerHTML + '</span><span class="i18n-en" lang="en">' + el.dataset.en + '</span>';
     el.classList.add('i18n');
   });
   alts.forEach(function (el) { el.dataset.zhAlt = el.alt; });
   function set(lang, save) {
+    if (lang === cur) return;
+    cur = lang;
     var en = lang === 'en';
     html.lang = en ? 'en' : 'zh-Hant';
     html.classList.toggle('show-en', en);
-    swap.forEach(function (el) { el.innerHTML = en ? el.dataset.en : el.dataset.zh; });
+    function swapText() { swap.forEach(function (el) { el.innerHTML = en ? el.dataset.en : el.dataset.zh; el.classList.remove('is-out'); }); }
+    clearTimeout(swapTimer);
+    if (save && html.classList.contains('i18n-anim')) {
+      swap.forEach(function (el) { el.classList.add('is-out'); });
+      swapTimer = setTimeout(swapText, 220);
+    } else swapText();
     alts.forEach(function (el) { el.alt = en ? el.dataset.enAlt : el.dataset.zhAlt; });
     meta.content = en ? metaEn : metaZh;
     btns.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
@@ -160,6 +169,8 @@
   if (lang !== 'en' && lang !== 'zh') { try { lang = localStorage.getItem(KEY); } catch (e) {} }
   if (lang !== 'en' && lang !== 'zh') lang = /^zh/i.test(navigator.language || '') ? 'zh' : 'en';
   set(lang, false);
+  // 第一次載入不播動畫，之後切換才有
+  requestAnimationFrame(function () { requestAnimationFrame(function () { html.classList.add('i18n-anim'); }); });
 })();
 </script>
 <script src="../js/main.js?v=184"></script>

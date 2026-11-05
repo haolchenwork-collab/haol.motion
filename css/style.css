@@ -572,8 +572,16 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .ab-intro > .ab-label { align-items: center; }
 .i18n { display: grid; }
 .i18n > span { grid-area: 1 / 1; align-self: end; }
-.i18n > .i18n-en, .show-en .i18n > .i18n-zh { visibility: hidden; }
-.show-en .i18n > .i18n-en { visibility: visible; }
+/* 中文在「上」、英文在「下」：切到 EN 時中文往上糊掉、英文從下方浮上來；切回來反過來 */
+.i18n > .i18n-en { opacity: 0; transform: translateY(.7em); filter: blur(8px); visibility: hidden; }
+.show-en .i18n > .i18n-zh { opacity: 0; transform: translateY(-.7em); filter: blur(8px); visibility: hidden; }
+.show-en .i18n > .i18n-en { opacity: 1; transform: none; filter: none; visibility: visible; }
+.i18n-anim .i18n > span { transition: opacity .38s ease, transform .6s cubic-bezier(.2, .8, .2, 1), filter .45s ease, visibility 0s linear .6s; }
+.i18n-anim .i18n > span:not(.i18n-en), .i18n-anim.show-en .i18n > .i18n-en { transition-delay: calc(var(--d, 0ms) + 120ms), calc(var(--d, 0ms) + 120ms), calc(var(--d, 0ms) + 120ms), 0s; }
+.i18n-anim:not(.show-en) .i18n > .i18n-en, .i18n-anim.show-en .i18n > .i18n-zh { transition-delay: var(--d, 0ms), var(--d, 0ms), var(--d, 0ms), calc(var(--d, 0ms) + .6s); }
+.i18n-swap { display: inline-block; transition: opacity .22s ease, filter .22s ease, transform .3s cubic-bezier(.2, .8, .2, 1); }
+.i18n-swap.is-out { opacity: 0; filter: blur(6px); transform: translateY(-.25em); }
+@media (prefers-reduced-motion: reduce) { .i18n-anim .i18n > span, .i18n-swap { transition: none !important; } }
 .ab-intro { grid-column: span 7; display: flex; flex-direction: column; gap: 18px; }
 .ab-intro h1 { margin: 8px 0 0; font-family: var(--display); font-weight: 800; font-size: clamp(44px, 5.4vw, 92px); line-height: .86; letter-spacing: -.035em; }
 .ab-role { margin: 0; font-family: var(--display); font-weight: 600; font-size: clamp(18px, 1.6vw, 24px); }
