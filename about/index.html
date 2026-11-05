@@ -12,7 +12,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Syne:wght@600;800&family=Noto+Sans+TC:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap">
 <script>try{if(sessionStorage.getItem("pt")!==null&&!matchMedia("(prefers-reduced-motion: reduce)").matches)document.documentElement.classList.add("pt-in")}catch(e){}</script>
-<link rel="stylesheet" href="../css/style.css?v=171">
+<link rel="stylesheet" href="../css/style.css?v=172">
 <script data-goatcounter="https://haolmotion.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
 </head>
 <body>
@@ -132,12 +132,20 @@
   var btns = document.querySelectorAll('.lang-toggle button');
   var meta = document.querySelector('meta[name="description"]');
   var metaZh = meta.content, metaEn = 'HaoChen Liao is a 2D motion designer and 3D artist based in Taiwan. Experience, skills and clients.';
-  els.forEach(function (el) { el.dataset.zh = el.innerHTML; });
+  // 區塊文字：中英兩版疊在同一格，只顯示其中一個，高度取較高的那版，切換時版面不會跳動
+  // 跑馬燈和頁尾是單行，直接換字就好
+  var swap = [];
+  els.forEach(function (el) {
+    if (el.closest('.ab-marquee-track, .site-footer')) { el.dataset.zh = el.innerHTML; swap.push(el); return; }
+    el.innerHTML = '<span class="i18n-zh" lang="zh-Hant">' + el.innerHTML + '</span><span class="i18n-en" lang="en">' + el.dataset.en + '</span>';
+    el.classList.add('i18n');
+  });
   alts.forEach(function (el) { el.dataset.zhAlt = el.alt; });
   function set(lang, save) {
     var en = lang === 'en';
     html.lang = en ? 'en' : 'zh-Hant';
-    els.forEach(function (el) { el.innerHTML = en ? el.dataset.en : el.dataset.zh; });
+    html.classList.toggle('show-en', en);
+    swap.forEach(function (el) { el.innerHTML = en ? el.dataset.en : el.dataset.zh; });
     alts.forEach(function (el) { el.alt = en ? el.dataset.enAlt : el.dataset.zhAlt; });
     meta.content = en ? metaEn : metaZh;
     btns.forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.lang === lang ? 'true' : 'false'); });
