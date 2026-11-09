@@ -86,8 +86,18 @@ a:focus-visible,button:focus-visible{outline:2px solid var(--accent);outline-off
 .cols{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);align-items:start}
 @media (max-width:900px){.cols{grid-template-columns:1fr}}
 .side{display:grid;gap:16px}
-.trio{grid-template-columns:repeat(3,minmax(0,1fr));align-items:start;margin-top:16px}
-@media (max-width:900px){.trio{grid-template-columns:1fr}}
+.duo{grid-template-columns:repeat(2,minmax(0,1fr));align-items:start;margin-top:16px}
+@media (max-width:900px){.duo{grid-template-columns:1fr}}
+
+/* World map */
+.geo{margin-top:16px}
+.geo-body{display:grid;grid-template-columns:minmax(0,2.2fr) minmax(0,1fr);gap:32px;align-items:center}
+@media (max-width:900px){.geo-body{grid-template-columns:1fr;gap:16px}}
+.map{position:relative}
+.map svg{display:block;width:100%;height:auto}
+.map .land{fill:#202023;stroke:#35353a;stroke-width:.6}
+.map .dot{fill:var(--accent);fill-opacity:.55;stroke:var(--accent);stroke-width:1.2;transition:fill-opacity .15s}
+.map .dot:hover,.map .dot.on{fill-opacity:.9}
 .how{margin-top:48px;padding-top:24px;border-top:1px solid var(--line)}
 .how h2{font-family:var(--display);font-weight:800;font-size:16px;margin:0 0 14px}
 .how dl{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 32px;margin:0}
@@ -189,9 +199,16 @@ footer{padding:32px 0 60px;color:var(--faint)}
     </div>
   </div>
 
-  <div class="grid trio">
+  <section class="card geo">
+    <div class="card-h"><h2>國家／地區</h2><span class="mono" id="geoN"></span></div>
+    <div class="geo-body">
+      <div class="map" id="map"><div class="tip" id="mapTip"></div></div>
+      <ul class="list" id="locations"></ul>
+    </div>
+  </section>
+
+  <div class="grid duo">
     <section class="card"><div class="card-h"><h2>從哪裡來</h2></div><ul class="list" id="refs"></ul></section>
-    <section class="card"><div class="card-h"><h2>國家／地區</h2></div><ul class="list" id="locations"></ul></section>
     <section class="card"><div class="card-h"><h2>裝置</h2></div><ul class="list" id="sizes"></ul></section>
   </div>
 
@@ -256,6 +273,39 @@ async function loadCatalog() {
     });
   } catch (e) {}
   return map;
+}
+
+// Static world outline (admin/world.json, Natural Earth projection) with one
+// circle per country, its area following the visitor count.
+let world = null;
+async function drawMap(rows) {
+  const box = $("map"), tip = $("mapTip");
+  if (!world) {
+    try { world = await (await fetch("world.json")).json(); } catch (e) { box.hidden = true; return; }
+  }
+  box.querySelectorAll("svg").forEach((s) => s.remove());
+  const pts = rows
+    .map((r) => ({ r, xy: world.pts[(r.id || "").split("-")[0].toUpperCase()] }))
+    .filter((p) => p.xy && p.r.count > 0);
+  const max = Math.max(1, ...pts.map((p) => p.r.count));
+  $("geoN").textContent = rows.length ? rows.length + " 個地區" : "";
+  let s = `<svg viewBox="0 0 ${world.w} ${world.h}" role="img" aria-label="訪客所在地地圖"><path class="land" d="${world.d}"/>`;
+  // Big circles first so small ones stay clickable on top.
+  pts.sort((a, b) => b.r.count - a.r.count).forEach((p, i) => {
+    const rad = 4 + 36 * Math.sqrt(p.r.count / max);
+    s += `<circle class="dot" data-i="${i}" cx="${p.xy[0]}" cy="${p.xy[1]}" r="${rad.toFixed(1)}"/>`;
+  });
+  box.insertAdjacentHTML("afterbegin", s + "</svg>");
+  box.querySelectorAll("circle.dot").forEach((c) => {
+    const p = pts[+c.dataset.i];
+    c.addEventListener("mouseenter", () => {
+      tip.textContent = country(p.r) + " · " + fmt(p.r.count) + " 人";
+      tip.style.left = (p.xy[0] / world.w * 100) + "%";
+      tip.style.top = ((p.xy[1] - +c.getAttribute("r")) / world.h * 100) + "%";
+      tip.classList.add("on");
+    });
+    c.addEventListener("mouseleave", () => tip.classList.remove("on"));
+  });
 }
 
 function chart(daily) {
@@ -396,6 +446,7 @@ function render(d) {
   const refs = d.refs.map((r) => ({ ...r, name: r.name || "直接開啟" }));
   list($("refs"), refs, (r) => esc(r.name));
   list($("locations"), d.locations, (r) => esc(country(r)));
+  drawMap(d.locations);
   list($("sizes"), d.sizes.filter((r) => r.count > 0), (r) => esc(SIZES[r.id] || r.name || r.id || "未知"));
   chart(d.daily);
 }
