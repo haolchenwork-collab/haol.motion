@@ -709,3 +709,21 @@ html:has(body.has-stack) { overflow-anchor: none; }
 .star4:nth-child(8n+7) { animation-delay: -2.8s; }
 .star4:nth-child(8n+8) { animation-delay: -3.2s; }
 @media (prefers-reduced-motion: reduce) { .star4 { animation: none; transform: rotate(-12deg); } }
+
+/* ===== 手機體驗優化 ===== */
+/* 選單列：手機上壓矮一點；往下滑時收起來、往上滑再出現（main.js 8 加上 .hdr-hide） */
+.site-header { transition: transform .35s cubic-bezier(.2,.7,.2,1); }
+@media (max-width: 760px) {
+  .site-header .wrap, .home .site-header .wrap { padding-block: 8px 0; gap: 0 24px; }
+  .nav { gap: 0 22px; }
+  .nav a { padding-block: 13px; }
+  .hdr-hide .site-header { transform: translateY(-100%); }
+  .hdr-hide .work-bar { top: 10px; }
+  .work-bar { transition: top .35s cubic-bezier(.2,.7,.2,1); }
+  /* 篩選列可以左右滑：右邊淡出，提示還有更多 */
+  .work-bar .filters { -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent); padding-right: 24px; }
+  /* 小按鈕加大點擊範圍 */
+  .stack-meta .sm-skip { padding: 12px 14px; margin-block: -6px; }
+  .lang-toggle button { padding: 9px 14px; }
+}
+@media (prefers-reduced-motion: reduce) { .site-header, .work-bar { transition: none; } }

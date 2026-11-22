@@ -1207,6 +1207,23 @@ document.querySelectorAll('[data-clock]').forEach(function (el) {
   function set() { document.documentElement.style.setProperty('--hh', h.offsetHeight + 'px'); }
   set();
   window.addEventListener('resize', set);
+
+  // 手機：往下滑收起選單列，往上滑（或回到頂端）再出現
+  var root = document.documentElement, mq = matchMedia('(max-width: 760px)');
+  // 往上要累積滑超過 48px 才叫出來，避免作品頁堆疊自動對齊時的小幅回捲讓它一直閃
+  var lastY = window.scrollY, up = 0, ticking = false;
+  function onScroll() {
+    ticking = false;
+    var y = window.scrollY, dy = y - lastY;
+    lastY = y;
+    if (!mq.matches || root.classList.contains('intro-playing') || y < h.offsetHeight) { root.classList.remove('hdr-hide'); up = 0; return; }
+    if (dy > 0) { up = 0; if (dy > 4) root.classList.add('hdr-hide'); }
+    else if (dy < 0) { up -= dy; if (up > 48) root.classList.remove('hdr-hide'); }
+  }
+  window.addEventListener('scroll', function () {
+    if (!ticking) { ticking = true; requestAnimationFrame(onScroll); }
+  }, { passive: true });
+  h.addEventListener('focusin', function () { root.classList.remove('hdr-hide'); });
 })();
 
 // 10. 全站動態：內容依序滑入、滑鼠光暈、數字跳動、換頁淡出

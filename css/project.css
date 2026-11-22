@@ -159,7 +159,9 @@
 .pj-part-bar { position: relative; display: block; width: 56px; height: 3px; background: rgba(255,255,255,.16); }
 .pj-part-bar::after { content: ""; position: absolute; top: 0; bottom: 0; left: var(--s); right: calc(100% - var(--e)); background: var(--accent); }
 .pj-hero .pj-facts .pj-part:hover, .pj-hero .pj-facts .pj-part:focus-visible { color: var(--accent); }
-@media (max-width: 700px) { .pj-hero .pj-facts .pj-part { font-size: 11px; } .pj-part-bar { width: 40px; } }
+@media (max-width: 700px) { .pj-hero .pj-facts .pj-part { font-size: 11px; min-height: 32px; } .pj-part-bar { width: 40px; } }
+/* 手機：角色標籤可換行，後面的時間碼才不會被切到畫面外 */
+@media (max-width: 700px) { .pj-hero .pj-facts .pj-chips { flex-wrap: wrap; justify-content: flex-end; overflow: visible; row-gap: 4px; } }
 .pj-hero .pj-facts .pj-part span { padding: 0; border: 0; background: none; color: inherit; font: inherit; letter-spacing: inherit; }
 /* 手機：角色標籤也靠右（標籤多時從左往右排、可橫向滑動，不會被切掉開頭） */
 @media (max-width: 700px) {
