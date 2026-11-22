@@ -126,7 +126,7 @@
 /* ---------- 手機 ---------- */
 @media (max-width: 640px) {
   .t-title { padding: 20px; }
-  .t-title h1 { font-size: 10.5vw; }
+  .t-title h1 { font-size: 8.5vw; }
   .player .play { font-size: 15px; padding: 12px 18px; gap: 10px; }
   .w { grid-column: span 12; }
   /* 手機：橫向滑動的直式片條 */
@@ -249,3 +249,22 @@ html:not(.intro-playing) .reel-intro { display: none; }
 
 /* 首頁作品格子：封面和預覽影片都對準正中間（全站預設是對齊下方） */
 .works .w .media > img, .works .w .media > video { object-position: center; }
+
+/* 手機開場：Reel 貼齊螢幕寬度（16:9 不裁切），下面補上 AE 的 Effect Controls 面板，時間軸圖層名稱完整顯示 */
+@media (max-width: 760px) {
+  .reel-intro { padding: 0 0 calc(8px + env(safe-area-inset-bottom, 0px)); gap: 0; }
+  .ri-screen { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); gap: 8px; padding-bottom: 8px; }
+  .ri-stage { aspect-ratio: 16 / 9; border: 0; border-radius: 0; background: #000; }
+  .ri-frame { inset: 0; width: 100%; height: 100%; }
+  .ri-project { display: none; }
+  .ri-fx { display: flex; margin: 0 8px; }
+  .ri-fx > * { flex-shrink: 0; }
+  .ri-fx .ri-tab.sub, .ri-fx .ri-tab.sub ~ * { display: none; }
+  .ri-fx .ri-fxlist { flex-shrink: 1; min-height: 0; -webkit-mask-image: linear-gradient(#000 calc(100% - 24px), transparent); mask-image: linear-gradient(#000 calc(100% - 24px), transparent); }
+  .ri-panel { margin: 0 8px; }
+  .tl-head { padding: 8px 8px 8px 12px; }
+  .tl-body { grid-template-columns: 132px minmax(0, 1fr); }
+  .tl-labels li { font-size: 10px; letter-spacing: .02em; padding-left: 8px; gap: 6px; }
+  .tl-labels .n { width: 12px; }
+  .tl-labels li, .tl-row { height: 26px; }
+}
