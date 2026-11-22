@@ -1145,18 +1145,29 @@ if (box) {
       } else if (d.event === 'play' || d.event === 'timeupdate') el.classList.add('is-on');
     });
   });
+  // Vimeo 也一樣：離開畫面就暫停（不然捲過去的每一支都會在背景一直串流，手機特別耗流量）
+  function vimeoCmd(el, method) {
+    if (el.contentWindow) el.contentWindow.postMessage(JSON.stringify({ method: method }), 'https://player.vimeo.com');
+  }
   function playOn(el) {
     if (!el.src) el.src = el.getAttribute('data-src');
+    else if (el.tagName === 'IFRAME') vimeoCmd(el, 'play');
     if (el.play) { var p = el.play(); if (p && p.catch) p.catch(function () {}); }
+  }
+  function playOff(el) {
+    if (!el.src) return;
+    if (el.pause) el.pause(); else vimeoCmd(el, 'pause');
   }
   if (!('IntersectionObserver' in window)) plays.forEach(playOn);
   else {
+    // 手機一次看到的格子少，預先載入的範圍縮小，只載快要滑到的那幾支
+    var near = matchMedia('(max-width: 760px)').matches ? '120px 0px' : '300px 0px';
     var playIo = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) playOn(e.target);
-        else if (e.target.pause && e.target.src) e.target.pause();
+        else playOff(e.target);
       });
-    }, { rootMargin: '300px 0px' });
+    }, { rootMargin: near });
     plays.forEach(function (el) { playIo.observe(el); });
   }
   box.querySelector('.lightbox-close').addEventListener('click', function () { box.close(); });

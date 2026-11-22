@@ -67,6 +67,9 @@
           <!-- Reel 影片：透過 jsDelivr（比 GitHub Pages 快很多）讀 repository 裡的 videos/reel.mp4，網址裡那串是 commit 編號。
                換影片：替換 videos/reel.mp4（20 MB 以內）並推上去，再把網址裡的 commit 編號換成新的。讀不到時依序改用本站檔案、Vimeo -->
           <video class="reel-bg" data-reel-bg data-vimeo-fallback="1057715669" src="https://cdn.jsdelivr.net/gh/haolchenwork-collab/haol.motion@819c51241b86c79a0ca4b1824e60fb2e7a85625a/videos/reel.mp4" data-local-src="videos/reel.mp4" poster="images/reel-cover.jpg" muted autoplay loop playsinline preload="auto" aria-hidden="true"></video>
+          <!-- 手機（760px 以下）改讀壓縮版 videos/reel-mobile.mp4（960×540，約 4 MB，原檔 15 MB）；讀不到時一樣退回原檔、再退回 Vimeo。
+               換 Reel 時記得也重壓這支：ffmpeg -i reel.mp4 -an -vf scale=960:-2 -c:v libx264 -preset slow -crf 27 -maxrate 550k -bufsize 1100k -movflags +faststart reel-mobile.mp4 -->
+          <script>(function(){var v=document.currentScript.previousElementSibling;if(v&&v.tagName==='VIDEO'&&matchMedia('(max-width: 760px)').matches){v.src='videos/reel-mobile.mp4';}})();</script>
           <button class="player reel-sound" type="button" data-vimeo="1057715669" aria-label="開聲音完整觀看 Reel 2024">
             <span class="play">
               <svg width="14" height="16" viewBox="0 0 18 20" aria-hidden="true"><path d="M2 2 L16 10 L2 18 Z" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linejoin="round"/></svg>
