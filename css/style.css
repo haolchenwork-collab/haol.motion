@@ -727,3 +727,9 @@ html:has(body.has-stack) { overflow-anchor: none; }
   .lang-toggle button { padding: 9px 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .site-header, .work-bar { transition: none; } }
+/* 手機大標題縮小約 20%（首頁的在 home.css） */
+@media (max-width: 760px) {
+  .ab-intro h1 { font-size: 8vw; }
+  .page-hero h1 { font-size: 30px; }
+  .stack-meta b { font-size: 22px; }
+}
