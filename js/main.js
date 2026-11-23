@@ -87,10 +87,29 @@ function trackPlay(name, title) {
   playedOnce[name] = true;
   try {
     if (window.goatcounter && window.goatcounter.count) {
-      window.goatcounter.count({ path: 'play/' + name, title: title || name, event: true });
+      window.goatcounter.count({ path: 'play/' + name, title: title || name, event: true, no_session: true });
     }
   } catch (e) {}
 }
+// 0a. 訪客數：同一個瀏覽器一天只記一次 visitor 事件（用 localStorage 記今天記過沒）。
+// GoatCounter 的「訪客」是每個頁面各算一次，看 4 頁就是 4，所以後台另外用這個算人數。
+(function () {
+  var key = 'gc-visitor-day', d = new Date();
+  var today = d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate();
+  try { if (localStorage.getItem(key) === today) return; } catch (e) { return; }
+  var tries = 0;
+  (function send() {
+    try {
+      if (window.goatcounter && window.goatcounter.count) {
+        window.goatcounter.count({ path: 'visitor', title: 'visitor', event: true, no_session: true });
+        localStorage.setItem(key, today);
+        return;
+      }
+    } catch (e) { return; }
+    if (++tries < 20) setTimeout(send, 500);  // 統計碼還沒載入，等一下再試
+  })();
+})();
+
 // 0b. 停留時間：只算分頁真的開在前面的時間，離開或切走時記一次 stay/<頁面>/<區間>。
 // 用區間不記秒數，GoatCounter 才算得出各區間有幾個人；後台再換算成平均停留。
 (function () {
@@ -104,7 +123,7 @@ function trackPlay(name, title) {
     sent = true;
     try {
       if (window.goatcounter && window.goatcounter.count) {
-        window.goatcounter.count({ path: 'stay/' + pageSlug() + '/' + bucket(shown / 1000), title: document.title.split(' | ')[0], event: true });
+        window.goatcounter.count({ path: 'stay/' + pageSlug() + '/' + bucket(shown / 1000), title: document.title.split(' | ')[0], event: true, no_session: true });
       }
     } catch (e) {}
   }
@@ -131,7 +150,7 @@ function trackPlay(name, title) {
     done[k] = true;
     try {
       if (window.goatcounter && window.goatcounter.count) {
-        window.goatcounter.count({ path: 'contact/' + k + '/' + pageSlug(), title: k, event: true });
+        window.goatcounter.count({ path: 'contact/' + k + '/' + pageSlug(), title: k, event: true, no_session: true });
       }
     } catch (err) {}
   }, true);
@@ -164,7 +183,7 @@ function trackPlay(name, title) {
       sent[k] = true;
       try {
         if (window.goatcounter && window.goatcounter.count) {
-          window.goatcounter.count({ path: 'preview/' + k + '/' + bucket(seen[k] / 1000), title: k, event: true });
+          window.goatcounter.count({ path: 'preview/' + k + '/' + bucket(seen[k] / 1000), title: k, event: true, no_session: true });
         }
       } catch (e) {}
     });

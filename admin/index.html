@@ -215,7 +215,7 @@ footer{padding:32px 0 60px;color:var(--faint)}
   <section class="how" id="how">
     <h2>數字怎麼算</h2>
     <dl>
-      <div><dt>訪客</dt><dd>同一人一天看同一頁只算一次。</dd></div>
+      <div><dt>訪客</dt><dd>同一個瀏覽器一天只算一次，不管看幾頁（從 11/23 開始記，之前的天數沒有）。沒有資料時先顯示舊算法：每個頁面各算一次，所以會比較高。</dd></div>
       <div><dt>播放</dt><dd>按下完整影片的播放鍵才算，預覽和自動播放不算。</dd></div>
       <div><dt>預覽</dt><dd>滑鼠在作品卡片上停滿 2 秒算一次，小字是平均看多久。手機沒有預覽，不算。</dd></div>
       <div><dt>點進去</dt><dd>打開這部作品頁面的人數。</dd></div>
@@ -343,9 +343,12 @@ function chart(daily) {
 }
 
 function render(d) {
-  $("total").textContent = fmt(d.total);
+  // Visitors = browsers per day (the "visitor" event); the old figure counts every page separately.
+  const people = d.visitors;
+  $("total").textContent = fmt(people != null ? people : d.total);
   const dl = $("delta");
-  if (d.prevTotal == null) { dl.textContent = "上一期資料還不夠，暫不比較"; dl.className = "delta"; }
+  if (people != null) { dl.textContent = "頁面造訪 " + fmt(d.total) + " 次"; dl.className = "delta"; }
+  else if (d.prevTotal == null) { dl.textContent = "上一期資料還不夠，暫不比較"; dl.className = "delta"; }
   else {
     const pct = d.prevTotal ? Math.round((d.total - d.prevTotal) / d.prevTotal * 100) : null;
     dl.textContent = pct == null ? "上一期 0 人" : (pct > 0 ? "▲ " : pct < 0 ? "▼ " : "") + Math.abs(pct) + "%　比上一期（" + fmt(d.prevTotal) + "）";

@@ -81,7 +81,7 @@ export async function onRequestGet({ request, env }) {
   // Cache each range for a few minutes so reloading the page or switching
   // tabs does not run into GoatCounter's rate limit.
   const cache = typeof caches !== "undefined" ? caches.default : null;
-  const cacheKey = new Request(new URL(request.url).origin + "/__stats-cache/v5/" + encodeURIComponent(range));
+  const cacheKey = new Request(new URL(request.url).origin + "/__stats-cache/v6/" + encodeURIComponent(range));
   try {
     const cached = cache && (await cache.match(cacheKey));
     if (cached) return cached;
@@ -117,8 +117,10 @@ export async function onRequestGet({ request, env }) {
     const stay = new Map(); // page -> { b: { bucket: count } }
     const previews = new Map();
     const contacts = [];
+    let visitors = null; // one "visitor" event per browser per day, sent from js/main.js
     for (const h of hitRows) {
       if (h.event) {
+        if (h.path === "visitor") visitors = (visitors || 0) + h.count;
         // Video plays are sent from js/main.js as events named play/<page>.
         if (h.path.startsWith("play/")) plays.push({ name: h.path.slice(5), title: h.title || "", count: h.count });
         // Time on page arrives as stay/<page>/<bucket>.
@@ -156,6 +158,7 @@ export async function onRequestGet({ request, env }) {
     const res = json({
       start, end,
       total: total.total,
+      visitors,
       prevTotal,
       plays: plays.sort((a, b) => b.count - a.count),
       contacts,
